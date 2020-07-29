@@ -12,7 +12,7 @@ describe('The note module', () => {
         type: NoteType.N1,
         duration: 4,
         svg: require('../svg/notes/n1.svg'),
-        className: 'note--n1',
+        description: 'a whole note',
       });
     });
   });
@@ -24,13 +24,13 @@ describe('The note module', () => {
           type: NoteType.N1,
           duration: 4,
           svg: require('../svg/notes/n1.svg'),
-          className: 'note--n1',
+          description: 'a whole note',
         },
         {
           type: NoteType.R1,
           duration: 4,
           svg: require('../svg/notes/r1.svg'),
-          className: 'note--r1',
+          description: 'a whole rest',
         },
       ]);
     });

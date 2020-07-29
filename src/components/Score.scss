@@ -1,0 +1,9 @@
+.c-rr-score {
+  // outline: 1px solid purple;
+
+  &:hover {
+    .c-rr-score-element {
+      outline: 1px dashed #aaaaaa;
+    }
+  }
+}
