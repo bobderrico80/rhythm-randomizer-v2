@@ -1,15 +1,15 @@
-import { ScoreElementDefinition } from './score';
+export interface TypedItem<T> {
+  type: T;
+}
 
-export const findDefinition = <T, D extends ScoreElementDefinition<T>>(
+export const findItemOfType = <T, I extends TypedItem<T>>(
   type: T,
-  definitions: D[]
+  items: I[]
 ) => {
-  const foundDefinition = definitions.find(
-    (definition) => definition.type === type
-  );
+  const foundItem = items.find((item) => item.type === type);
 
-  if (foundDefinition) {
-    return foundDefinition;
+  if (foundItem) {
+    return foundItem;
   }
 
   throw new Error(`No definition found for type ${type}`);

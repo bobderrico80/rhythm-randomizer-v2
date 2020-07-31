@@ -1,6 +1,4 @@
-import { ScoreElementDefinition } from './score';
-import { findDefinition } from './util';
-import { widthUnitTypes } from './dimension';
+import { findItemOfType, TypedItem } from './util';
 
 export enum TimeSignatureComplexity {
   SIMPLE,
@@ -8,61 +6,39 @@ export enum TimeSignatureComplexity {
 }
 
 export enum TimeSignatureType {
-  SIMPLE_2_4 = 'simple-2-4',
-  SIMPLE_3_4 = 'simple-3-4',
-  SIMPLE_4_4 = 'simple-4-4',
+  SIMPLE_2_4 = '2/4',
+  SIMPLE_3_4 = '3/4',
+  SIMPLE_4_4 = '4/4',
 }
 
-export interface TimeSignatureDefinition
-  extends ScoreElementDefinition<TimeSignatureType> {
-  beatsPerMeasure: number;
+export interface TimeSignature extends TypedItem<TimeSignatureType> {
+  type: TimeSignatureType;
   complexity: TimeSignatureComplexity;
+  beatsPerMeasure: number;
+  description: string;
 }
 
-const createDefinition = (
-  type: TimeSignatureType,
-  beatsPerMeasure: number,
-  complexity: TimeSignatureComplexity,
-  description: string,
-  widthUnit: number
-): TimeSignatureDefinition => {
-  return {
-    type,
-    beatsPerMeasure,
-    complexity,
-    svgPath: `time-signatures/${type}`,
-    description,
-    widthUnit,
-  };
-};
-
-const definitions: TimeSignatureDefinition[] = [
-  createDefinition(
-    TimeSignatureType.SIMPLE_2_4,
-    2,
-    TimeSignatureComplexity.SIMPLE,
-    '2/4 Time',
-    widthUnitTypes.TIME_SIGNATURE
-  ),
-  createDefinition(
-    TimeSignatureType.SIMPLE_3_4,
-    3,
-    TimeSignatureComplexity.SIMPLE,
-    '3/4 Time',
-    widthUnitTypes.TIME_SIGNATURE
-  ),
-  createDefinition(
-    TimeSignatureType.SIMPLE_4_4,
-    4,
-    TimeSignatureComplexity.SIMPLE,
-    '4/4 Time',
-    widthUnitTypes.TIME_SIGNATURE
-  ),
+const timeSignatures: TimeSignature[] = [
+  {
+    type: TimeSignatureType.SIMPLE_2_4,
+    complexity: TimeSignatureComplexity.SIMPLE,
+    beatsPerMeasure: 2,
+    description: '2/4 time signature',
+  },
+  {
+    type: TimeSignatureType.SIMPLE_3_4,
+    complexity: TimeSignatureComplexity.SIMPLE,
+    beatsPerMeasure: 3,
+    description: '3/4 time signature',
+  },
+  {
+    type: TimeSignatureType.SIMPLE_4_4,
+    complexity: TimeSignatureComplexity.SIMPLE,
+    beatsPerMeasure: 4,
+    description: '4/4 time signature',
+  },
 ];
 
-export const getTimeSignatureDefinition = (type: TimeSignatureType) => {
-  return findDefinition<TimeSignatureType, TimeSignatureDefinition>(
-    type,
-    definitions
-  );
+export const getTimeSignature = (type: TimeSignatureType) => {
+  return findItemOfType<TimeSignatureType, TimeSignature>(type, timeSignatures);
 };
