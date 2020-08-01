@@ -6,8 +6,9 @@ import {
   getNoteGroup,
 } from './note';
 import { Measure } from './vex';
+import { InvalidNoteSelectionError } from './error';
 
-const MAX_LOOP_COUNT = 100;
+const MAX_LOOP_COUNT = 1000;
 
 const getRandomNoteDefinition = (
   possibleNoteGroupTypes: NoteGroupType[]
@@ -17,46 +18,22 @@ const getRandomNoteDefinition = (
   return getNoteGroup(randomNoteGroupType);
 };
 
-// TODO: Fix this by doing the "is the duration per measure divisible by at least one duration in a
-// set of possible durations" test
-const validateNoteSelection = (
-  possibleNoteGroupTypes: NoteGroupType[],
-  durationPerMeasure: number
-): boolean => {
-  // If no notes selected, not valid
-  if (possibleNoteGroupTypes.length === 0) {
-    return false;
-  }
-
-  const possibleNoteGroups = getNoteGroups(...possibleNoteGroupTypes);
-
-  // If one note selected, and it is equal to the measure duration, valid
-  if (
-    possibleNoteGroups.length === 1 &&
-    possibleNoteGroups[0].duration === durationPerMeasure
-  ) {
-    return true;
-  }
-
-  // If all of the notes selected are more than half of the measure duration, then
-  // it will be impossible to fill a complete measure
-  if (
-    possibleNoteGroups.every(
-      (noteGroup) => noteGroup.duration > durationPerMeasure / 2
-    )
-  ) {
-    return false;
-  }
-
-  return true;
-};
-
 const getRandomMeasure = (
   possibleNoteGroupTypes: NoteGroupType[],
   durationPerMeasure: number
 ): Measure => {
-  if (!validateNoteSelection(possibleNoteGroupTypes, durationPerMeasure)) {
-    throw new Error('This combination of notes is not valid');
+  if (possibleNoteGroupTypes.length === 0) {
+    throw new InvalidNoteSelectionError();
+  }
+
+  const possibleNoteGroups = getNoteGroups(...possibleNoteGroupTypes);
+  const uniqueDurations = [
+    ...new Set(possibleNoteGroups.map((ng) => ng.duration)),
+  ];
+
+  // If any duration is larger than the measure, not valid
+  if (uniqueDurations.some((d) => d > durationPerMeasure)) {
+    throw new InvalidNoteSelectionError();
   }
 
   let randomMeasure: Measure = {
@@ -73,8 +50,11 @@ const getRandomMeasure = (
     );
 
     if (nextPossibleNoteGroup.duration + totalDuration > durationPerMeasure) {
+      // Detect infinite loops, incase there's a possible edge case the other logic in this
+      // function cannot handle
       if (loopCount > MAX_LOOP_COUNT) {
-        throw new Error('Loop detected while building random measure');
+        console.warn('Infinite loop detected!');
+        throw new InvalidNoteSelectionError();
       }
 
       loopCount++;
@@ -83,6 +63,18 @@ const getRandomMeasure = (
 
     randomMeasure.noteGroups.push(nextPossibleNoteGroup);
     totalDuration = getTotalDuration(randomMeasure.noteGroups);
+
+    const remainingDurationToFill = durationPerMeasure - totalDuration;
+
+    // If there isn't at least one possible note that fits within the remaining duration, we can't
+    // complete the rhythm
+    if (
+      remainingDurationToFill !== 0 &&
+      !uniqueDurations.some((d) => d <= remainingDurationToFill)
+    ) {
+      throw new InvalidNoteSelectionError();
+    }
+
     loopCount = 0;
   }
 
