@@ -74,6 +74,7 @@ const splitMeasuresIntoSystems = (measures: Measure[]): System[] => {
 const createNotes = (
   noteGroups: NoteGroup[],
   stave: Vex.Flow.Stave,
+  measureWidth: number,
   toRender: ToRender
 ): void => {
   noteGroups.forEach((noteGroup) => {
@@ -88,9 +89,7 @@ const createNotes = (
 
       // Center the whole rest
       if (note.type === NoteType.WR) {
-        staveNote.setXShift(
-          DEFAULT_MEASURE_WIDTH * WHOLE_REST_CENTERING_OFFSET_PERCENT
-        );
+        staveNote.setXShift(measureWidth * WHOLE_REST_CENTERING_OFFSET_PERCENT);
       }
 
       if (note.dotted) {
@@ -123,14 +122,20 @@ const createMeasure = (
   measureIndexInSystem: number,
   systemIndex: number,
   totalSystems: number,
+  measureWidths: number[],
   timeSignature: TimeSignature,
   toRender: ToRender
 ): void => {
-  const xOffset =
-    SCORE_PADDING_LEFT + DEFAULT_MEASURE_WIDTH * measureIndexInSystem;
-  const yOffset = SCORE_PADDING_TOP + SYSTEM_VERTICAL_OFFSET * systemIndex;
+  let previousMeasureOffsets = 0;
+  for (let i = 0; i < measureIndexInSystem; i++) {
+    previousMeasureOffsets += measureWidths[i];
+  }
 
-  const stave = new VF.Stave(xOffset, yOffset, DEFAULT_MEASURE_WIDTH);
+  const xOffset = SCORE_PADDING_LEFT + previousMeasureOffsets;
+  const yOffset = SCORE_PADDING_TOP + SYSTEM_VERTICAL_OFFSET * systemIndex;
+  const measureWidth = measureWidths[measureIndexInSystem];
+
+  const stave = new VF.Stave(xOffset, yOffset, measureWidth);
 
   // Setup 1-line stave
   stave
@@ -159,7 +164,19 @@ const createMeasure = (
     stave.setEndBarType(VF.Barline.type.END);
   }
 
-  createNotes(measure.noteGroups, stave, toRender);
+  createNotes(measure.noteGroups, stave, measureWidth, toRender);
+};
+
+const getNoteGroupWidthUnits = (noteGroup: NoteGroup): number => {
+  return noteGroup.notes.reduce((sum, noteGroup) => {
+    return (sum += noteGroup.widthUnit);
+  }, 0);
+};
+
+const getMeasureWidthUnits = (measure: Measure): number => {
+  return measure.noteGroups.reduce((sum, noteGroup) => {
+    return (sum += getNoteGroupWidthUnits(noteGroup));
+  }, 0);
 };
 
 const createSystem = (
@@ -169,12 +186,29 @@ const createSystem = (
   timeSignature: TimeSignature,
   toRender: ToRender
 ): void => {
+  const measureWidthUnits = system.measures.map((measure) => {
+    return getMeasureWidthUnits(measure);
+  });
+
+  const totalWidthUnits = measureWidthUnits.reduce(
+    (sum, widthUnit) => (sum += widthUnit),
+    0
+  );
+
+  const systemMeasureWidth = system.measures.length * DEFAULT_MEASURE_WIDTH;
+  const widthUnitSize = systemMeasureWidth / totalWidthUnits;
+
+  const measureWidths = measureWidthUnits.map((measureWidthUnit) => {
+    return measureWidthUnit * widthUnitSize;
+  });
+
   system.measures.forEach((measure, measureIndex) => {
     createMeasure(
       measure,
       measureIndex,
       systemIndex,
       totalSystems,
+      measureWidths,
       timeSignature,
       toRender
     );
@@ -206,4 +240,6 @@ export const createScore = (
   toRender.tuplets.forEach((tuplet) => {
     tuplet.setContext(context).draw();
   });
+
+  context.scale(1, 1);
 };

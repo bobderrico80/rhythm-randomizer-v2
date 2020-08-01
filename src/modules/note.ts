@@ -72,22 +72,28 @@ export interface NoteGroup extends TypedItem<NoteGroupType> {
 }
 
 const noteWidthUnitMap = {
-  [NoteType.W]: 4,
-  [NoteType.H]: 2,
-  [NoteType.Q]: 1,
-  [NoteType.E]: 0.5,
-  [NoteType.S]: 0.25,
-  [NoteType.WR]: 4,
-  [NoteType.HR]: 2,
-  [NoteType.QR]: 1,
-  [NoteType.ER]: 0.5,
+  [NoteType.W]: 13,
+  [NoteType.H]: 8,
+  [NoteType.Q]: 5,
+  [NoteType.E]: 3,
+  [NoteType.S]: 1,
+  [NoteType.WR]: 13,
+  [NoteType.HR]: 8,
+  [NoteType.QR]: 5,
+  [NoteType.ER]: 3,
 };
 
 const createNote = (type: NoteType, dotted: boolean = false): Note => {
+  let widthUnit = noteWidthUnitMap[type];
+
+  if (dotted) {
+    widthUnit *= 1.5;
+  }
+
   return {
     type,
     dotted,
-    widthUnit: noteWidthUnitMap[type],
+    widthUnit,
   };
 };
 
