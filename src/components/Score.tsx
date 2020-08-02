@@ -6,9 +6,10 @@ import { TimeSignature } from '../modules/time-signature';
 export interface ScoreProps {
   timeSignature: TimeSignature;
   measures: Measure[];
+  innerWidth: number;
 }
 
-const Score = ({ timeSignature, measures }: ScoreProps) => {
+const Score = ({ timeSignature, measures, innerWidth }: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,16 +19,16 @@ const Score = ({ timeSignature, measures }: ScoreProps) => {
       return;
     }
 
-    createScore(ref.current, measures, timeSignature);
+    createScore(ref.current, measures, timeSignature, innerWidth);
 
     return () => {
       if (ref && ref.current) {
         ref.current.innerHTML = '';
       }
     };
-  }, [timeSignature, measures]);
+  }, [timeSignature, measures, innerWidth]);
 
-  return <div id="score" ref={containerRef} />;
+  return <div className="c-rr-score" id="score" ref={containerRef} />;
 };
 
 export default Score;

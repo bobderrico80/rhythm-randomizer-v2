@@ -1,13 +1,6 @@
 .c-rr-score {
-  // outline: 1px solid purple;
-
-  &:hover {
-    .c-rr-score-element {
-      outline: 1px dashed #aaaaaa;
-    }
+  svg {
+    display: block;
+    margin: 0 auto;
   }
-}
-
-svg {
-  outline: 1px solid red;
 }

@@ -4,10 +4,13 @@ import { TimeSignature } from './time-signature';
 
 const VF = Vex.Flow;
 
+// All measurements below in px, unless otherwise specified
 const SCORE_PADDING_LEFT = 10;
 const SCORE_PADDING_RIGHT = 10;
 const SCORE_PADDING_TOP = 40;
 const SCORE_PADDING_BOTTOM = 40;
+
+const MAX_SCORE_WIDTH = 1220;
 
 const SYSTEM_VERTICAL_OFFSET = 150;
 const DEFAULT_MEASURE_WIDTH = 300;
@@ -15,7 +18,8 @@ const MEASURES_PER_SYSTEM = 4;
 
 const DEFAULT_CLEF = 'percussion';
 const DEFAULT_PITCHES = ['b/4'];
-const WHOLE_REST_CENTERING_OFFSET_PERCENT = 0.43;
+const WHOLE_REST_CENTERING_OFFSET = 0.43; // percent
+const WHOLE_REST_CENTERING_FIRST_MEASURE_ADDITIONAL_OFFSET = -0.1; // percent
 
 export interface Measure {
   noteGroups: NoteGroup[];
@@ -31,23 +35,53 @@ export interface ToRender {
   tuplets: Vex.Flow.Tuplet[];
 }
 
-const getContext = (targetElement: HTMLElement, measures: Measure[]) => {
+const getContext = (
+  targetElement: HTMLElement,
+  measures: Measure[],
+  innerWidth: number
+) => {
+  let effectiveMeasuresPerSystem = MEASURES_PER_SYSTEM;
+  if (measures.length < effectiveMeasuresPerSystem) {
+    effectiveMeasuresPerSystem = measures.length;
+  }
+
+  let resolvedScoreWidth = MAX_SCORE_WIDTH;
+
   const scoreWidth =
     SCORE_PADDING_LEFT +
-    DEFAULT_MEASURE_WIDTH * MEASURES_PER_SYSTEM +
+    DEFAULT_MEASURE_WIDTH * effectiveMeasuresPerSystem +
     SCORE_PADDING_RIGHT;
 
-  const numberOfSystems = Math.ceil(measures.length / MEASURES_PER_SYSTEM);
+  let scaleFactor = 1;
+
+  if (scoreWidth < MAX_SCORE_WIDTH) {
+    scaleFactor = MAX_SCORE_WIDTH / scoreWidth;
+    resolvedScoreWidth = MAX_SCORE_WIDTH;
+  }
+
+  if (innerWidth < resolvedScoreWidth) {
+    scaleFactor = innerWidth / scoreWidth;
+    resolvedScoreWidth = innerWidth;
+  }
+
+  const numberOfSystems = Math.ceil(
+    measures.length / effectiveMeasuresPerSystem
+  );
 
   const scoreHeight =
-    SCORE_PADDING_TOP +
-    SYSTEM_VERTICAL_OFFSET * numberOfSystems +
-    SCORE_PADDING_BOTTOM;
+    (SCORE_PADDING_TOP +
+      SYSTEM_VERTICAL_OFFSET * numberOfSystems +
+      SCORE_PADDING_BOTTOM) *
+    scaleFactor;
 
   const renderer = new VF.Renderer(targetElement, VF.Renderer.Backends.SVG);
-  renderer.resize(scoreWidth, scoreHeight);
+  renderer.resize(resolvedScoreWidth, scoreHeight);
 
-  return renderer.getContext();
+  const context = renderer.getContext();
+
+  context.scale(scaleFactor, scaleFactor);
+
+  return context;
 };
 
 const getCurrentSystemIndex = (measureIndex: number, totalMeasures: number) =>
@@ -75,6 +109,7 @@ const createNotes = (
   noteGroups: NoteGroup[],
   stave: Vex.Flow.Stave,
   measureWidth: number,
+  inFirstMeasure: boolean,
   toRender: ToRender
 ): void => {
   noteGroups.forEach((noteGroup) => {
@@ -89,7 +124,13 @@ const createNotes = (
 
       // Center the whole rest
       if (note.type === NoteType.WR) {
-        staveNote.setXShift(measureWidth * WHOLE_REST_CENTERING_OFFSET_PERCENT);
+        let offsetPercent = WHOLE_REST_CENTERING_OFFSET;
+
+        if (inFirstMeasure) {
+          offsetPercent += WHOLE_REST_CENTERING_FIRST_MEASURE_ADDITIONAL_OFFSET;
+        }
+
+        staveNote.setXShift(measureWidth * offsetPercent);
       }
 
       if (note.dotted) {
@@ -121,7 +162,7 @@ const createMeasure = (
   measure: Measure,
   measureIndexInSystem: number,
   systemIndex: number,
-  totalSystems: number,
+  isFinalMeasure: boolean,
   measureWidths: number[],
   timeSignature: TimeSignature,
   toRender: ToRender
@@ -134,6 +175,7 @@ const createMeasure = (
   const xOffset = SCORE_PADDING_LEFT + previousMeasureOffsets;
   const yOffset = SCORE_PADDING_TOP + SYSTEM_VERTICAL_OFFSET * systemIndex;
   const measureWidth = measureWidths[measureIndexInSystem];
+  const inFirstMeasure = measureIndexInSystem === 0 && systemIndex === 0;
 
   const stave = new VF.Stave(xOffset, yOffset, measureWidth);
 
@@ -152,19 +194,22 @@ const createMeasure = (
   }
 
   // If first measure of first system, add the time signature
-  if (measureIndexInSystem === 0 && systemIndex === 0) {
+  if (inFirstMeasure) {
     stave.addTimeSignature(timeSignature.type);
   }
 
   // If last measure of last system, set a final barline
-  if (
-    measureIndexInSystem === MEASURES_PER_SYSTEM - 1 &&
-    systemIndex === totalSystems - 1
-  ) {
+  if (isFinalMeasure) {
     stave.setEndBarType(VF.Barline.type.END);
   }
 
-  createNotes(measure.noteGroups, stave, measureWidth, toRender);
+  createNotes(
+    measure.noteGroups,
+    stave,
+    measureWidth,
+    inFirstMeasure,
+    toRender
+  );
 };
 
 const getNoteGroupWidthUnits = (noteGroup: NoteGroup): number => {
@@ -186,6 +231,7 @@ const createSystem = (
   timeSignature: TimeSignature,
   toRender: ToRender
 ): void => {
+  const isFinalSystem = systemIndex === totalSystems - 1;
   const measureWidthUnits = system.measures.map((measure) => {
     return getMeasureWidthUnits(measure);
   });
@@ -207,7 +253,7 @@ const createSystem = (
       measure,
       measureIndex,
       systemIndex,
-      totalSystems,
+      isFinalSystem && measureIndex === system.measures.length - 1,
       measureWidths,
       timeSignature,
       toRender
@@ -218,9 +264,10 @@ const createSystem = (
 export const createScore = (
   targetElement: HTMLElement,
   measures: Measure[],
-  timeSignature: TimeSignature
+  timeSignature: TimeSignature,
+  innerWidth: number
 ) => {
-  const context = getContext(targetElement, measures);
+  const context = getContext(targetElement, measures, innerWidth);
   const systems = splitMeasuresIntoSystems(measures);
   const toRender: ToRender = { staveNotes: new Map(), beams: [], tuplets: [] };
 
@@ -240,6 +287,4 @@ export const createScore = (
   toRender.tuplets.forEach((tuplet) => {
     tuplet.setContext(context).draw();
   });
-
-  context.scale(1, 1);
 };
