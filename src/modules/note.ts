@@ -105,19 +105,19 @@ const noteGroups: NoteGroup[] = [
   {
     type: NoteGroupType.W,
     notes: [c(NoteType.W)],
-    description: 'whole note',
+    description: 'a whole note',
     duration: 4,
   },
   {
     type: NoteGroupType.H,
     notes: [c(NoteType.H)],
-    description: 'half note',
+    description: 'a half note',
     duration: 2,
   },
   {
     type: NoteGroupType.Q,
     notes: [c(NoteType.Q)],
-    description: 'quarter note',
+    description: 'a quarter note',
     duration: 1,
   },
 
