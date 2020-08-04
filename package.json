@@ -32,6 +32,11 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(vexflow)/)"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",
