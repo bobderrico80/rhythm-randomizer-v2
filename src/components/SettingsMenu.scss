@@ -1,0 +1,37 @@
+@import '../styles/variables.scss';
+
+.c-rr-settings-menu {
+  &__pane {
+    position: absolute;
+    top: 0;
+    left: -500px;
+    height: 100vh;
+    width: 100vw;
+    max-width: 500px;
+    z-index: 1;
+    background-color: $pane-color;
+    color: black;
+    transition: left 250ms ease;
+    padding-top: 58px;
+
+    &--open {
+      left: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border-right: 2px solid white;
+    }
+  }
+
+  &__button {
+    position: absolute;
+    top: 16px;
+    left: 10px;
+    z-index: 2;
+    background: none;
+    border: none;
+  }
+
+  &__button-icon {
+    width: 25px;
+  }
+}

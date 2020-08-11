@@ -14,3 +14,19 @@ export const findItemOfType = <T, I extends TypedItem<T>>(
 
   throw new Error(`No definition found for type ${type}`);
 };
+
+export const buildBemClassName = (block: string) => (element?: string) => (
+  modifier?: string
+) => {
+  let className = block;
+
+  if (element) {
+    className = `${className}__${element}`;
+  }
+
+  if (modifier) {
+    className = `${className}--${modifier}`;
+  }
+
+  return className;
+};

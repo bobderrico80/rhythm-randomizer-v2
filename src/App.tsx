@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import throttle from 'lodash/throttle';
-import './App.css';
+import './App.scss';
 import { NoteGroupType } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
 import { Measure } from './modules/vex';
 import { getTimeSignature, TimeSignatureType } from './modules/time-signature';
+import Header from './components/Header';
 
 const THROTTLE_INTERVAL = 200; // ms
 
@@ -76,7 +77,7 @@ const App = () => {
 
   return (
     <div className="c-rr-app">
-      <button onClick={handleRandomizeClick}>New Rhythm</button>
+      <Header handleRandomizeClick={handleRandomizeClick} />
       <Score
         timeSignature={timeSignature}
         measures={measures}
