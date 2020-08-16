@@ -1,54 +1,66 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import Openable from './Openable';
 import { buildBemClassName } from '../modules/util';
-import menuIcon from '../svg/menu.svg';
+import IconButton from './IconButton';
 import backArrowIcon from '../svg/back-arrow.svg';
 import './SettingsMenu.scss';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
-const buildContainerClassName = buildClassName('container');
 const buildPaneClassName = buildClassName('pane');
-const buildButtonIconClassName = buildClassName('button-icon');
+const buildFormClassName = buildClassName('form');
+const buildOverlayClassName = buildClassName('overlay');
 
-export interface SettingsMenuProps {}
+export interface SettingsMenuProps {
+  settingsMenuOpen: boolean;
+  onSettingsMenuCloseClick: () => void;
+}
 
-const SettingsMenu = ({}: SettingsMenuProps) => {
-  const renderButtonContents = (open: boolean) => {
-    const icon = open ? backArrowIcon : menuIcon;
-    const alt = open ? 'Close Settings Menu' : 'Open Settings Menu';
+const SettingsMenu = ({
+  settingsMenuOpen,
+  onSettingsMenuCloseClick,
+}: SettingsMenuProps) => {
+  useEffect(() => {
+    const escapePane = (event: KeyboardEvent) => {
+      // If escape key is pressed...
+      if (event.keyCode === 27) {
+        onSettingsMenuCloseClick();
+      }
+    };
 
-    return (
-      <img
-        src={icon}
-        alt={alt}
-        className={classnames(buildButtonIconClassName(), {
-          [buildButtonIconClassName('open')]: open,
-          [buildButtonIconClassName('closed')]: !open,
-        })}
-      />
-    );
-  };
+    document.addEventListener('keydown', escapePane);
 
-  const renderPaneContents = () => {
-    return <form>Settings menu stuff goes here</form>;
-  };
+    return () => {
+      document.removeEventListener('keydown', escapePane);
+    };
+  }, [onSettingsMenuCloseClick]);
 
   return (
-    <section className={buildClassName()()}>
-      <Openable
-        renderButtonContents={renderButtonContents}
-        renderPaneContents={renderPaneContents}
-        buttonClassName={buildClassName('button')()}
-        containerClassName={buildContainerClassName()}
-        openContainerClassName={buildContainerClassName('open')}
-        closedContainerClassName={buildContainerClassName('closed')}
-        paneClassName={buildPaneClassName()}
-        openPaneClassName={buildPaneClassName('open')}
-        closedPaneClassName={buildPaneClassName('closed')}
-        autoClose={false}
+    <div
+      className={classnames(buildClassName()(), {
+        [buildClassName()('open')]: settingsMenuOpen,
+      })}
+      aria-hidden={!settingsMenuOpen}
+    >
+      <section
+        className={classnames(buildPaneClassName(), {
+          [buildPaneClassName('open')]: settingsMenuOpen,
+        })}
+      >
+        <IconButton
+          className={buildClassName('close-button')()}
+          svg={backArrowIcon}
+          alt="Close Settings Menu"
+          onClick={onSettingsMenuCloseClick}
+        />
+        <form className={buildFormClassName()}>Form contents go here</form>
+      </section>
+      <div
+        className={classnames(buildOverlayClassName(), {
+          [buildOverlayClassName('open')]: settingsMenuOpen,
+        })}
+        onClick={onSettingsMenuCloseClick}
       />
-    </section>
+    </div>
   );
 };
 

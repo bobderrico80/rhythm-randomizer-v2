@@ -34,6 +34,23 @@ const Openable = ({
   const node = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const escapePane = (event: KeyboardEvent) => {
+      // If escape key is pressed...
+      if (event.keyCode === 27) {
+        closePane();
+      }
+    };
+
+    const closeNonTargetPane = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (node?.current?.contains(target)) {
+        return;
+      }
+
+      closePane();
+    };
+
     document.addEventListener('mousedown', closeNonTargetPane);
     document.addEventListener('keydown', escapePane);
 
@@ -41,24 +58,7 @@ const Openable = ({
       document.removeEventListener('mousedown', closeNonTargetPane);
       document.removeEventListener('keydown', escapePane);
     };
-  });
-
-  const escapePane = (event: KeyboardEvent) => {
-    // If escape key is pressed...
-    if (event.keyCode === 27) {
-      closePane();
-    }
-  };
-
-  const closeNonTargetPane = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-
-    if (node?.current?.contains(target)) {
-      return;
-    }
-
-    closePane();
-  };
+  }, []);
 
   const togglePane = () => {
     setOpen((open) => !open);

@@ -7,6 +7,7 @@ import { getRandomMeasures } from './modules/random';
 import { Measure } from './modules/vex';
 import { getTimeSignature, TimeSignatureType } from './modules/time-signature';
 import Header from './components/Header';
+import SettingsMenu from './components/SettingsMenu';
 
 const THROTTLE_INTERVAL = 200; // ms
 
@@ -45,6 +46,8 @@ const App = () => {
     NoteGroupType.EQQQE,
   ]);
 
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+
   // TODO: Handle errors from `getRandomMeasures`
   const [measures, setMeasures] = useState<Measure[]>(
     getRandomMeasures(noteTypes, timeSignature.beatsPerMeasure, measureCount)
@@ -71,13 +74,28 @@ const App = () => {
     setMeasures(nextMeasures);
   };
 
-  const handleRandomizeClick = () => {
+  const handleRandomizeButtonClick = () => {
     setNextMeasures();
+  };
+
+  const handleSettingsMenuButtonClick = () => {
+    setSettingsMenuOpen(true);
+  };
+
+  const handleSettingsMenuCloseClick = () => {
+    setSettingsMenuOpen(false);
   };
 
   return (
     <div className="c-rr-app">
-      <Header handleRandomizeClick={handleRandomizeClick} />
+      <SettingsMenu
+        settingsMenuOpen={settingsMenuOpen}
+        onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
+      />
+      <Header
+        onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
+        onRandomizeButtonClick={handleRandomizeButtonClick}
+      />
       <Score
         timeSignature={timeSignature}
         measures={measures}

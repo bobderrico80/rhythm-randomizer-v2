@@ -1,19 +1,29 @@
 import React from 'react';
 import classnames from 'classnames';
-import SettingsMenu from './SettingsMenu';
 import { buildBemClassName } from '../modules/util';
+import menuIcon from '../svg/menu.svg';
 import './Header.scss';
+import IconButton from './IconButton';
 
 export interface HeaderProps {
-  handleRandomizeClick: () => void;
+  onRandomizeButtonClick: () => void;
+  onSettingsMenuButtonClick: () => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-header');
 
-const Header = ({ handleRandomizeClick }: HeaderProps) => {
+const Header = ({
+  onRandomizeButtonClick,
+  onSettingsMenuButtonClick,
+}: HeaderProps) => {
   return (
     <header className={buildClassName()()}>
-      <SettingsMenu />
+      <IconButton
+        className={buildClassName('settings-menu-button')()}
+        svg={menuIcon}
+        alt="Open Settings Menu"
+        onClick={onSettingsMenuButtonClick}
+      />
       <h1 className={buildClassName('title')()}>The Rhythm Randomizer</h1>
       <nav className={buildClassName('nav')()}>
         <ul>
@@ -23,7 +33,7 @@ const Header = ({ handleRandomizeClick }: HeaderProps) => {
                 'e-rr-button',
                 buildClassName('nav-item-link')()
               )}
-              onClick={handleRandomizeClick}
+              onClick={onRandomizeButtonClick}
             >
               New Rhythm
             </button>
