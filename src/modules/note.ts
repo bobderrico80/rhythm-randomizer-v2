@@ -1,4 +1,16 @@
+import { Map } from 'immutable';
 import { TypedItem, findItemOfType } from './util';
+
+export enum NoteGroupCategory {
+  BASIC_NOTES = 'Basic Notes',
+  BASIC_RESTS = 'Basic Rests',
+  SIMPLE_BEAMED_NOTES = 'Simple Beamed Notes',
+  MIXED_BEAMED_NOTES = 'Mixed Beamed Notes',
+  TUPLETS = 'Tuplets',
+  DOTTED_NOTE_COMBINATIONS = 'Dotted Note Combinations',
+  EIGHTH_REST_COMBINATIONS = '8th Rest Combinations',
+  SYNCOPATED_COMBINATIONS = 'Syncopated Combinations',
+}
 
 export enum NoteGroupType {
   // Basic notes
@@ -69,7 +81,17 @@ export interface NoteGroup extends TypedItem<NoteGroupType> {
   tuplet?: boolean;
   description: string;
   duration: number;
+  icon: string;
+  category: NoteGroupCategory;
+  defaultSelectionValue: boolean;
 }
+
+export interface CategorizedNoteGroup {
+  category: NoteGroupCategory;
+  noteGroups: NoteGroup[];
+}
+
+export type NoteGroupTypeSelectionMap = Map<NoteGroupType, Boolean>;
 
 const noteWidthUnitMap = {
   [NoteType.W]: 13,
@@ -100,179 +122,252 @@ const createNote = (type: NoteType, dotted: boolean = false): Note => {
 // Alias to make defining note groups less verbose
 const c = createNote;
 
-const noteGroups: NoteGroup[] = [
+export const noteGroups: NoteGroup[] = [
   // Basic notes
   {
+    category: NoteGroupCategory.BASIC_NOTES,
     type: NoteGroupType.W,
     notes: [c(NoteType.W)],
     description: 'a whole note',
     duration: 4,
+    icon: require('../svg/notes/w.svg'),
+    defaultSelectionValue: true,
   },
   {
+    category: NoteGroupCategory.BASIC_NOTES,
     type: NoteGroupType.H,
     notes: [c(NoteType.H)],
     description: 'a half note',
     duration: 2,
+    icon: require('../svg/notes/h.svg'),
+    defaultSelectionValue: true,
   },
   {
+    category: NoteGroupCategory.BASIC_NOTES,
     type: NoteGroupType.Q,
     notes: [c(NoteType.Q)],
     description: 'a quarter note',
     duration: 1,
+    icon: require('../svg/notes/q.svg'),
+    defaultSelectionValue: true,
   },
 
   // Basic rests
   {
+    category: NoteGroupCategory.BASIC_RESTS,
     type: NoteGroupType.WR,
     notes: [c(NoteType.WR)],
     description: 'a whole rest',
     duration: 4,
+    icon: require('../svg/notes/wr.svg'),
+    defaultSelectionValue: true,
   },
   {
+    category: NoteGroupCategory.BASIC_RESTS,
     type: NoteGroupType.HR,
     notes: [c(NoteType.HR)],
     description: 'a half rest',
     duration: 2,
+    icon: require('../svg/notes/hr.svg'),
+    defaultSelectionValue: true,
   },
   {
+    category: NoteGroupCategory.BASIC_RESTS,
     type: NoteGroupType.QR,
     notes: [c(NoteType.QR)],
     description: 'a quarter rest',
     duration: 1,
+    icon: require('../svg/notes/qr.svg'),
+    defaultSelectionValue: true,
   },
 
   // Simple beamed notes
   {
+    category: NoteGroupCategory.SIMPLE_BEAMED_NOTES,
     type: NoteGroupType.EE,
     notes: [c(NoteType.E), c(NoteType.E)],
     beam: true,
     description: 'two beamed 8th notes',
     duration: 1,
+    icon: require('../svg/notes/ee.svg'),
+    defaultSelectionValue: true,
   },
   {
+    category: NoteGroupCategory.SIMPLE_BEAMED_NOTES,
     type: NoteGroupType.SSSS,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.S), c(NoteType.S)],
     beam: true,
     description: 'four beamed 16th notes',
     duration: 1,
+    icon: require('../svg/notes/ssss.svg'),
+    defaultSelectionValue: true,
   },
 
   // Mixed beamed notes
   {
+    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
     type: NoteGroupType.SSE,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.E)],
     beam: true,
     description: 'two 16th notes and an 8th note, beamed',
     duration: 1,
+    icon: require('../svg/notes/sse.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
     type: NoteGroupType.ESS,
     notes: [c(NoteType.E), c(NoteType.S), c(NoteType.S)],
     beam: true,
     description: 'an 8th note and two 16th notes, beamed',
     duration: 1,
+    icon: require('../svg/notes/ess.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
     type: NoteGroupType.SES,
     notes: [c(NoteType.S), c(NoteType.E), c(NoteType.S)],
     beam: true,
     description: 'an 8th note, a 16th notes, and an 8th note, beamed',
     duration: 1,
+    icon: require('../svg/notes/ses.svg'),
+    defaultSelectionValue: false,
   },
 
   // Tuplets
   {
+    category: NoteGroupCategory.TUPLETS,
     type: NoteGroupType.TQQQ,
     notes: [c(NoteType.Q), c(NoteType.Q), c(NoteType.Q)],
     tuplet: true,
     description: 'a quarter note triplet',
     duration: 2,
+    icon: require('../svg/notes/tqqq.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.TUPLETS,
     type: NoteGroupType.TEEE,
     notes: [c(NoteType.E), c(NoteType.E), c(NoteType.E)],
     tuplet: true,
     beam: true,
     description: 'an 8th note triplet',
     duration: 1,
+    icon: require('../svg/notes/teee.svg'),
+    defaultSelectionValue: false,
   },
 
   // Dotted note combinations
   {
+    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.HD,
     notes: [c(NoteType.H, true)],
     description: 'a dotted half note',
     duration: 3,
+    icon: require('../svg/notes/hd.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.QDE,
     notes: [c(NoteType.Q, true), c(NoteType.E)],
     description: 'a dotted quarter note and an 8th note',
     duration: 2,
+    icon: require('../svg/notes/qde.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EQD,
     notes: [c(NoteType.E), c(NoteType.Q, true)],
     description: 'an 8th note and a dotted quarter note',
     duration: 2,
+    icon: require('../svg/notes/eqd.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EDS,
     notes: [c(NoteType.E, true), c(NoteType.S)],
     beam: true,
     description: 'a dotted 8th note and a 16th note, beamed',
     duration: 1,
+    icon: require('../svg/notes/eds.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.SED,
     notes: [c(NoteType.S), c(NoteType.E, true)],
     beam: true,
     description: 'a 16th note and a dotted 8th note, beamed',
     duration: 1,
+    icon: require('../svg/notes/sed.svg'),
+    defaultSelectionValue: false,
   },
 
   // Combinations with 8th rests
   {
+    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.EER,
     notes: [c(NoteType.E), c(NoteType.ER)],
     description: 'an 8th note and an 8th rest',
     duration: 1,
+    icon: require('../svg/notes/eer.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERE,
     notes: [c(NoteType.ER), c(NoteType.E)],
     description: 'an 8th rest and an 8th note',
     duration: 1,
+    icon: require('../svg/notes/ere.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.SSER,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.ER)],
     beam: true,
     description: 'two beamed 16th notes and an 8th rest',
     duration: 1,
+    icon: require('../svg/notes/sser.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERSS,
     notes: [c(NoteType.ER), c(NoteType.S), c(NoteType.S)],
     beam: true,
     description: 'an 8th rest and two beamed 16th notes',
     duration: 1,
+    icon: require('../svg/notes/erss.svg'),
+    defaultSelectionValue: false,
   },
 
   // Syncopated combinations
   {
+    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQE,
     notes: [c(NoteType.E), c(NoteType.Q), c(NoteType.E)],
     description: 'an 8th note, a quarter note, and an 8th note',
     duration: 2,
+    icon: require('../svg/notes/erss.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQQE,
     notes: [c(NoteType.E), c(NoteType.Q), c(NoteType.Q), c(NoteType.E)],
     description: 'an 8th note, two quarter notes, and an 8th note',
     duration: 3,
+    icon: require('../svg/notes/eqqe.svg'),
+    defaultSelectionValue: false,
   },
   {
+    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQQQE,
     notes: [
       c(NoteType.E),
@@ -283,8 +378,57 @@ const noteGroups: NoteGroup[] = [
     ],
     description: 'an 8th note, three quarter notes, and an 8th note',
     duration: 4,
+    icon: require('../svg/notes/eqqqe.svg'),
+    defaultSelectionValue: false,
   },
 ];
+
+export const categorizeNoteGroups = (
+  noteGroups: NoteGroup[]
+): CategorizedNoteGroup[] => {
+  return noteGroups.reduce(
+    (
+      previousCategorizedNoteGroups: CategorizedNoteGroup[],
+      noteGroup: NoteGroup
+    ) => {
+      const existingCategorizedNoteGroup = previousCategorizedNoteGroups.find(
+        (categorizedNoteGroup) =>
+          categorizedNoteGroup.category === noteGroup.category
+      );
+
+      if (existingCategorizedNoteGroup) {
+        existingCategorizedNoteGroup.noteGroups.push(noteGroup);
+      } else {
+        previousCategorizedNoteGroups.push({
+          category: noteGroup.category,
+          noteGroups: [noteGroup],
+        });
+      }
+      return previousCategorizedNoteGroups;
+    },
+    []
+  );
+};
+
+export const getNoteGroupTypeSelectionMap = (): NoteGroupTypeSelectionMap => {
+  const noteGroupSelections = noteGroups.reduce((accumulator, noteGroup) => {
+    accumulator[noteGroup.type] = noteGroup.defaultSelectionValue;
+    return accumulator;
+  }, {} as { [key: string]: boolean });
+
+  return Map(noteGroupSelections) as NoteGroupTypeSelectionMap;
+};
+
+export const resetNoteGroupTypeSelectionMap = (
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap
+) => {
+  return noteGroupTypeSelectionMap.reduce(
+    (previousNoteGroupTypeSelectionMap, _, noteGroupType) => {
+      return previousNoteGroupTypeSelectionMap.set(noteGroupType, false);
+    },
+    noteGroupTypeSelectionMap
+  );
+};
 
 export const getNoteGroup = (type: NoteGroupType): NoteGroup => {
   return findItemOfType<NoteGroupType, NoteGroup>(type, noteGroups);

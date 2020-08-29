@@ -1,0 +1,38 @@
+.c-rr-note-selection {
+  &__fieldset {
+    padding: 1rem 0.5rem 0 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__label-container {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+  }
+
+  &__label {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__icon {
+    height: 30px;
+    margin-left: 0.5rem;
+
+    &--w {
+      height: 8px;
+    }
+
+    &--wr {
+      height: 7px;
+    }
+
+    &--hr {
+      height: 7px;
+    }
+
+    &--eqd {
+      height: 30px;
+    }
+  }
+}

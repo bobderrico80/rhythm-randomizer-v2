@@ -4,20 +4,26 @@ import { buildBemClassName } from '../modules/util';
 import IconButton from './IconButton';
 import backArrowIcon from '../svg/back-arrow.svg';
 import './SettingsMenu.scss';
+import SettingsForm from './SettingsForm';
+import { NoteGroupTypeSelectionMap } from '../modules/note';
+import { NoteGroupChangeHandler } from './NoteSelection';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 const buildPaneClassName = buildClassName('pane');
-const buildFormClassName = buildClassName('form');
 const buildOverlayClassName = buildClassName('overlay');
 
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   onSettingsMenuCloseClick: () => void;
+  onNoteGroupChange: NoteGroupChangeHandler;
 }
 
 const SettingsMenu = ({
   settingsMenuOpen,
+  noteGroupTypeSelectionMap,
   onSettingsMenuCloseClick,
+  onNoteGroupChange,
 }: SettingsMenuProps) => {
   useEffect(() => {
     const escapePane = (event: KeyboardEvent) => {
@@ -52,7 +58,10 @@ const SettingsMenu = ({
           alt="Close Settings Menu"
           onClick={onSettingsMenuCloseClick}
         />
-        <form className={buildFormClassName()}>Form contents go here</form>
+        <SettingsForm
+          noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+          onNoteGroupChange={onNoteGroupChange}
+        />
       </section>
       <div
         className={classnames(buildOverlayClassName(), {

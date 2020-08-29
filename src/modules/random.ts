@@ -4,6 +4,7 @@ import {
   getTotalDuration,
   getNoteGroups,
   getNoteGroup,
+  NoteGroupTypeSelectionMap,
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
@@ -19,9 +20,19 @@ const getRandomNoteDefinition = (
 };
 
 const getRandomMeasure = (
-  possibleNoteGroupTypes: NoteGroupType[],
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   durationPerMeasure: number
 ): Measure => {
+  const possibleNoteGroupTypes = [
+    ...noteGroupTypeSelectionMap.entries(),
+  ].reduce((previousNoteGroupTypes, [noteGroupType, checked]) => {
+    if (checked) {
+      previousNoteGroupTypes.push(noteGroupType);
+    }
+
+    return previousNoteGroupTypes;
+  }, [] as NoteGroupType[]);
+
   if (possibleNoteGroupTypes.length === 0) {
     throw new InvalidNoteSelectionError();
   }
@@ -82,14 +93,16 @@ const getRandomMeasure = (
 };
 
 export const getRandomMeasures = (
-  possibleNoteGroupTypes: NoteGroupType[],
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   durationPerMeasure: number,
   measureCount: number
 ): Measure[] => {
   let measures: Measure[] = [];
 
   for (let i = 0; i < measureCount; i++) {
-    measures.push(getRandomMeasure(possibleNoteGroupTypes, durationPerMeasure));
+    measures.push(
+      getRandomMeasure(noteGroupTypeSelectionMap, durationPerMeasure)
+    );
   }
 
   return measures;

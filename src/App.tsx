@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import throttle from 'lodash/throttle';
 import './App.scss';
-import { NoteGroupType } from './modules/note';
+import { NoteGroupType, getNoteGroupTypeSelectionMap } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
 import { Measure } from './modules/vex';
@@ -18,39 +18,19 @@ const App = () => {
   );
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
 
-  const [noteTypes, setNoteTypes] = useState([
-    NoteGroupType.W,
-    NoteGroupType.H,
-    NoteGroupType.Q,
-    NoteGroupType.WR,
-    NoteGroupType.HR,
-    NoteGroupType.QR,
-    NoteGroupType.EE,
-    NoteGroupType.SSSS,
-    NoteGroupType.SSE,
-    NoteGroupType.SES,
-    NoteGroupType.ESS,
-    NoteGroupType.TQQQ,
-    NoteGroupType.TEEE,
-    NoteGroupType.HD,
-    NoteGroupType.QDE,
-    NoteGroupType.EQD,
-    NoteGroupType.EDS,
-    NoteGroupType.SED,
-    NoteGroupType.EER,
-    NoteGroupType.ERE,
-    NoteGroupType.SSER,
-    NoteGroupType.ERSS,
-    NoteGroupType.EQE,
-    NoteGroupType.EQQE,
-    NoteGroupType.EQQQE,
-  ]);
+  const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
+    getNoteGroupTypeSelectionMap()
+  );
 
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
 
   // TODO: Handle errors from `getRandomMeasures`
   const [measures, setMeasures] = useState<Measure[]>(
-    getRandomMeasures(noteTypes, timeSignature.beatsPerMeasure, measureCount)
+    getRandomMeasures(
+      noteGroupTypeSelectionMap,
+      timeSignature.beatsPerMeasure,
+      measureCount
+    )
   );
 
   useEffect(() => {
@@ -67,7 +47,7 @@ const App = () => {
 
   const setNextMeasures = () => {
     const nextMeasures = getRandomMeasures(
-      noteTypes,
+      noteGroupTypeSelectionMap,
       timeSignature.beatsPerMeasure,
       measureCount
     );
@@ -86,11 +66,22 @@ const App = () => {
     setSettingsMenuOpen(false);
   };
 
+  const handleNoteGroupChange = (
+    noteGroupType: NoteGroupType,
+    checked: boolean
+  ) => {
+    setNoteGroupTypeSelectionMap((previousNoteGroupTypeSelectionMap) => {
+      return previousNoteGroupTypeSelectionMap.set(noteGroupType, checked);
+    });
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
         settingsMenuOpen={settingsMenuOpen}
+        noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
+        onNoteGroupChange={handleNoteGroupChange}
       />
       <Header
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}

@@ -14,11 +14,12 @@
     "@types/react-dom": "^16.9.8",
     "@types/vexflow": "^3.0.0",
     "classnames": "^2.2.6",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.19",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.3",
     "typescript": "^3.7.5",
     "vexflow": "^3.0.9"
   },
