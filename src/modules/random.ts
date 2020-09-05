@@ -5,6 +5,7 @@ import {
   getNoteGroups,
   getNoteGroup,
   NoteGroupTypeSelectionMap,
+  getSelectedNoteGroupTypes,
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
@@ -23,21 +24,15 @@ const getRandomMeasure = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   durationPerMeasure: number
 ): Measure => {
-  const possibleNoteGroupTypes = [
-    ...noteGroupTypeSelectionMap.entries(),
-  ].reduce((previousNoteGroupTypes, [noteGroupType, checked]) => {
-    if (checked) {
-      previousNoteGroupTypes.push(noteGroupType);
-    }
+  const selectedNoteGroupTypes = getSelectedNoteGroupTypes(
+    noteGroupTypeSelectionMap
+  );
 
-    return previousNoteGroupTypes;
-  }, [] as NoteGroupType[]);
-
-  if (possibleNoteGroupTypes.length === 0) {
+  if (selectedNoteGroupTypes.length === 0) {
     throw new InvalidNoteSelectionError();
   }
 
-  const possibleNoteGroups = getNoteGroups(...possibleNoteGroupTypes);
+  const possibleNoteGroups = getNoteGroups(...selectedNoteGroupTypes);
   const uniqueDurations = [
     ...new Set(possibleNoteGroups.map((ng) => ng.duration)),
   ];
@@ -57,7 +52,7 @@ const getRandomMeasure = (
 
   while (totalDuration < durationPerMeasure) {
     const nextPossibleNoteGroup = getRandomNoteDefinition(
-      possibleNoteGroupTypes
+      selectedNoteGroupTypes
     );
 
     if (nextPossibleNoteGroup.duration + totalDuration > durationPerMeasure) {
@@ -77,8 +72,6 @@ const getRandomMeasure = (
 
     const remainingDurationToFill = durationPerMeasure - totalDuration;
 
-    // If there isn't at least one possible note that fits within the remaining duration, we can't
-    // complete the rhythm
     if (
       remainingDurationToFill !== 0 &&
       !uniqueDurations.some((d) => d <= remainingDurationToFill)

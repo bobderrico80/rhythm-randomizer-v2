@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import throttle from 'lodash/throttle';
 import './App.scss';
-import { NoteGroupType, getNoteGroupTypeSelectionMap } from './modules/note';
+import {
+  NoteGroupType,
+  getNoteGroupTypeSelectionMap,
+  getSelectedNoteGroupTypes,
+} from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
 import { Measure } from './modules/vex';
@@ -17,22 +21,21 @@ const App = () => {
     getTimeSignature(TimeSignatureType.SIMPLE_4_4)
   );
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
     getNoteGroupTypeSelectionMap()
   );
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
 
-  // TODO: Handle errors from `getRandomMeasures`
-  const [measures, setMeasures] = useState<Measure[]>(
-    getRandomMeasures(
-      noteGroupTypeSelectionMap,
-      timeSignature.beatsPerMeasure,
-      measureCount
-    )
-  );
+  const [measures, setMeasures] = useState<Measure[]>([]);
 
+  // TODO: Improve how initial state is set
+  useEffect(() => {
+    setNextMeasures();
+  }, []); // eslint-disable-line
+
+  // Handle resizing score on window resize
   useEffect(() => {
     const handleWindowResize = throttle(() => {
       setInnerWidth(window.innerWidth);
@@ -45,13 +48,33 @@ const App = () => {
     };
   }, []);
 
+  // Handle validating configuration and adding an error message
+  useEffect(() => {
+    // TODO: Do more robust checks here, including smarter validation of potentially impossible
+    // selections
+
+    if (getSelectedNoteGroupTypes(noteGroupTypeSelectionMap).length === 0) {
+      setErrorMessage('Please select at least one type of note');
+      return;
+    }
+
+    setErrorMessage('');
+  }, [noteGroupTypeSelectionMap, timeSignature]);
+
   const setNextMeasures = () => {
-    const nextMeasures = getRandomMeasures(
-      noteGroupTypeSelectionMap,
-      timeSignature.beatsPerMeasure,
-      measureCount
-    );
-    setMeasures(nextMeasures);
+    try {
+      const nextMeasures = getRandomMeasures(
+        noteGroupTypeSelectionMap,
+        timeSignature.beatsPerMeasure,
+        measureCount
+      );
+      setMeasures(nextMeasures);
+    } catch (error) {
+      setSettingsMenuOpen(true);
+      setErrorMessage(
+        'The combination of notes selected is not valid for the given time signature'
+      );
+    }
   };
 
   const handleRandomizeButtonClick = () => {
@@ -82,6 +105,7 @@ const App = () => {
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
         onNoteGroupChange={handleNoteGroupChange}
+        errorMessage={errorMessage}
       />
       <Header
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}

@@ -1,6 +1,15 @@
+@import '../styles/variables.scss';
+
 .c-rr-settings-form {
   margin-top: 2rem;
   padding-left: 1rem;
   padding-right: 1rem;
   margin-bottom: 2rem;
+
+  &__error-message {
+    border: 1px solid $warning-dark;
+    background-color: $warning-light;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
 }

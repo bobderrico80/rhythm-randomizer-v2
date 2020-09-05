@@ -443,3 +443,18 @@ export const getTotalDuration = (noteGroups: NoteGroup[]): number => {
     return sum + noteGroup.duration;
   }, 0);
 };
+
+export const getSelectedNoteGroupTypes = (
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap
+) => {
+  return [...noteGroupTypeSelectionMap.entries()].reduce(
+    (previousNoteGroupTypes, [noteGroupType, checked]) => {
+      if (checked) {
+        previousNoteGroupTypes.push(noteGroupType);
+      }
+
+      return previousNoteGroupTypes;
+    },
+    [] as NoteGroupType[]
+  );
+};

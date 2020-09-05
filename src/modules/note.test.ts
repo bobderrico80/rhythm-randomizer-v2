@@ -6,6 +6,9 @@ import {
   NoteType,
   categorizeNoteGroups,
   NoteGroupCategory,
+  resetNoteGroupTypeSelectionMap,
+  getNoteGroupTypeSelectionMap,
+  getSelectedNoteGroupTypes,
 } from './note';
 
 describe('The note module', () => {
@@ -87,6 +90,46 @@ describe('The note module', () => {
           },
         ]);
       });
+    });
+  });
+
+  describe('resetNoteGroupTypeSelectionMap', () => {
+    it('resets all note group type selections to `false`', () => {
+      const resetMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap()
+      );
+
+      [...resetMap.entries()].forEach(([_, value]) => {
+        expect(value).toEqual(false);
+      });
+    });
+  });
+
+  describe('getSelectedNoteGroupTypes', () => {
+    it('returns an array of all note group types that are mapped to the value of `true`', () => {
+      // Start with a mapping of all note group types selected as `false`
+      let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap()
+      );
+
+      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap
+        .set(NoteGroupType.W, true)
+        .set(NoteGroupType.H, true)
+        .set(NoteGroupType.Q, true);
+
+      expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([
+        NoteGroupType.H,
+        NoteGroupType.Q,
+        NoteGroupType.W,
+      ]);
+    });
+
+    it('returns an empty array if all note group types are mapped to the value of `false`', () => {
+      let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap()
+      );
+
+      expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([]);
     });
   });
 });

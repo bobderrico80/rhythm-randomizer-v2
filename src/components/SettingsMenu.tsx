@@ -15,6 +15,7 @@ const buildOverlayClassName = buildClassName('overlay');
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+  errorMessage: string;
   onSettingsMenuCloseClick: () => void;
   onNoteGroupChange: NoteGroupChangeHandler;
 }
@@ -22,6 +23,7 @@ export interface SettingsMenuProps {
 const SettingsMenu = ({
   settingsMenuOpen,
   noteGroupTypeSelectionMap,
+  errorMessage,
   onSettingsMenuCloseClick,
   onNoteGroupChange,
 }: SettingsMenuProps) => {
@@ -60,6 +62,7 @@ const SettingsMenu = ({
         />
         <SettingsForm
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+          errorMessage={errorMessage}
           onNoteGroupChange={onNoteGroupChange}
         />
       </section>
