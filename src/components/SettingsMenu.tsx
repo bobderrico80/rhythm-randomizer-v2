@@ -7,6 +7,7 @@ import './SettingsMenu.scss';
 import SettingsForm from './SettingsForm';
 import { NoteGroupTypeSelectionMap } from '../modules/note';
 import { NoteGroupChangeHandler } from './NoteSelection';
+import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 const buildPaneClassName = buildClassName('pane');
@@ -15,17 +16,23 @@ const buildOverlayClassName = buildClassName('overlay');
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+  timeSignatures: TimeSignature[];
+  selectedTimeSignature: TimeSignature;
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
   onNoteGroupChange: NoteGroupChangeHandler;
+  onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
 }
 
 const SettingsMenu = ({
   settingsMenuOpen,
   noteGroupTypeSelectionMap,
+  timeSignatures,
+  selectedTimeSignature,
   errorMessage,
   onSettingsMenuCloseClick,
   onNoteGroupChange,
+  onTimeSignatureChange,
 }: SettingsMenuProps) => {
   useEffect(() => {
     const escapePane = (event: KeyboardEvent) => {
@@ -62,8 +69,11 @@ const SettingsMenu = ({
         />
         <SettingsForm
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+          timeSignatures={timeSignatures}
+          selectedTimeSignature={selectedTimeSignature}
           errorMessage={errorMessage}
           onNoteGroupChange={onNoteGroupChange}
+          onTimeSignatureChange={onTimeSignatureChange}
         />
       </section>
       <div

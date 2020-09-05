@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import {

@@ -16,26 +16,30 @@ export interface TimeSignature extends TypedItem<TimeSignatureType> {
   complexity: TimeSignatureComplexity;
   beatsPerMeasure: number;
   description: string;
+  icon: string;
 }
 
-const timeSignatures: TimeSignature[] = [
+export const timeSignatures: TimeSignature[] = [
   {
     type: TimeSignatureType.SIMPLE_2_4,
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 2,
     description: '2/4 time signature',
+    icon: require('../svg/time-signatures/ts-2-4.svg'),
   },
   {
     type: TimeSignatureType.SIMPLE_3_4,
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 3,
     description: '3/4 time signature',
+    icon: require('../svg/time-signatures/ts-3-4.svg'),
   },
   {
     type: TimeSignatureType.SIMPLE_4_4,
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 4,
     description: '4/4 time signature',
+    icon: require('../svg/time-signatures/ts-4-4.svg'),
   },
 ];
 

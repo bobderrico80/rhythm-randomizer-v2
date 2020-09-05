@@ -9,7 +9,12 @@ import {
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
 import { Measure } from './modules/vex';
-import { getTimeSignature, TimeSignatureType } from './modules/time-signature';
+import {
+  getTimeSignature,
+  TimeSignatureType,
+  timeSignatures,
+  TimeSignature,
+} from './modules/time-signature';
 import Header from './components/Header';
 import SettingsMenu from './components/SettingsMenu';
 
@@ -17,7 +22,7 @@ const THROTTLE_INTERVAL = 200; // ms
 
 const App = () => {
   const [measureCount, setMeasureCount] = useState(8);
-  const [timeSignature, setTimeSignature] = useState(
+  const [selectedTimeSignature, setSelectedTimeSignature] = useState(
     getTimeSignature(TimeSignatureType.SIMPLE_4_4)
   );
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
@@ -59,13 +64,13 @@ const App = () => {
     }
 
     setErrorMessage('');
-  }, [noteGroupTypeSelectionMap, timeSignature]);
+  }, [noteGroupTypeSelectionMap, selectedTimeSignature]);
 
   const setNextMeasures = () => {
     try {
       const nextMeasures = getRandomMeasures(
         noteGroupTypeSelectionMap,
-        timeSignature.beatsPerMeasure,
+        selectedTimeSignature.beatsPerMeasure,
         measureCount
       );
       setMeasures(nextMeasures);
@@ -75,6 +80,10 @@ const App = () => {
         'The combination of notes selected is not valid for the given time signature'
       );
     }
+  };
+
+  const setNextTimeSignature = (timeSignatureType: TimeSignatureType) => {
+    setSelectedTimeSignature(getTimeSignature(timeSignatureType));
   };
 
   const handleRandomizeButtonClick = () => {
@@ -98,13 +107,20 @@ const App = () => {
     });
   };
 
+  const handleTimeSignatureChange = (timeSignatureType: TimeSignatureType) => {
+    setNextTimeSignature(timeSignatureType);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
         settingsMenuOpen={settingsMenuOpen}
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+        timeSignatures={timeSignatures}
+        selectedTimeSignature={selectedTimeSignature}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
         onNoteGroupChange={handleNoteGroupChange}
+        onTimeSignatureChange={handleTimeSignatureChange}
         errorMessage={errorMessage}
       />
       <Header
@@ -112,7 +128,7 @@ const App = () => {
         onRandomizeButtonClick={handleRandomizeButtonClick}
       />
       <Score
-        timeSignature={timeSignature}
+        timeSignature={selectedTimeSignature}
         measures={measures}
         innerWidth={innerWidth}
       />
