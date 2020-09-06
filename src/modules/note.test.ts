@@ -5,7 +5,7 @@ import {
   NoteGroupType,
   NoteType,
   categorizeNoteGroups,
-  NoteGroupCategory,
+  NoteGroupCategoryType,
   resetNoteGroupTypeSelectionMap,
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
@@ -15,7 +15,7 @@ describe('The note module', () => {
   describe('getNoteGroup() function', () => {
     it('gets the expected note group', () => {
       expect(getNoteGroup(NoteGroupType.W)).toMatchObject({
-        category: NoteGroupCategory.BASIC_NOTES,
+        categoryType: NoteGroupCategoryType.BASIC_NOTES,
         type: NoteGroupType.W,
         notes: [{ type: NoteType.W, dotted: false, widthUnit: 13 }],
         description: 'a whole note',
@@ -28,14 +28,14 @@ describe('The note module', () => {
     it('gets an array of the expected note groups', () => {
       expect(getNoteGroups(NoteGroupType.W, NoteGroupType.WR)).toMatchObject([
         {
-          category: NoteGroupCategory.BASIC_NOTES,
+          categoryType: NoteGroupCategoryType.BASIC_NOTES,
           type: NoteGroupType.W,
           notes: [{ type: NoteType.W, dotted: false, widthUnit: 13 }],
           description: 'a whole note',
           duration: 4,
         },
         {
-          category: NoteGroupCategory.BASIC_RESTS,
+          categoryType: NoteGroupCategoryType.BASIC_RESTS,
           type: NoteGroupType.WR,
           notes: [{ type: NoteType.WR, dotted: false, widthUnit: 13 }],
           description: 'a whole rest',
@@ -62,7 +62,10 @@ describe('The note module', () => {
           )
         ).toEqual([
           {
-            category: NoteGroupCategory.BASIC_NOTES,
+            category: {
+              type: NoteGroupCategoryType.BASIC_NOTES,
+              sortOrder: 0,
+            },
             noteGroups: getNoteGroups(
               NoteGroupType.W,
               NoteGroupType.H,
@@ -74,18 +77,21 @@ describe('The note module', () => {
     });
 
     describe('with note groups in different categories', () => {
-      it('puts different-category note groups into the separate categorized note group objects', () => {
+      it('puts different-category note groups into the separate categorized note group objects, with categories sorted by sortOrder', () => {
         expect(
           categorizeNoteGroups(
-            getNoteGroups(NoteGroupType.W, NoteGroupType.H, NoteGroupType.QR)
+            getNoteGroups(NoteGroupType.QR, NoteGroupType.W, NoteGroupType.H)
           )
         ).toEqual([
           {
-            category: NoteGroupCategory.BASIC_NOTES,
+            category: { type: NoteGroupCategoryType.BASIC_NOTES, sortOrder: 0 },
             noteGroups: getNoteGroups(NoteGroupType.W, NoteGroupType.H),
           },
           {
-            category: NoteGroupCategory.BASIC_RESTS,
+            category: {
+              type: NoteGroupCategoryType.BASIC_RESTS,
+              sortOrder: 1,
+            },
             noteGroups: getNoteGroups(NoteGroupType.QR),
           },
         ]);
@@ -93,10 +99,20 @@ describe('The note module', () => {
     });
   });
 
-  describe('resetNoteGroupTypeSelectionMap', () => {
+  describe('getNoteGroupTypeSelectionMap() function', () => {
+    it('returns a map containing only note groups less than or equal to the max duration', () => {
+      const map = getNoteGroupTypeSelectionMap(3);
+
+      [...map.entries()].forEach(([noteGroupType]) => {
+        expect(getNoteGroup(noteGroupType).duration).toBeLessThanOrEqual(3);
+      });
+    });
+  });
+
+  describe('resetNoteGroupTypeSelectionMap() function', () => {
     it('resets all note group type selections to `false`', () => {
       const resetMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap()
+        getNoteGroupTypeSelectionMap(4)
       );
 
       [...resetMap.entries()].forEach(([_, value]) => {
@@ -105,11 +121,11 @@ describe('The note module', () => {
     });
   });
 
-  describe('getSelectedNoteGroupTypes', () => {
+  describe('getSelectedNoteGroupTypes() function', () => {
     it('returns an array of all note group types that are mapped to the value of `true`', () => {
       // Start with a mapping of all note group types selected as `false`
       let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap()
+        getNoteGroupTypeSelectionMap(4)
       );
 
       noteGroupTypeSelectionMap = noteGroupTypeSelectionMap
@@ -126,7 +142,7 @@ describe('The note module', () => {
 
     it('returns an empty array if all note group types are mapped to the value of `false`', () => {
       let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap()
+        getNoteGroupTypeSelectionMap(4)
       );
 
       expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([]);

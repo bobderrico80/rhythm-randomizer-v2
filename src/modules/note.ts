@@ -1,7 +1,8 @@
+import { sortBy } from 'lodash';
 import { Map } from 'immutable';
 import { TypedItem, findItemOfType } from './util';
 
-export enum NoteGroupCategory {
+export enum NoteGroupCategoryType {
   BASIC_NOTES = 'Basic Notes',
   BASIC_RESTS = 'Basic Rests',
   SIMPLE_BEAMED_NOTES = 'Simple Beamed Notes',
@@ -82,13 +83,18 @@ export interface NoteGroup extends TypedItem<NoteGroupType> {
   description: string;
   duration: number;
   icon: string;
-  category: NoteGroupCategory;
+  categoryType: NoteGroupCategoryType;
   defaultSelectionValue: boolean;
 }
 
 export interface CategorizedNoteGroup {
   category: NoteGroupCategory;
   noteGroups: NoteGroup[];
+}
+
+export interface NoteGroupCategory {
+  type: NoteGroupCategoryType;
+  sortOrder: number;
 }
 
 export type NoteGroupTypeSelectionMap = Map<NoteGroupType, Boolean>;
@@ -119,13 +125,48 @@ const createNote = (type: NoteType, dotted: boolean = false): Note => {
   };
 };
 
+export const noteGroupCategories: NoteGroupCategory[] = [
+  {
+    type: NoteGroupCategoryType.BASIC_NOTES,
+    sortOrder: 0,
+  },
+  {
+    type: NoteGroupCategoryType.BASIC_RESTS,
+    sortOrder: 1,
+  },
+  {
+    type: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
+    sortOrder: 2,
+  },
+  {
+    type: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
+    sortOrder: 3,
+  },
+  {
+    type: NoteGroupCategoryType.TUPLETS,
+    sortOrder: 4,
+  },
+  {
+    type: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
+    sortOrder: 5,
+  },
+  {
+    type: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
+    sortOrder: 6,
+  },
+  {
+    type: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
+    sortOrder: 7,
+  },
+];
+
 // Alias to make defining note groups less verbose
 const c = createNote;
 
 export const noteGroups: NoteGroup[] = [
   // Basic notes
   {
-    category: NoteGroupCategory.BASIC_NOTES,
+    categoryType: NoteGroupCategoryType.BASIC_NOTES,
     type: NoteGroupType.W,
     notes: [c(NoteType.W)],
     description: 'a whole note',
@@ -134,7 +175,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: true,
   },
   {
-    category: NoteGroupCategory.BASIC_NOTES,
+    categoryType: NoteGroupCategoryType.BASIC_NOTES,
     type: NoteGroupType.H,
     notes: [c(NoteType.H)],
     description: 'a half note',
@@ -143,7 +184,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: true,
   },
   {
-    category: NoteGroupCategory.BASIC_NOTES,
+    categoryType: NoteGroupCategoryType.BASIC_NOTES,
     type: NoteGroupType.Q,
     notes: [c(NoteType.Q)],
     description: 'a quarter note',
@@ -154,7 +195,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Basic rests
   {
-    category: NoteGroupCategory.BASIC_RESTS,
+    categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.WR,
     notes: [c(NoteType.WR)],
     description: 'a whole rest',
@@ -163,7 +204,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: true,
   },
   {
-    category: NoteGroupCategory.BASIC_RESTS,
+    categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.HR,
     notes: [c(NoteType.HR)],
     description: 'a half rest',
@@ -172,7 +213,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: true,
   },
   {
-    category: NoteGroupCategory.BASIC_RESTS,
+    categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.QR,
     notes: [c(NoteType.QR)],
     description: 'a quarter rest',
@@ -183,7 +224,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Simple beamed notes
   {
-    category: NoteGroupCategory.SIMPLE_BEAMED_NOTES,
+    categoryType: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
     type: NoteGroupType.EE,
     notes: [c(NoteType.E), c(NoteType.E)],
     beam: true,
@@ -193,7 +234,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: true,
   },
   {
-    category: NoteGroupCategory.SIMPLE_BEAMED_NOTES,
+    categoryType: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
     type: NoteGroupType.SSSS,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.S), c(NoteType.S)],
     beam: true,
@@ -205,7 +246,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Mixed beamed notes
   {
-    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
+    categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
     type: NoteGroupType.SSE,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.E)],
     beam: true,
@@ -215,7 +256,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
+    categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
     type: NoteGroupType.ESS,
     notes: [c(NoteType.E), c(NoteType.S), c(NoteType.S)],
     beam: true,
@@ -225,7 +266,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.MIXED_BEAMED_NOTES,
+    categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
     type: NoteGroupType.SES,
     notes: [c(NoteType.S), c(NoteType.E), c(NoteType.S)],
     beam: true,
@@ -237,7 +278,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Tuplets
   {
-    category: NoteGroupCategory.TUPLETS,
+    categoryType: NoteGroupCategoryType.TUPLETS,
     type: NoteGroupType.TQQQ,
     notes: [c(NoteType.Q), c(NoteType.Q), c(NoteType.Q)],
     tuplet: true,
@@ -247,7 +288,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.TUPLETS,
+    categoryType: NoteGroupCategoryType.TUPLETS,
     type: NoteGroupType.TEEE,
     notes: [c(NoteType.E), c(NoteType.E), c(NoteType.E)],
     tuplet: true,
@@ -260,7 +301,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Dotted note combinations
   {
-    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.HD,
     notes: [c(NoteType.H, true)],
     description: 'a dotted half note',
@@ -269,7 +310,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.QDE,
     notes: [c(NoteType.Q, true), c(NoteType.E)],
     description: 'a dotted quarter note and an 8th note',
@@ -278,7 +319,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EQD,
     notes: [c(NoteType.E), c(NoteType.Q, true)],
     description: 'an 8th note and a dotted quarter note',
@@ -287,7 +328,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EDS,
     notes: [c(NoteType.E, true), c(NoteType.S)],
     beam: true,
@@ -297,7 +338,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.DOTTED_NOTE_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.SED,
     notes: [c(NoteType.S), c(NoteType.E, true)],
     beam: true,
@@ -309,7 +350,7 @@ export const noteGroups: NoteGroup[] = [
 
   // Combinations with 8th rests
   {
-    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.EER,
     notes: [c(NoteType.E), c(NoteType.ER)],
     description: 'an 8th note and an 8th rest',
@@ -318,7 +359,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERE,
     notes: [c(NoteType.ER), c(NoteType.E)],
     description: 'an 8th rest and an 8th note',
@@ -327,7 +368,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.SSER,
     notes: [c(NoteType.S), c(NoteType.S), c(NoteType.ER)],
     beam: true,
@@ -337,7 +378,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.EIGHTH_REST_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERSS,
     notes: [c(NoteType.ER), c(NoteType.S), c(NoteType.S)],
     beam: true,
@@ -349,16 +390,16 @@ export const noteGroups: NoteGroup[] = [
 
   // Syncopated combinations
   {
-    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQE,
     notes: [c(NoteType.E), c(NoteType.Q), c(NoteType.E)],
     description: 'an 8th note, a quarter note, and an 8th note',
     duration: 2,
-    icon: require('../svg/notes/erss.svg'),
+    icon: require('../svg/notes/eqe.svg'),
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQQE,
     notes: [c(NoteType.E), c(NoteType.Q), c(NoteType.Q), c(NoteType.E)],
     description: 'an 8th note, two quarter notes, and an 8th note',
@@ -367,7 +408,7 @@ export const noteGroups: NoteGroup[] = [
     defaultSelectionValue: false,
   },
   {
-    category: NoteGroupCategory.SYNCOPATED_COMBINATIONS,
+    categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
     type: NoteGroupType.EQQQE,
     notes: [
       c(NoteType.E),
@@ -386,21 +427,21 @@ export const noteGroups: NoteGroup[] = [
 export const categorizeNoteGroups = (
   noteGroups: NoteGroup[]
 ): CategorizedNoteGroup[] => {
-  return noteGroups.reduce(
+  const categorizedNoteGroups = noteGroups.reduce(
     (
       previousCategorizedNoteGroups: CategorizedNoteGroup[],
       noteGroup: NoteGroup
     ) => {
       const existingCategorizedNoteGroup = previousCategorizedNoteGroups.find(
         (categorizedNoteGroup) =>
-          categorizedNoteGroup.category === noteGroup.category
+          categorizedNoteGroup.category.type === noteGroup.categoryType
       );
 
       if (existingCategorizedNoteGroup) {
         existingCategorizedNoteGroup.noteGroups.push(noteGroup);
       } else {
         previousCategorizedNoteGroups.push({
-          category: noteGroup.category,
+          category: getNoteGroupCategory(noteGroup.categoryType),
           noteGroups: [noteGroup],
         });
       }
@@ -408,14 +449,24 @@ export const categorizeNoteGroups = (
     },
     []
   );
+
+  return sortBy<CategorizedNoteGroup>(
+    categorizedNoteGroups,
+    (categorizedNoteGroup) => {
+      return categorizedNoteGroup.category.sortOrder;
+    }
+  );
 };
 
-export const getNoteGroupTypeSelectionMap = (): NoteGroupTypeSelectionMap => {
+export const getNoteGroupTypeSelectionMap = (
+  maxDuration: number
+): NoteGroupTypeSelectionMap => {
   const noteGroupSelections = noteGroups.reduce((accumulator, noteGroup) => {
-    accumulator[noteGroup.type] = noteGroup.defaultSelectionValue;
+    if (noteGroup.duration <= maxDuration) {
+      accumulator[noteGroup.type] = noteGroup.defaultSelectionValue;
+    }
     return accumulator;
   }, {} as { [key: string]: boolean });
-
   return Map(noteGroupSelections) as NoteGroupTypeSelectionMap;
 };
 
@@ -432,6 +483,15 @@ export const resetNoteGroupTypeSelectionMap = (
 
 export const getNoteGroup = (type: NoteGroupType): NoteGroup => {
   return findItemOfType<NoteGroupType, NoteGroup>(type, noteGroups);
+};
+
+export const getNoteGroupCategory = (
+  type: NoteGroupCategoryType
+): NoteGroupCategory => {
+  return findItemOfType<NoteGroupCategoryType, NoteGroupCategory>(
+    type,
+    noteGroupCategories
+  );
 };
 
 export const getNoteGroups = (...types: NoteGroupType[]): NoteGroup[] => {

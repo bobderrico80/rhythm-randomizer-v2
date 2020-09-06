@@ -37,7 +37,7 @@
     background-color: white;
     color: black;
     transition: left 250ms ease;
-    padding-top: 1rem;
+    overflow-y: hidden;
 
     &--open {
       left: 0;
@@ -47,6 +47,7 @@
   }
 
   &__close-button {
+    margin-top: 1rem;
     padding-left: 1rem;
     .c-rr-icon-button__icon {
       width: 25px;

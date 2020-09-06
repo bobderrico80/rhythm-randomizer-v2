@@ -1,15 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import './Score.scss';
-import { createScore, Measure } from '../modules/vex';
-import { TimeSignature } from '../modules/time-signature';
+import { createScore } from '../modules/vex';
+import { ScoreData } from '../modules/score';
 
 export interface ScoreProps {
-  timeSignature: TimeSignature;
-  measures: Measure[];
+  scoreData: ScoreData;
   innerWidth: number;
 }
 
-const Score = ({ timeSignature, measures, innerWidth }: ScoreProps) => {
+const Score = ({ scoreData, innerWidth }: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,14 +18,14 @@ const Score = ({ timeSignature, measures, innerWidth }: ScoreProps) => {
       return;
     }
 
-    createScore(ref.current, measures, timeSignature, innerWidth);
+    createScore(ref.current, scoreData, innerWidth);
 
     return () => {
       if (ref && ref.current) {
         ref.current.innerHTML = '';
       }
     };
-  }, [timeSignature, measures, innerWidth]);
+  }, [scoreData, innerWidth]);
 
   return <div className="c-rr-score" id="score" ref={containerRef} />;
 };

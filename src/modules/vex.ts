@@ -8,6 +8,7 @@ import {
   getMeasureConfiguration,
   MeasureConfiguration,
   calculateMeasureWidths,
+  ScoreData,
 } from './score';
 
 const VF = Vex.Flow;
@@ -159,10 +160,10 @@ const createSystem = (
 
 export const createScore = (
   targetElement: HTMLElement,
-  measures: Measure[],
-  timeSignature: TimeSignature,
+  scoreData: ScoreData,
   innerWidth: number
 ) => {
+  const { measures, timeSignature } = scoreData;
   const context = getContext(targetElement, measures, innerWidth);
   const systems = splitMeasuresIntoSystems(measures);
   const toRender: ToRender = { staveNotes: new Map(), beams: [], tuplets: [] };

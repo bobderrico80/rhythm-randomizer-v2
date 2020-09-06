@@ -52,6 +52,7 @@ const TimeSignatureSelection = ({
                 <img
                   src={timeSignature.icon}
                   alt={timeSignature.description}
+                  title={timeSignature.description}
                   className={classnames(
                     buildClassName('icon')(),
                     buildClassName('icon')(timeSignature.type)

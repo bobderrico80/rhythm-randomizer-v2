@@ -4,9 +4,9 @@ import { buildBemClassName } from '../modules/util';
 import {
   CategorizedNoteGroup,
   categorizeNoteGroups,
-  noteGroups,
   NoteGroupType,
   NoteGroupTypeSelectionMap,
+  getNoteGroups,
 } from '../modules/note';
 import './NoteSelection.scss';
 
@@ -27,7 +27,7 @@ const NoteSelection = ({
   onNoteGroupChange,
 }: NoteSelectionProps) => {
   const categorizedNoteGroups: CategorizedNoteGroup[] = categorizeNoteGroups(
-    noteGroups
+    getNoteGroups(...noteGroupTypeSelectionMap.keys())
   );
 
   const handleNoteGroupChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -46,10 +46,10 @@ const NoteSelection = ({
         return (
           <fieldset
             className={buildClassName('fieldset')()}
-            key={categorizedNoteGroup.category}
+            key={categorizedNoteGroup.category.type}
           >
             <legend className={buildClassName('legend')()}>
-              {categorizedNoteGroup.category}
+              {categorizedNoteGroup.category.type}
             </legend>
             <div className={buildClassName('label-container')()}>
               {categorizedNoteGroup.noteGroups.map((noteGroup) => {
@@ -71,6 +71,7 @@ const NoteSelection = ({
                     <img
                       src={noteGroup.icon}
                       alt={noteGroup.description}
+                      title={noteGroup.description}
                       className={classnames(
                         buildClassName('icon')(),
                         buildClassName('icon')(noteGroup.type)

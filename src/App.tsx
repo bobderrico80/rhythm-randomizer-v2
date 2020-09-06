@@ -8,15 +8,14 @@ import {
 } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
-import { Measure } from './modules/vex';
 import {
   getTimeSignature,
   TimeSignatureType,
   timeSignatures,
-  TimeSignature,
 } from './modules/time-signature';
 import Header from './components/Header';
 import SettingsMenu from './components/SettingsMenu';
+import { ScoreData } from './modules/score';
 
 const THROTTLE_INTERVAL = 200; // ms
 
@@ -27,13 +26,14 @@ const App = () => {
   );
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
-    getNoteGroupTypeSelectionMap()
+    getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
   const [errorMessage, setErrorMessage] = useState('');
-
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
-
-  const [measures, setMeasures] = useState<Measure[]>([]);
+  const [scoreData, setScoreData] = useState({
+    measures: [],
+    timeSignature: selectedTimeSignature,
+  } as ScoreData);
 
   // TODO: Improve how initial state is set
   useEffect(() => {
@@ -66,6 +66,23 @@ const App = () => {
     setErrorMessage('');
   }, [noteGroupTypeSelectionMap, selectedTimeSignature]);
 
+  // Handle reconfiguring selection map when time signature changes
+  useEffect(() => {
+    setNoteGroupTypeSelectionMap((oldMap) => {
+      let newMap = getNoteGroupTypeSelectionMap(
+        selectedTimeSignature.beatsPerMeasure
+      );
+
+      [...oldMap.entries()].forEach(([noteGroupType, checked]) => {
+        if (newMap.has(noteGroupType)) {
+          newMap = newMap.set(noteGroupType, checked);
+        }
+      });
+
+      return newMap;
+    });
+  }, [selectedTimeSignature]);
+
   const setNextMeasures = () => {
     try {
       const nextMeasures = getRandomMeasures(
@@ -73,7 +90,10 @@ const App = () => {
         selectedTimeSignature.beatsPerMeasure,
         measureCount
       );
-      setMeasures(nextMeasures);
+      setScoreData({
+        measures: nextMeasures,
+        timeSignature: selectedTimeSignature,
+      });
     } catch (error) {
       setSettingsMenuOpen(true);
       setErrorMessage(
@@ -127,11 +147,7 @@ const App = () => {
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
         onRandomizeButtonClick={handleRandomizeButtonClick}
       />
-      <Score
-        timeSignature={selectedTimeSignature}
-        measures={measures}
-        innerWidth={innerWidth}
-      />
+      <Score scoreData={scoreData} innerWidth={innerWidth} />
     </div>
   );
 };

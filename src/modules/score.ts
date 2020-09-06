@@ -31,6 +31,11 @@ export interface MeasureConfiguration {
   firstMeasure: boolean;
 }
 
+export interface ScoreData {
+  measures: Measure[];
+  timeSignature: TimeSignature;
+}
+
 // All measurements below in px, unless otherwise specified
 const SCORE_PADDING_LEFT = 10;
 const SCORE_PADDING_RIGHT = 10;
