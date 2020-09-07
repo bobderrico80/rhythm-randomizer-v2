@@ -18,6 +18,10 @@ const Score = ({ scoreData, innerWidth }: ScoreProps) => {
       return;
     }
 
+    if (!scoreData.measures.length) {
+      return;
+    }
+
     createScore(ref.current, scoreData, innerWidth);
 
     return () => {

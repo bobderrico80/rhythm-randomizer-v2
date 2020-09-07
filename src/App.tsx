@@ -18,9 +18,10 @@ import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
 
 const THROTTLE_INTERVAL = 200; // ms
+const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
 
 const App = () => {
-  const [measureCount, setMeasureCount] = useState(8);
+  const [measureCount, setMeasureCount] = useState(2);
   const [selectedTimeSignature, setSelectedTimeSignature] = useState(
     getTimeSignature(TimeSignatureType.SIMPLE_4_4)
   );
@@ -29,7 +30,7 @@ const App = () => {
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
   const [errorMessage, setErrorMessage] = useState('');
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [scoreData, setScoreData] = useState({
     measures: [],
     timeSignature: selectedTimeSignature,
@@ -131,6 +132,10 @@ const App = () => {
     setNextTimeSignature(timeSignatureType);
   };
 
+  const handleMeasureCountChange = (measureCount: number) => {
+    setMeasureCount(measureCount);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
@@ -138,9 +143,12 @@ const App = () => {
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         timeSignatures={timeSignatures}
         selectedTimeSignature={selectedTimeSignature}
+        measureCountOptions={MEASURE_COUNT_OPTIONS}
+        selectedMeasureCount={measureCount}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
         onNoteGroupChange={handleNoteGroupChange}
         onTimeSignatureChange={handleTimeSignatureChange}
+        onMeasureCountChange={handleMeasureCountChange}
         errorMessage={errorMessage}
       />
       <Header

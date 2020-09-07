@@ -18,10 +18,13 @@ export interface SettingsMenuProps {
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
+  measureCountOptions: number[];
+  selectedMeasureCount: number;
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
   onNoteGroupChange: NoteGroupChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
+  onMeasureCountChange: (measureCount: number) => void;
 }
 
 const SettingsMenu = ({
@@ -29,10 +32,13 @@ const SettingsMenu = ({
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
+  measureCountOptions,
+  selectedMeasureCount,
   errorMessage,
   onSettingsMenuCloseClick,
   onNoteGroupChange,
   onTimeSignatureChange,
+  onMeasureCountChange,
 }: SettingsMenuProps) => {
   useEffect(() => {
     const escapePane = (event: KeyboardEvent) => {
@@ -71,9 +77,12 @@ const SettingsMenu = ({
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
           timeSignatures={timeSignatures}
           selectedTimeSignature={selectedTimeSignature}
+          measureCountOptions={measureCountOptions}
+          selectedMeasureCount={selectedMeasureCount}
           errorMessage={errorMessage}
           onNoteGroupChange={onNoteGroupChange}
           onTimeSignatureChange={onTimeSignatureChange}
+          onMeasureCountChange={onMeasureCountChange}
         />
       </section>
       <div
