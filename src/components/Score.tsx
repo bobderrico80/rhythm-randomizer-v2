@@ -1,14 +1,19 @@
 import React, { useEffect, useRef } from 'react';
+import classnames from 'classnames';
 import './Score.scss';
 import { createScore } from '../modules/vex';
 import { ScoreData } from '../modules/score';
+import { buildBemClassName } from '../modules/util';
+
+const buildClassName = buildBemClassName('c-rr-score');
 
 export interface ScoreProps {
   scoreData: ScoreData;
   innerWidth: number;
+  transitioning: boolean;
 }
 
-const Score = ({ scoreData, innerWidth }: ScoreProps) => {
+const Score = ({ scoreData, innerWidth, transitioning }: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +36,15 @@ const Score = ({ scoreData, innerWidth }: ScoreProps) => {
     };
   }, [scoreData, innerWidth]);
 
-  return <div className="c-rr-score" id="score" ref={containerRef} />;
+  return (
+    <div
+      className={classnames(buildClassName()(), {
+        [buildClassName()('transitioning')]: transitioning,
+      })}
+      id="score"
+      ref={containerRef}
+    />
+  );
 };
 
 export default Score;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import IconButton from './IconButton';
@@ -40,6 +40,9 @@ const SettingsMenu = ({
   onTimeSignatureChange,
   onMeasureCountChange,
 }: SettingsMenuProps) => {
+  const paneRef = useRef<HTMLDivElement>(null);
+
+  // Handle closing menu with escape key
   useEffect(() => {
     const escapePane = (event: KeyboardEvent) => {
       // If escape key is pressed...
@@ -55,6 +58,13 @@ const SettingsMenu = ({
     };
   }, [onSettingsMenuCloseClick]);
 
+  // Scroll pane to top when error message appears
+  useEffect(() => {
+    if (errorMessage) {
+      paneRef.current?.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+    }
+  }, [errorMessage]);
+
   return (
     <div
       className={classnames(buildClassName()(), {
@@ -66,6 +76,7 @@ const SettingsMenu = ({
         className={classnames(buildPaneClassName(), {
           [buildPaneClassName('open')]: settingsMenuOpen,
         })}
+        ref={paneRef}
       >
         <IconButton
           className={buildClassName('close-button')()}

@@ -18,6 +18,7 @@ import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
 
 const THROTTLE_INTERVAL = 200; // ms
+const TRANSITION_TIME = 500; // ms
 const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
     measures: [],
     timeSignature: selectedTimeSignature,
   } as ScoreData);
+  const [transitioning, setTransitioning] = useState(false);
 
   // TODO: Improve how initial state is set
   useEffect(() => {
@@ -97,8 +99,9 @@ const App = () => {
       });
     } catch (error) {
       setSettingsMenuOpen(true);
+      setScoreData({ measures: [], timeSignature: selectedTimeSignature });
       setErrorMessage(
-        'The combination of notes selected is not valid for the given time signature'
+        'The combination of notes selected is not always valid for the given time signature'
       );
     }
   };
@@ -108,7 +111,12 @@ const App = () => {
   };
 
   const handleRandomizeButtonClick = () => {
-    setNextMeasures();
+    setTransitioning(true);
+    setErrorMessage('');
+    window.setTimeout(() => {
+      setNextMeasures();
+      setTransitioning(false);
+    }, TRANSITION_TIME);
   };
 
   const handleSettingsMenuButtonClick = () => {
@@ -155,7 +163,11 @@ const App = () => {
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
         onRandomizeButtonClick={handleRandomizeButtonClick}
       />
-      <Score scoreData={scoreData} innerWidth={innerWidth} />
+      <Score
+        scoreData={scoreData}
+        innerWidth={innerWidth}
+        transitioning={transitioning}
+      />
     </div>
   );
 };
