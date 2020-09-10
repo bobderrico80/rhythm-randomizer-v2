@@ -77,10 +77,10 @@ describe('The note module', () => {
     });
 
     describe('with note groups in different categories', () => {
-      it('puts different-category note groups into the separate categorized note group objects, with categories sorted by sortOrder', () => {
+      it('puts different-category note groups into the separate categorized note group objects, with categories and note groups sorted by sortOrder', () => {
         expect(
           categorizeNoteGroups(
-            getNoteGroups(NoteGroupType.QR, NoteGroupType.W, NoteGroupType.H)
+            getNoteGroups(NoteGroupType.QR, NoteGroupType.H, NoteGroupType.W)
           )
         ).toEqual([
           {

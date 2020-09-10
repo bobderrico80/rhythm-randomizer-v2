@@ -85,6 +85,7 @@ export interface NoteGroup extends TypedItem<NoteGroupType> {
   icon: string;
   categoryType: NoteGroupCategoryType;
   defaultSelectionValue: boolean;
+  sortOrder: number;
 }
 
 export interface CategorizedNoteGroup {
@@ -173,6 +174,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 4,
     icon: require('../svg/notes/w.svg'),
     defaultSelectionValue: true,
+    sortOrder: 0,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_NOTES,
@@ -182,6 +184,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/h.svg'),
     defaultSelectionValue: true,
+    sortOrder: 1,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_NOTES,
@@ -191,6 +194,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/q.svg'),
     defaultSelectionValue: true,
+    sortOrder: 2,
   },
 
   // Basic rests
@@ -202,6 +206,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 4,
     icon: require('../svg/notes/wr.svg'),
     defaultSelectionValue: true,
+    sortOrder: 3,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
@@ -211,6 +216,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/hr.svg'),
     defaultSelectionValue: true,
+    sortOrder: 4,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
@@ -220,6 +226,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/qr.svg'),
     defaultSelectionValue: true,
+    sortOrder: 5,
   },
 
   // Simple beamed notes
@@ -232,6 +239,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/ee.svg'),
     defaultSelectionValue: true,
+    sortOrder: 6,
   },
   {
     categoryType: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
@@ -242,6 +250,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/ssss.svg'),
     defaultSelectionValue: true,
+    sortOrder: 7,
   },
 
   // Mixed beamed notes
@@ -254,6 +263,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/sse.svg'),
     defaultSelectionValue: false,
+    sortOrder: 8,
   },
   {
     categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
@@ -264,6 +274,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/ess.svg'),
     defaultSelectionValue: false,
+    sortOrder: 9,
   },
   {
     categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
@@ -274,6 +285,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/ses.svg'),
     defaultSelectionValue: false,
+    sortOrder: 10,
   },
 
   // Tuplets
@@ -286,6 +298,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/tqqq.svg'),
     defaultSelectionValue: false,
+    sortOrder: 11,
   },
   {
     categoryType: NoteGroupCategoryType.TUPLETS,
@@ -297,6 +310,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/teee.svg'),
     defaultSelectionValue: false,
+    sortOrder: 12,
   },
 
   // Dotted note combinations
@@ -308,6 +322,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 3,
     icon: require('../svg/notes/hd.svg'),
     defaultSelectionValue: false,
+    sortOrder: 13,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -317,6 +332,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/qde.svg'),
     defaultSelectionValue: false,
+    sortOrder: 14,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -326,6 +342,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/eqd.svg'),
     defaultSelectionValue: false,
+    sortOrder: 15,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -336,6 +353,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/eds.svg'),
     defaultSelectionValue: false,
+    sortOrder: 16,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -346,6 +364,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/sed.svg'),
     defaultSelectionValue: false,
+    sortOrder: 17,
   },
 
   // Combinations with 8th rests
@@ -357,6 +376,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/eer.svg'),
     defaultSelectionValue: false,
+    sortOrder: 18,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -366,6 +386,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/ere.svg'),
     defaultSelectionValue: false,
+    sortOrder: 19,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -376,6 +397,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/sser.svg'),
     defaultSelectionValue: false,
+    sortOrder: 20,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -386,6 +408,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 1,
     icon: require('../svg/notes/erss.svg'),
     defaultSelectionValue: false,
+    sortOrder: 21,
   },
 
   // Syncopated combinations
@@ -397,6 +420,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 2,
     icon: require('../svg/notes/eqe.svg'),
     defaultSelectionValue: false,
+    sortOrder: 22,
   },
   {
     categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
@@ -406,6 +430,7 @@ export const noteGroups: NoteGroup[] = [
     duration: 3,
     icon: require('../svg/notes/eqqe.svg'),
     defaultSelectionValue: false,
+    sortOrder: 23,
   },
   {
     categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
@@ -421,13 +446,14 @@ export const noteGroups: NoteGroup[] = [
     duration: 4,
     icon: require('../svg/notes/eqqqe.svg'),
     defaultSelectionValue: false,
+    sortOrder: 24,
   },
 ];
 
 export const categorizeNoteGroups = (
   noteGroups: NoteGroup[]
 ): CategorizedNoteGroup[] => {
-  const categorizedNoteGroups = noteGroups.reduce(
+  let categorizedNoteGroups = noteGroups.reduce(
     (
       previousCategorizedNoteGroups: CategorizedNoteGroup[],
       noteGroup: NoteGroup
@@ -450,12 +476,21 @@ export const categorizeNoteGroups = (
     []
   );
 
-  return sortBy<CategorizedNoteGroup>(
+  categorizedNoteGroups = sortBy<CategorizedNoteGroup>(
     categorizedNoteGroups,
     (categorizedNoteGroup) => {
       return categorizedNoteGroup.category.sortOrder;
     }
   );
+
+  categorizedNoteGroups.forEach((categorizedNoteGroup) => {
+    categorizedNoteGroup.noteGroups = sortBy<NoteGroup>(
+      categorizedNoteGroup.noteGroups,
+      ['sortOrder']
+    );
+  });
+
+  return categorizedNoteGroups;
 };
 
 export const getNoteGroupTypeSelectionMap = (
