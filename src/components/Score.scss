@@ -1,6 +1,15 @@
+@import '../styles/variables.scss';
+
 $transition-time: 500ms;
 
 .c-rr-score {
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: none;
+  border: none;
+  overflow: hidden;
   transition: opacity $transition-time ease;
   opacity: 1;
 
@@ -13,5 +22,9 @@ $transition-time: 500ms;
     transform: translateY(50px);
     opacity: 0;
     transition: opacity $transition-time ease, transform $transition-time ease;
+
+    &:focus {
+      outline: none;
+    }
   }
 }

@@ -22,7 +22,7 @@ const IconButton = ({
       onClick={onClick}
       {...rest}
     >
-      <img src={svg} alt={alt} className="c-rr-icon-button__icon" />
+      <img src={svg} alt={alt} className="c-rr-icon-button__icon" title={alt} />
     </button>
   );
 };

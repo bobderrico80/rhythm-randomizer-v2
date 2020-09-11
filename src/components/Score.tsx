@@ -11,9 +11,15 @@ export interface ScoreProps {
   scoreData: ScoreData;
   innerWidth: number;
   transitioning: boolean;
+  onScoreClick: () => void;
 }
 
-const Score = ({ scoreData, innerWidth, transitioning }: ScoreProps) => {
+const Score = ({
+  scoreData,
+  innerWidth,
+  transitioning,
+  onScoreClick,
+}: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,13 +43,20 @@ const Score = ({ scoreData, innerWidth, transitioning }: ScoreProps) => {
   }, [scoreData, innerWidth]);
 
   return (
-    <div
+    <button
       className={classnames(buildClassName()(), {
         [buildClassName()('transitioning')]: transitioning,
       })}
-      id="score"
-      ref={containerRef}
-    />
+      onClick={onScoreClick}
+      aria-label="New Rhythm"
+      title="Click for New Rhythm"
+    >
+      <span
+        className={buildClassName('container')()}
+        id="score"
+        ref={containerRef}
+      />
+    </button>
   );
 };
 

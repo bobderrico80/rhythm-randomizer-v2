@@ -167,6 +167,7 @@ const App = () => {
         scoreData={scoreData}
         innerWidth={innerWidth}
         transitioning={transitioning}
+        onScoreClick={handleRandomizeButtonClick}
       />
     </div>
   );
