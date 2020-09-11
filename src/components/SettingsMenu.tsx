@@ -9,6 +9,9 @@ import { NoteGroupTypeSelectionMap } from '../modules/note';
 import { NoteGroupChangeHandler } from './NoteSelection';
 import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 
+const FOCUSABLE_ELEMENTS =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 const buildPaneClassName = buildClassName('pane');
 const buildOverlayClassName = buildClassName('overlay');
@@ -45,8 +48,7 @@ const SettingsMenu = ({
   // Handle closing menu with escape key
   useEffect(() => {
     const escapePane = (event: KeyboardEvent) => {
-      // If escape key is pressed...
-      if (event.keyCode === 27) {
+      if (event.key === 'Escape') {
         onSettingsMenuCloseClick();
       }
     };
@@ -64,6 +66,55 @@ const SettingsMenu = ({
       paneRef.current?.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
     }
   }, [errorMessage]);
+
+  // Trap focus
+  useEffect(() => {
+    if (!settingsMenuOpen) {
+      return;
+    }
+
+    const pane = paneRef.current;
+
+    if (!pane) {
+      return;
+    }
+
+    const focusableElements = pane.querySelectorAll<HTMLElement>(
+      FOCUSABLE_ELEMENTS
+    );
+    const firstFocusableElement = focusableElements[0];
+    const lastFocusableElement =
+      focusableElements[focusableElements.length - 1];
+
+    console.log(focusableElements);
+
+    const handleTab = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === firstFocusableElement) {
+        event.preventDefault();
+        lastFocusableElement.focus();
+        return;
+      }
+
+      if (document.activeElement === lastFocusableElement) {
+        event.preventDefault();
+        firstFocusableElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleTab);
+
+    // Position 0 is assumed to be close button, so start focus after that
+    // TODO: Make this less brittle
+    focusableElements[1].focus();
+
+    return () => {
+      document.removeEventListener('keydown', handleTab);
+    };
+  }, [settingsMenuOpen]);
 
   return (
     <div
@@ -83,6 +134,7 @@ const SettingsMenu = ({
           svg={backArrowIcon}
           alt="Close Settings Menu"
           onClick={onSettingsMenuCloseClick}
+          id="settings-menu-close"
         />
         <SettingsForm
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}

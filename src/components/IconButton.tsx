@@ -6,6 +6,7 @@ export interface IconButtonProps {
   svg: string;
   alt: string;
   className?: string;
+  id?: string;
   onClick: () => void;
 }
 
@@ -13,11 +14,13 @@ const IconButton = ({
   svg,
   alt,
   className = '',
+  id,
   onClick,
   ...rest
 }: IconButtonProps) => {
   return (
     <button
+      id={id}
       className={classnames('e-rr-button', 'c-rr-icon-button', className)}
       onClick={onClick}
       {...rest}
