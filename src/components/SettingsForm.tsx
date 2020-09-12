@@ -6,6 +6,7 @@ import { NoteGroupTypeSelectionMap } from '../modules/note';
 import TimeSignatureSelection from './TimeSignatureSelection';
 import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 import MeasureCountSelection from './MeasureCountSelection';
+import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 
 export interface SettingsFormProps {
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
@@ -15,6 +16,7 @@ export interface SettingsFormProps {
   selectedMeasureCount: number;
   errorMessage: string;
   onNoteGroupChange: NoteGroupChangeHandler;
+  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
   onMeasureCountChange: (measureCount: number) => void;
 }
@@ -29,6 +31,7 @@ const SettingsForm = ({
   selectedMeasureCount,
   errorMessage,
   onNoteGroupChange,
+  onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
   onMeasureCountChange,
 }: SettingsFormProps) => {
@@ -48,8 +51,9 @@ const SettingsForm = ({
         onTimeSignatureChange={onTimeSignatureChange}
       />
       <NoteSelection
-        onNoteGroupChange={onNoteGroupChange}
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+        onNoteGroupChange={onNoteGroupChange}
+        onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
       />
     </form>
   );

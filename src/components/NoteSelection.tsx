@@ -8,7 +8,9 @@ import {
   NoteGroupTypeSelectionMap,
   getNoteGroups,
 } from '../modules/note';
-import './NoteSelection.scss';
+import NoteCheckboxGroup, {
+  NoteGroupMultiSelectChangeHandler,
+} from './NoteCheckboxGroup';
 
 export type NoteGroupChangeHandler = (
   noteGroupType: NoteGroupType,
@@ -18,6 +20,7 @@ export type NoteGroupChangeHandler = (
 export interface NoteSelectionProps {
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   onNoteGroupChange: NoteGroupChangeHandler;
+  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
 }
 
 const buildClassName = buildBemClassName('c-rr-note-selection');
@@ -25,17 +28,11 @@ const buildClassName = buildBemClassName('c-rr-note-selection');
 const NoteSelection = ({
   noteGroupTypeSelectionMap,
   onNoteGroupChange,
+  onNoteGroupMultiSelectChange,
 }: NoteSelectionProps) => {
   const categorizedNoteGroups: CategorizedNoteGroup[] = categorizeNoteGroups(
     getNoteGroups(...noteGroupTypeSelectionMap.keys())
   );
-
-  const handleNoteGroupChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const noteGroupType = event.currentTarget.name as NoteGroupType;
-    const checked = event.currentTarget.checked;
-
-    onNoteGroupChange(noteGroupType, checked);
-  };
 
   return (
     <section
@@ -44,44 +41,14 @@ const NoteSelection = ({
       <h3 className="c-rr-settings-form__section-title">Note Selection</h3>
       {categorizedNoteGroups.map((categorizedNoteGroup) => {
         return (
-          <fieldset
-            className={buildClassName('fieldset')()}
+          <NoteCheckboxGroup
+            category={categorizedNoteGroup.category}
+            noteGroups={categorizedNoteGroup.noteGroups}
+            noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+            onNoteGroupChange={onNoteGroupChange}
+            onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
             key={categorizedNoteGroup.category.type}
-          >
-            <legend className={buildClassName('legend')()}>
-              {categorizedNoteGroup.category.type}
-            </legend>
-            <div className={buildClassName('label-container')()}>
-              {categorizedNoteGroup.noteGroups.map((noteGroup) => {
-                const checked = noteGroupTypeSelectionMap.get(noteGroup.type);
-                return (
-                  <label
-                    htmlFor={noteGroup.type}
-                    key={noteGroup.type}
-                    className={buildClassName('label')()}
-                  >
-                    <input
-                      type="checkbox"
-                      id={noteGroup.type}
-                      name={noteGroup.type}
-                      className={buildClassName('checkbox')()}
-                      checked={Boolean(checked)}
-                      onChange={handleNoteGroupChange}
-                    />
-                    <img
-                      src={noteGroup.icon}
-                      alt={noteGroup.description}
-                      title={noteGroup.description}
-                      className={classnames(
-                        buildClassName('icon')(),
-                        buildClassName('icon')(noteGroup.type)
-                      )}
-                    />
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
+          />
         );
       })}
     </section>

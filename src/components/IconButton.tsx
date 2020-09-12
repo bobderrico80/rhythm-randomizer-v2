@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import classnames from 'classnames';
 import './IconButton.scss';
 
@@ -7,7 +7,7 @@ export interface IconButtonProps {
   alt: string;
   className?: string;
   id?: string;
-  onClick: () => void;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const IconButton = ({

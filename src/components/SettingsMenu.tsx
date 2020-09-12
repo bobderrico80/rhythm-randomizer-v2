@@ -8,6 +8,7 @@ import SettingsForm from './SettingsForm';
 import { NoteGroupTypeSelectionMap } from '../modules/note';
 import { NoteGroupChangeHandler } from './NoteSelection';
 import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
+import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 
 const FOCUSABLE_ELEMENTS =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -26,6 +27,7 @@ export interface SettingsMenuProps {
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
   onNoteGroupChange: NoteGroupChangeHandler;
+  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
   onMeasureCountChange: (measureCount: number) => void;
 }
@@ -40,6 +42,7 @@ const SettingsMenu = ({
   errorMessage,
   onSettingsMenuCloseClick,
   onNoteGroupChange,
+  onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
   onMeasureCountChange,
 }: SettingsMenuProps) => {
@@ -85,8 +88,6 @@ const SettingsMenu = ({
     const firstFocusableElement = focusableElements[0];
     const lastFocusableElement =
       focusableElements[focusableElements.length - 1];
-
-    console.log(focusableElements);
 
     const handleTab = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') {
@@ -144,6 +145,7 @@ const SettingsMenu = ({
           selectedMeasureCount={selectedMeasureCount}
           errorMessage={errorMessage}
           onNoteGroupChange={onNoteGroupChange}
+          onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
           onTimeSignatureChange={onTimeSignatureChange}
           onMeasureCountChange={onMeasureCountChange}
         />

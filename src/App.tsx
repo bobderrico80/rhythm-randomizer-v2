@@ -5,6 +5,8 @@ import {
   NoteGroupType,
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
+  NoteGroupCategory,
+  getNoteGroup,
 } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
@@ -16,6 +18,7 @@ import {
 import Header from './components/Header';
 import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
+import { MultiSelectStatusType } from './components/NoteCheckboxGroup';
 
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
@@ -144,6 +147,30 @@ const App = () => {
     setMeasureCount(measureCount);
   };
 
+  const handleNoteGroupMultiSelectChange = (
+    category: NoteGroupCategory,
+    multiSelectStatusType: MultiSelectStatusType
+  ) => {
+    setNoteGroupTypeSelectionMap((previousNoteGroupTypeSelectionMap) => {
+      let nextNoteGroupTypeSelectionMap = previousNoteGroupTypeSelectionMap;
+
+      previousNoteGroupTypeSelectionMap.forEach((_, noteGroupType) => {
+        const noteGroup = getNoteGroup(noteGroupType);
+
+        if (noteGroup.categoryType === category.type) {
+          const checked =
+            multiSelectStatusType === MultiSelectStatusType.SELECT_ALL;
+          nextNoteGroupTypeSelectionMap = nextNoteGroupTypeSelectionMap.set(
+            noteGroupType,
+            checked
+          );
+        }
+      });
+
+      return nextNoteGroupTypeSelectionMap;
+    });
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
@@ -155,6 +182,7 @@ const App = () => {
         selectedMeasureCount={measureCount}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
         onNoteGroupChange={handleNoteGroupChange}
+        onNoteGroupMultiSelectChange={handleNoteGroupMultiSelectChange}
         onTimeSignatureChange={handleTimeSignatureChange}
         onMeasureCountChange={handleMeasureCountChange}
         errorMessage={errorMessage}

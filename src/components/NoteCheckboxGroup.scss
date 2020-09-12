@@ -1,7 +1,21 @@
-.c-rr-note-selection {
-  &__fieldset {
-    padding: 1rem 0.5rem 0 0.5rem;
-    margin-bottom: 1rem;
+.c-rr-note-checkbox-group {
+  padding: 1rem 0.5rem 0 0.5rem;
+  margin-bottom: 1rem;
+
+  &__multi-select-container {
+    float: right;
+    position: relative;
+    top: -15px;
+  }
+
+  &__multi-select-button {
+    padding: 3px;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+
+    img {
+      display: block;
+    }
   }
 
   &__label-container {
