@@ -38,7 +38,6 @@ const NoteSelection = ({
     <section
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
-      <h3 className="c-rr-settings-form__section-title">Note Selection</h3>
       {categorizedNoteGroups.map((categorizedNoteGroup) => {
         return (
           <NoteCheckboxGroup

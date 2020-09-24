@@ -40,6 +40,9 @@ const App = () => {
     timeSignature: selectedTimeSignature,
   } as ScoreData);
   const [transitioning, setTransitioning] = useState(false);
+  const [openSettingsAccordion, setOpenSettingsAccordion] = useState(
+    'note-selection-accordion'
+  );
 
   // TODO: Improve how initial state is set
   useEffect(() => {
@@ -171,10 +174,15 @@ const App = () => {
     });
   };
 
+  const handleSettingsOpenAccordionChange = (openedAccordion: string) => {
+    setOpenSettingsAccordion(openedAccordion);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
         settingsMenuOpen={settingsMenuOpen}
+        openAccordion={openSettingsAccordion}
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         timeSignatures={timeSignatures}
         selectedTimeSignature={selectedTimeSignature}
@@ -186,6 +194,7 @@ const App = () => {
         onTimeSignatureChange={handleTimeSignatureChange}
         onMeasureCountChange={handleMeasureCountChange}
         errorMessage={errorMessage}
+        onOpenAccordionChange={handleSettingsOpenAccordionChange}
       />
       <Header
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}

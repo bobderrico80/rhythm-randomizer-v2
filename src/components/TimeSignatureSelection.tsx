@@ -27,9 +27,6 @@ const TimeSignatureSelection = ({
     <section
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
-      <h3 className="c-rr-settings-form__section-title">
-        Time Signature Selection
-      </h3>
       <fieldset className={buildClassName('fieldset')()}>
         <div className={buildClassName('label-container')()}>
           {timeSignatures.map((timeSignature) => {

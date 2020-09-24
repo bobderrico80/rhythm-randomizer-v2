@@ -19,6 +19,7 @@ const buildOverlayClassName = buildClassName('overlay');
 
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
+  openAccordion: string;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
@@ -30,10 +31,12 @@ export interface SettingsMenuProps {
   onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
   onMeasureCountChange: (measureCount: number) => void;
+  onOpenAccordionChange: (openedAccordion: string) => void;
 }
 
 const SettingsMenu = ({
   settingsMenuOpen,
+  openAccordion,
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
@@ -45,6 +48,7 @@ const SettingsMenu = ({
   onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
   onMeasureCountChange,
+  onOpenAccordionChange,
 }: SettingsMenuProps) => {
   const paneRef = useRef<HTMLDivElement>(null);
 
@@ -138,6 +142,7 @@ const SettingsMenu = ({
           id="settings-menu-close"
         />
         <SettingsForm
+          openAccordion={openAccordion}
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
           timeSignatures={timeSignatures}
           selectedTimeSignature={selectedTimeSignature}
@@ -148,6 +153,7 @@ const SettingsMenu = ({
           onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
           onTimeSignatureChange={onTimeSignatureChange}
           onMeasureCountChange={onMeasureCountChange}
+          onOpenAccordionChange={onOpenAccordionChange}
         />
       </section>
       <div

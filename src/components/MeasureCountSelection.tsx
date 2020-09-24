@@ -24,9 +24,6 @@ const MeasureCountSelection = ({
     <section
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
-      <h3 className="c-rr-settings-form__section-title">
-        Measure Count Selection
-      </h3>
       <fieldset className={buildClassName('fieldset')()}>
         <label htmlFor="measure-count" className={buildClassName('label')()}>
           Total measures:

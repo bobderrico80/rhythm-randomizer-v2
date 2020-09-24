@@ -1,0 +1,43 @@
+.c-rr-accordion {
+  &__button {
+    background-color: white;
+    border: 0;
+    display: flex;
+    align-items: center;
+    font-size: 1.17em;
+    font-weight: bold;
+  }
+
+  &__button-caret {
+    margin-right: 0.5em;
+    transition: transform 250ms ease;
+
+    &--open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &--open {
+    //
+  }
+
+  &--closed {
+    //
+  }
+
+  &__pane {
+    overflow: hidden;
+    transition: height 500ms ease;
+    height: auto;
+    padding-top: 1rem;
+
+    &--open {
+      // height: 300px;
+    }
+
+    &--closed {
+      // height: 0;
+      // overflow: hidden;
+    }
+  }
+}
