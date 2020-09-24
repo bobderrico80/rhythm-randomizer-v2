@@ -30,9 +30,14 @@ export interface ToRender {
 const getContext = (
   targetElement: HTMLElement,
   measures: Measure[],
-  innerWidth: number
+  innerWidth: number,
+  measuresPerSystem: number
 ) => {
-  const dimensions = getScoreDimensions(measures.length, innerWidth);
+  const dimensions = getScoreDimensions(
+    measures.length,
+    innerWidth,
+    measuresPerSystem
+  );
 
   const renderer = new VF.Renderer(targetElement, VF.Renderer.Backends.SVG);
   renderer.resize(dimensions.width, dimensions.height);
@@ -161,11 +166,17 @@ const createSystem = (
 export const createScore = (
   targetElement: HTMLElement,
   scoreData: ScoreData,
-  innerWidth: number
+  innerWidth: number,
+  measuresPerSystem: number
 ) => {
   const { measures, timeSignature } = scoreData;
-  const context = getContext(targetElement, measures, innerWidth);
-  const systems = splitMeasuresIntoSystems(measures);
+  const context = getContext(
+    targetElement,
+    measures,
+    innerWidth,
+    measuresPerSystem
+  );
+  const systems = splitMeasuresIntoSystems(measures, measuresPerSystem);
   const toRender: ToRender = { staveNotes: new Map(), beams: [], tuplets: [] };
 
   systems.forEach((system, systemIndex) => {

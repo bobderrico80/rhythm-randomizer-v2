@@ -46,7 +46,6 @@ const MAX_SCORE_WIDTH = 1220;
 
 const SYSTEM_VERTICAL_OFFSET = 150;
 const DEFAULT_MEASURE_WIDTH = 300;
-const MEASURES_PER_SYSTEM = 4;
 
 const DEFAULT_CLEF = 'percussion';
 const DEFAULT_PITCHES = ['b/4'];
@@ -55,9 +54,10 @@ const WHOLE_REST_CENTERING_FIRST_MEASURE_ADDITIONAL_OFFSET = -0.1; // percent
 
 export const getScoreDimensions = (
   totalMeasures: number,
-  innerWidth: number
+  innerWidth: number,
+  measuresPerSystem: number
 ): ScoreDimensions => {
-  let effectiveMeasuresPerSystem = MEASURES_PER_SYSTEM;
+  let effectiveMeasuresPerSystem = measuresPerSystem;
 
   if (totalMeasures < effectiveMeasuresPerSystem) {
     effectiveMeasuresPerSystem = totalMeasures;
@@ -97,14 +97,25 @@ export const getScoreDimensions = (
   };
 };
 
-const getCurrentSystemIndex = (measureIndex: number, totalMeasures: number) =>
+const getCurrentSystemIndex = (
+  measureIndex: number,
+  totalMeasures: number,
+  measuresPerSystem: number
+) =>
   Math.floor(
-    measureIndex / totalMeasures / (MEASURES_PER_SYSTEM / totalMeasures)
+    measureIndex / totalMeasures / (measuresPerSystem / totalMeasures)
   );
 
-export const splitMeasuresIntoSystems = (measures: Measure[]): System[] => {
+export const splitMeasuresIntoSystems = (
+  measures: Measure[],
+  measuresPerSystem: number
+): System[] => {
   return measures.reduce((previousSystems, measure, index) => {
-    const currentSystemIndex = getCurrentSystemIndex(index, measures.length);
+    const currentSystemIndex = getCurrentSystemIndex(
+      index,
+      measures.length,
+      measuresPerSystem
+    );
 
     if (!previousSystems[currentSystemIndex]) {
       previousSystems[currentSystemIndex] = {

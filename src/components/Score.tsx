@@ -5,6 +5,8 @@ import { createScore } from '../modules/vex';
 import { ScoreData } from '../modules/score';
 import { buildBemClassName } from '../modules/util';
 
+const MOBILE_BREAKPOINT = 768; // px
+
 const buildClassName = buildBemClassName('c-rr-score');
 
 export interface ScoreProps {
@@ -33,7 +35,9 @@ const Score = ({
       return;
     }
 
-    createScore(ref.current, scoreData, innerWidth);
+    const measuresPerSystem = innerWidth > MOBILE_BREAKPOINT ? 4 : 2;
+
+    createScore(ref.current, scoreData, innerWidth, measuresPerSystem);
 
     return () => {
       if (ref && ref.current) {

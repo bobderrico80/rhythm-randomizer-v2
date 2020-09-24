@@ -50,7 +50,7 @@ describe('The score module', () => {
   describe('getScoreDimensions() function', () => {
     describe('where score width can equal the score max size', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 2000);
+        dimensions = getScoreDimensions(4, 2000, 4);
       });
 
       it('has a width equal to the max score width', () => {
@@ -64,7 +64,7 @@ describe('The score module', () => {
 
     describe('with one system-worth of measures', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 2000);
+        dimensions = getScoreDimensions(4, 2000, 4);
       });
 
       it('has a height to accommodate one system', () => {
@@ -74,7 +74,7 @@ describe('The score module', () => {
 
     describe('with more than one system-worth of measures', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(8, 2000);
+        dimensions = getScoreDimensions(8, 2000, 4);
       });
 
       it('has a height to accommodate multiple systems', () => {
@@ -84,7 +84,7 @@ describe('The score module', () => {
 
     describe('with a score width smaller than the window inner width', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 610);
+        dimensions = getScoreDimensions(4, 610, 4);
       });
 
       it('has a width equal to the window inner width', () => {
@@ -102,7 +102,7 @@ describe('The score module', () => {
 
     describe('with a score width smaller than the max score width', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(2, 2000);
+        dimensions = getScoreDimensions(2, 2000, 4);
       });
 
       it('has a width equal to the maximum score width', () => {
@@ -131,7 +131,7 @@ describe('The score module', () => {
           { noteGroups: [] },
           { noteGroups: [] },
         ];
-        systems = splitMeasuresIntoSystems(measures);
+        systems = splitMeasuresIntoSystems(measures, 4);
       });
 
       it('returns one system', () => {
@@ -155,16 +155,16 @@ describe('The score module', () => {
           { noteGroups: [] },
           { noteGroups: [] },
         ];
-        systems = splitMeasuresIntoSystems(measures);
+        systems = splitMeasuresIntoSystems(measures, 2);
       });
 
       it('returns expected number of systems', () => {
-        expect(systems).toHaveLength(2);
+        expect(systems).toHaveLength(4);
       });
 
       it('places expected number of measures into both systems', () => {
         systems.forEach((system) => {
-          expect(system.measures).toHaveLength(4);
+          expect(system.measures).toHaveLength(2);
         });
       });
     });
@@ -172,7 +172,7 @@ describe('The score module', () => {
     describe('with less than one system-worth of measures', () => {
       beforeEach(() => {
         measures = [{ noteGroups: [] }, { noteGroups: [] }];
-        systems = splitMeasuresIntoSystems(measures);
+        systems = splitMeasuresIntoSystems(measures, 4);
       });
 
       it('returns one system', () => {
@@ -193,7 +193,7 @@ describe('The score module', () => {
           { noteGroups: [] },
           { noteGroups: [] },
         ];
-        systems = splitMeasuresIntoSystems(measures);
+        systems = splitMeasuresIntoSystems(measures, 4);
       });
 
       it('returns expected number systems, including a system for the "left over" measures', () => {
