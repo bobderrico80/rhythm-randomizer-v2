@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
-import menuIcon from '../svg/menu.svg';
+import settingsMenuIcon from '../svg/settings.svg';
 import './Header.scss';
 import IconButton from './IconButton';
 
@@ -20,7 +20,7 @@ const Header = ({
     <header className={buildClassName()()}>
       <IconButton
         className={buildClassName('settings-menu-button')()}
-        svg={menuIcon}
+        svg={settingsMenuIcon}
         alt="Open Settings Menu"
         onClick={onSettingsMenuButtonClick}
       />

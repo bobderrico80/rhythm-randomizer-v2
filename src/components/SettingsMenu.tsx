@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import classnames from 'classnames';
+import React, { useEffect, useRef, useState } from 'react';
 import { buildBemClassName } from '../modules/util';
 import IconButton from './IconButton';
 import backArrowIcon from '../svg/back-arrow.svg';
@@ -9,9 +8,7 @@ import { NoteGroupTypeSelectionMap } from '../modules/note';
 import { NoteGroupChangeHandler } from './NoteSelection';
 import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
-
-const FOCUSABLE_ELEMENTS =
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+import SlideOut from './SlideOut';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 const buildPaneClassName = buildClassName('pane');
@@ -51,6 +48,7 @@ const SettingsMenu = ({
   onOpenAccordionChange,
 }: SettingsMenuProps) => {
   const paneRef = useRef<HTMLDivElement>(null);
+  const [lastOpenedAccordion, setLastOpenedAccordion] = useState('');
 
   // Handle closing menu with escape key
   useEffect(() => {
@@ -67,6 +65,7 @@ const SettingsMenu = ({
     };
   }, [onSettingsMenuCloseClick]);
 
+  // TODO: Need to figure out how to do this now that we are using the generic component
   // Scroll pane to top when error message appears
   useEffect(() => {
     if (errorMessage) {
@@ -74,71 +73,24 @@ const SettingsMenu = ({
     }
   }, [errorMessage]);
 
-  // Trap focus
-  useEffect(() => {
-    if (!settingsMenuOpen) {
-      return;
+  // let handleAccordionTransitionComplete: (open: boolean, id: string) => void;
+
+  const accordionTransitionHandlerRef = useRef<
+    (open: boolean, id: string) => void
+  >((open: boolean, id: string) => {
+    if (open) {
+      setLastOpenedAccordion(id);
     }
+  });
 
-    const pane = paneRef.current;
-
-    if (!pane) {
-      return;
-    }
-
-    const focusableElements = pane.querySelectorAll<HTMLElement>(
-      FOCUSABLE_ELEMENTS
-    );
-    const firstFocusableElement = focusableElements[0];
-    const lastFocusableElement =
-      focusableElements[focusableElements.length - 1];
-
-    const handleTab = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab') {
-        return;
-      }
-
-      if (event.shiftKey && document.activeElement === firstFocusableElement) {
-        event.preventDefault();
-        lastFocusableElement.focus();
-        return;
-      }
-
-      if (document.activeElement === lastFocusableElement) {
-        event.preventDefault();
-        firstFocusableElement.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleTab);
-
-    // Position 0 is assumed to be close button, so start focus after that
-    // TODO: Make this less brittle
-    focusableElements[1].focus();
-
-    return () => {
-      document.removeEventListener('keydown', handleTab);
-    };
-  }, [settingsMenuOpen]);
-
-  return (
-    <div
-      className={classnames(buildClassName()(), {
-        [buildClassName()('open')]: settingsMenuOpen,
-      })}
-      aria-hidden={!settingsMenuOpen}
-    >
-      <section
-        className={classnames(buildPaneClassName(), {
-          [buildPaneClassName('open')]: settingsMenuOpen,
-        })}
-        ref={paneRef}
-      >
+  const renderSettingsMenuPane = (open: boolean, onCloseClick: () => void) => {
+    return (
+      <section>
         <IconButton
           className={buildClassName('close-button')()}
           svg={backArrowIcon}
           alt="Close Settings Menu"
-          onClick={onSettingsMenuCloseClick}
+          onClick={onCloseClick}
           id="settings-menu-close"
         />
         <SettingsForm
@@ -154,15 +106,26 @@ const SettingsMenu = ({
           onTimeSignatureChange={onTimeSignatureChange}
           onMeasureCountChange={onMeasureCountChange}
           onOpenAccordionChange={onOpenAccordionChange}
+          onAccordionTransitionComplete={accordionTransitionHandlerRef.current}
         />
       </section>
-      <div
-        className={classnames(buildOverlayClassName(), {
-          [buildOverlayClassName('open')]: settingsMenuOpen,
-        })}
-        onClick={onSettingsMenuCloseClick}
-      />
-    </div>
+    );
+  };
+
+  return (
+    <SlideOut
+      open={settingsMenuOpen}
+      onCloseClick={onSettingsMenuCloseClick}
+      renderPane={renderSettingsMenuPane}
+      className={buildClassName()()}
+      openClassName={buildClassName()('open')}
+      paneClassName={buildPaneClassName()}
+      openPaneClassName={buildPaneClassName('open')}
+      overlayClassName={buildOverlayClassName()}
+      openOverlayClassName={buildOverlayClassName('open')}
+      scrollToTop={Boolean(errorMessage)}
+      focusDependency={lastOpenedAccordion}
+    />
   );
 };
 

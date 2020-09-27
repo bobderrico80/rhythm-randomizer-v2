@@ -22,6 +22,7 @@ export interface SettingsFormProps {
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
   onMeasureCountChange: (measureCount: number) => void;
   onOpenAccordionChange: (accordionOpened: string) => void;
+  onAccordionTransitionComplete: (open: boolean, id: string) => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-settings-form');
@@ -39,6 +40,7 @@ const SettingsForm = ({
   onTimeSignatureChange,
   onMeasureCountChange,
   onOpenAccordionChange,
+  onAccordionTransitionComplete,
 }: SettingsFormProps) => {
   const handleAccordionToggleClick = (id: string, currentlyOpen: boolean) => {
     if (currentlyOpen) {
@@ -55,6 +57,7 @@ const SettingsForm = ({
         id="measure-count-selection-accordion"
         isOpen={openAccordion === 'measure-count-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
+        onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Measure Count Selection'}
         renderPaneContents={() => {
           return (
@@ -70,6 +73,7 @@ const SettingsForm = ({
         id="time-signature-selection-accordion"
         isOpen={openAccordion === 'time-signature-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
+        onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Time Signature Selection'}
         renderPaneContents={() => {
           return (
@@ -85,6 +89,7 @@ const SettingsForm = ({
         id="note-selection-accordion"
         isOpen={openAccordion === 'note-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
+        onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Note Selection'}
         renderPaneContents={() => {
           return (

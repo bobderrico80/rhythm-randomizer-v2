@@ -10,6 +10,8 @@ import {
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
 
+const logger = console;
+
 const MAX_LOOP_COUNT = 1000;
 
 const getRandomNoteDefinition = (
@@ -59,7 +61,7 @@ const getRandomMeasure = (
       // Detect infinite loops, incase there's a possible edge case the other logic in this
       // function cannot handle
       if (loopCount > MAX_LOOP_COUNT) {
-        console.warn('Infinite loop detected!');
+        logger.warn('Infinite loop detected!');
         throw new InvalidNoteSelectionError();
       }
 

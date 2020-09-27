@@ -34,7 +34,7 @@ const App = () => {
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
   const [errorMessage, setErrorMessage] = useState('');
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
   const [scoreData, setScoreData] = useState({
     measures: [],
     timeSignature: selectedTimeSignature,

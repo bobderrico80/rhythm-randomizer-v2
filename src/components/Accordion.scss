@@ -6,6 +6,7 @@
     align-items: center;
     font-size: 1.17em;
     font-weight: bold;
+    margin-bottom: 1rem;
   }
 
   &__button-caret {
@@ -27,9 +28,8 @@
 
   &__pane {
     overflow: hidden;
-    transition: height 500ms ease;
+    transition: height 250ms ease;
     height: auto;
-    padding-top: 1rem;
 
     &--open {
       // height: 300px;

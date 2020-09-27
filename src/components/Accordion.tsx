@@ -17,6 +17,7 @@ export interface AccordionProps {
   openPaneClassName?: string;
   closedPaneClassName?: string;
   onToggleClick?: (toggledId: string, nextOpenState: boolean) => void;
+  onTransitionComplete?: (open: boolean, id: string) => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-accordion');
@@ -34,9 +35,11 @@ const Accordion = ({
   openPaneClassName = '',
   closedPaneClassName = '',
   onToggleClick,
+  onTransitionComplete,
 }: AccordionProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(isOpen || false);
   const [initialized, setInitialized] = useState(false);
+  const [neverOpened, setNeverOpened] = useState(true);
 
   const paneNode = useRef<HTMLDivElement>(null);
 
@@ -52,6 +55,12 @@ const Accordion = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (open) {
+      setNeverOpened(false);
+    }
+  }, [open]);
+
   // Handle expand/collapse animations when `open` changes
   useEffect(() => {
     if (!paneNode.current) {
@@ -63,6 +72,7 @@ const Accordion = ({
     // Don't run the close transition on first render
     if (!initialized && !open) {
       pane.style.height = '0px';
+      pane.style.visibility = 'hidden';
       return;
     }
 
@@ -77,23 +87,39 @@ const Accordion = ({
       requestAnimationFrame(() => {
         pane.style.height = `${paneHeight}px`;
         pane.style.transition = paneTransition;
-
         requestAnimationFrame(() => {
           pane.style.height = '0px';
+
+          if (!neverOpened) {
+            const handleTransition = () => {
+              pane.removeEventListener('transitionend', handleTransition);
+              pane.style.visibility = 'hidden';
+
+              if (onTransitionComplete) {
+                onTransitionComplete(false, id);
+              }
+            };
+            pane.addEventListener('transitionend', handleTransition);
+          }
         });
       });
     } else {
       // Expand section
       pane.style.height = `${paneHeight}px`;
+      pane.style.visibility = '';
 
       const handleTransition = () => {
-        pane.removeEventListener('transitioned', handleTransition);
-        delete pane.style.height;
+        pane.removeEventListener('transitionend', handleTransition);
+        pane.style.height = '';
+
+        if (onTransitionComplete) {
+          onTransitionComplete(true, id);
+        }
       };
 
-      pane.addEventListener('transitioned', handleTransition);
+      pane.addEventListener('transitionend', handleTransition);
     }
-  }, [open, initialized]);
+  }, [open, initialized, id, neverOpened, onTransitionComplete]);
 
   const handleToggleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
