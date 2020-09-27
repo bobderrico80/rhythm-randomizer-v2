@@ -1,7 +1,136 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
-    <g fill="#61DAFB">
-        <path d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 29.4-19.6-4.8-41-8.5-63.5-10.9-13.5-18.5-27.5-35.3-41.6-50 32.6-30.3 63.2-46.9 84-46.9V78c-27.5 0-63.5 19.6-99.9 53.6-36.4-33.8-72.4-53.2-99.9-53.2v22.3c20.7 0 51.4 16.5 84 46.6-14 14.7-28 31.4-41.3 49.9-22.6 2.4-44 6.1-63.6 11-2.3-10-4-19.7-5.2-29-4.7-38.2 1.1-67.9 14.6-75.8 3-1.8 6.9-2.6 11.5-2.6V78.5c-8.4 0-16 1.8-22.6 5.6-28.1 16.2-34.4 66.7-19.9 130.1-62.2 19.2-102.7 49.9-102.7 82.3 0 32.5 40.7 63.3 103.1 82.4-14.4 63.6-8 114.2 20.2 130.4 6.5 3.8 14.1 5.6 22.5 5.6 27.5 0 63.5-19.6 99.9-53.6 36.4 33.8 72.4 53.2 99.9 53.2 8.4 0 16-1.8 22.6-5.6 28.1-16.2 34.4-66.7 19.9-130.1 62-19.1 102.5-49.9 102.5-82.3zm-130.2-66.7c-3.7 12.9-8.3 26.2-13.5 39.5-4.1-8-8.4-16-13.1-24-4.6-8-9.5-15.8-14.4-23.4 14.2 2.1 27.9 4.7 41 7.9zm-45.8 106.5c-7.8 13.5-15.8 26.3-24.1 38.2-14.9 1.3-30 2-45.2 2-15.1 0-30.2-.7-45-1.9-8.3-11.9-16.4-24.6-24.2-38-7.6-13.1-14.5-26.4-20.8-39.8 6.2-13.4 13.2-26.8 20.7-39.9 7.8-13.5 15.8-26.3 24.1-38.2 14.9-1.3 30-2 45.2-2 15.1 0 30.2.7 45 1.9 8.3 11.9 16.4 24.6 24.2 38 7.6 13.1 14.5 26.4 20.8 39.8-6.3 13.4-13.2 26.8-20.7 39.9zm32.3-13c5.4 13.4 10 26.8 13.8 39.8-13.1 3.2-26.9 5.9-41.2 8 4.9-7.7 9.8-15.6 14.4-23.7 4.6-8 8.9-16.1 13-24.1zM421.2 430c-9.3-9.6-18.6-20.3-27.8-32 9 .4 18.2.7 27.5.7 9.4 0 18.7-.2 27.8-.7-9 11.7-18.3 22.4-27.5 32zm-74.4-58.9c-14.2-2.1-27.9-4.7-41-7.9 3.7-12.9 8.3-26.2 13.5-39.5 4.1 8 8.4 16 13.1 24 4.7 8 9.5 15.8 14.4 23.4zM420.7 163c9.3 9.6 18.6 20.3 27.8 32-9-.4-18.2-.7-27.5-.7-9.4 0-18.7.2-27.8.7 9-11.7 18.3-22.4 27.5-32zm-74 58.9c-4.9 7.7-9.8 15.6-14.4 23.7-4.6 8-8.9 16-13 24-5.4-13.4-10-26.8-13.8-39.8 13.1-3.1 26.9-5.8 41.2-7.9zm-90.5 125.2c-35.4-15.1-58.3-34.9-58.3-50.6 0-15.7 22.9-35.6 58.3-50.6 8.6-3.7 18-7 27.7-10.1 5.7 19.6 13.2 40 22.5 60.9-9.2 20.8-16.6 41.1-22.2 60.6-9.9-3.1-19.3-6.5-28-10.2zM310 490c-13.6-7.8-19.5-37.5-14.9-75.7 1.1-9.4 2.9-19.3 5.1-29.4 19.6 4.8 41 8.5 63.5 10.9 13.5 18.5 27.5 35.3 41.6 50-32.6 30.3-63.2 46.9-84 46.9-4.5-.1-8.3-1-11.3-2.7zm237.2-76.2c4.7 38.2-1.1 67.9-14.6 75.8-3 1.8-6.9 2.6-11.5 2.6-20.7 0-51.4-16.5-84-46.6 14-14.7 28-31.4 41.3-49.9 22.6-2.4 44-6.1 63.6-11 2.3 10.1 4.1 19.8 5.2 29.1zm38.5-66.7c-8.6 3.7-18 7-27.7 10.1-5.7-19.6-13.2-40-22.5-60.9 9.2-20.8 16.6-41.1 22.2-60.6 9.9 3.1 19.3 6.5 28.1 10.2 35.4 15.1 58.3 34.9 58.3 50.6-.1 15.7-23 35.6-58.4 50.6zM320.8 78.4z"/>
-        <circle cx="420.9" cy="296.5" r="45.7"/>
-        <path d="M520.5 78.1z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="300"
+   height="300"
+   viewBox="0 0 79.374999 79.374999"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="75.895872"
+     inkscape:cy="99.060761"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="1005"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-217.625)">
+    <rect
+       id="rect10"
+       width="76.769135"
+       height="76.769135"
+       x="1.3029319"
+       y="218.92793"
+       style="fill:#027fa2;fill-opacity:1;stroke:#000000;stroke-width:2.60586381;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:9.69999981;stroke-dasharray:none;stroke-opacity:1"
+       ry="11.142501" />
+    <g
+       id="g910"
+       transform="translate(-1.2027129,-0.80180861)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;line-height:1.25;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.13072991"
+         x="4.8748808"
+         y="260.25546"
+         id="text888"><tspan
+           sodipodi:role="line"
+           id="tspan886"
+           x="4.8748808"
+           y="260.25546"
+           style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:1.13072991">R</tspan></text>
+      <text
+         id="text821"
+         y="262.25998"
+         x="7.5475764"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;line-height:1.25;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.13072991"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:1.13072991"
+           y="262.25998"
+           x="7.5475764"
+           id="tspan819"
+           sodipodi:role="line">R</tspan></text>
     </g>
+    <g
+       transform="translate(29.800553,26.459683)"
+       id="g920">
+      <text
+         id="text914"
+         y="260.25546"
+         x="4.8748808"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;line-height:1.25;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.13072991"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:1.13072991"
+           y="260.25546"
+           x="4.8748808"
+           id="tspan912"
+           sodipodi:role="line">R</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;line-height:1.25;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.13072991"
+         x="7.5475764"
+         y="262.25998"
+         id="text918"><tspan
+           sodipodi:role="line"
+           id="tspan916"
+           x="7.5475764"
+           y="262.25998"
+           style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:45.22964096px;font-family:'Hiragino Kaku Gothic Std';-inkscape-font-specification:'Hiragino Kaku Gothic Std, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:1.13072991">R</tspan></text>
+    </g>
+    <g
+       aria-label=""
+       style="font-style:normal;font-weight:normal;font-size:34.75893021px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.86897326"
+       id="text924">
+      <path
+         d="m 23.908683,281.7343 c -0.556143,-0.48663 -1.32084,-0.72994 -2.224572,-0.72994 -3.441134,0 -6.187089,2.5374 -6.187089,5.2486 0,1.63367 1.320839,2.60692 3.024027,2.60692 2.780714,0 6.221848,-2.60692 6.221848,-5.2486 v -23.01041 h -0.834214 z"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.86897326"
+         id="path933" />
+    </g>
+    <g
+       aria-label=""
+       style="font-style:normal;font-weight:normal;font-size:34.59845352px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.86496139"
+       id="text928">
+      <path
+         d="m 56.209763,236.36152 c 0.44978,0.55358 0.830363,1.10715 1.210946,1.66073 0.0346,0.13839 0.172992,0.34598 0.172992,0.41518 0,0 0,0.0692 -0.0346,0.10379 -0.0692,0.1038 -0.172992,0.1384 -0.311386,0.1384 -0.103796,0 -0.345985,-0.0692 -0.44978,-0.1038 -0.138394,0 -0.311386,-0.0692 -0.44978,-0.0692 -1.176347,0 -2.248899,1.17635 -2.248899,2.66409 0,1.38393 1.176347,2.73327 3.217656,4.2902 0.20759,0.173 0.484378,0.24219 0.691969,0.24219 0.207591,0 0.415181,-0.0692 0.415181,-0.17299 0.0346,-0.0692 0.0692,-0.13839 0.0692,-0.17299 0,-0.27679 -0.207591,-0.48438 -0.44978,-0.69197 -0.345984,0 -0.65737,-0.72657 -0.726567,-0.96876 -0.0692,-0.24219 -0.103796,-0.48438 -0.103796,-0.72656 0,-0.86497 0.415182,-1.83372 1.314742,-2.00671 0.138393,-0.0346 0.276787,-0.0346 0.44978,-0.0346 0.795764,0 1.695324,0.31138 2.145104,0.48438 0.0346,0 0.0692,0.0346 0.0692,0.0346 0.103795,0.0346 0.138393,0.0346 0.20759,0.0346 0.0692,0 0.138394,-0.0346 0.138394,-0.13839 0,-0.31139 -0.726567,-1.24555 -1.037954,-1.55693 -1.037953,-1.28015 -1.902914,-2.3181 -1.902914,-3.84043 0,-0.13839 0.0346,-0.27679 0.0346,-0.38058 0.103795,-1.59153 1.10715,-2.94087 1.833718,-4.04802 0.0692,-0.1384 0.103795,-0.27679 0.103795,-0.41518 0,-0.27679 -0.103795,-0.55358 -0.103795,-0.55358 0,0 -4.117216,-4.84378 -4.566996,-5.32816 -0.138394,-0.1384 -0.345984,-0.20759 -0.518977,-0.20759 -0.276787,0 -0.553575,0.17299 -0.553575,0.55357 0,0.1384 0.0346,0.27679 0.138394,0.44978 0.103795,0.31139 1.660726,1.72993 1.660726,3.70204 0,1.03795 -0.415182,2.2143 -1.660726,3.52904 -0.276788,0.27679 -0.380583,0.58817 -0.380583,0.79576 0,0.38059 0.276788,0.65738 0.276788,0.65738 z"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.86496139"
+         id="path930" />
+    </g>
+  </g>
 </svg>
