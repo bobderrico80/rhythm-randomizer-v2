@@ -1,6 +1,6 @@
 ## What's New in Version 2.0.0?
 
-Welcome to Rhythm Randomizer version 2! This version is a complete rebuild of the original version that was created in 2014, and hasn't been updated since. This new version is more stable, easier to maintain, and easier to update and add new features. There are many exciting features planned for version 2. Be sure to check the main menu for news about updates and new features, or even better, follow my [Facebook Page]()!
+Welcome to Rhythm Randomizer version 2! This version is a complete rebuild of the original version that was created in 2014, and hasn't been updated since. This new version is more stable, easier to maintain, and easier to update and add new features. There are many exciting features planned for version 2. Be sure to check the main menu for news about updates and new features, or even better, follow my [Facebook Page](https://fb.me/TheRhythmRandomizer)!
 
 Here are some of the new things introduced with this version:
 
@@ -26,7 +26,7 @@ Selected options will now be persisted locally. This means that if you close the
 
 ### New Facebook page
 
-During the last six years, I've had several people attempt to reach out to me about feature requests and bug fixes. Since I created this project (and in all honesty, kinda forgot about it), the email address was outdated. Most people were able to track me down on Facebook. In the future, I want to make this process easier, so I've set up a dedicated [Facebook page]() for The Rhythm Randomizer. Follow the page to get news about updates and post feedback, feature requests, or bugs that you might find.
+During the last six years, I've had several people attempt to reach out to me about feature requests and bug fixes. Since I created this project (and in all honesty, kinda forgot about it), the email address was outdated. Most people were able to track me down on Facebook. In the future, I want to make this process easier, so I've set up a dedicated [Facebook page](https://fb.me/TheRhythmRandomizer) for The Rhythm Randomizer. Follow the page to get news about updates and post feedback, feature requests, or bugs that you might find.
 
 ### Thank you!
 

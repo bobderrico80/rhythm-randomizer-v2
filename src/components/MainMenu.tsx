@@ -42,13 +42,22 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
           />
         </div>
         <section className={buildClassName('content')()}>
-          <ReactMarkdown source={releaseNotesSource} />
+          <ReactMarkdown source={releaseNotesSource} linkTarget="_blank" />
           <footer className={buildClassName('footer')()}>
             <p>
               Copyright &copy; {new Date().getFullYear()} Bob D'Errico. All
               Rights Reserved.
             </p>
-            <p>Version: {version}</p>
+            <p>
+              Version: {version} |{' '}
+              <a
+                href="https://fb.me/TheRhythmRandomizer"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Connect on Facebook
+              </a>
+            </p>
           </footer>
         </section>
       </section>
