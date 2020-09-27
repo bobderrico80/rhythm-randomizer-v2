@@ -4,78 +4,72 @@
   height: 60px;
   color: white;
   background-color: $brand-color;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
+  padding: 0 1rem;
 
-  @media (max-width: $mobile-breakpoint) {
+  &__container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  &--mobile {
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: flex-start;
-    padding-top: 14px;
+    // padding-top: 14px;
     height: 90px;
-  }
 
-  &__settings-menu-button {
-    margin-right: 1rem;
-    margin-top: 4px;
-
-    @media (max-width: $mobile-breakpoint) {
-      margin-right: 0.5rem;
+    .c-rr-header__container {
+      height: 45px;
     }
 
-    .c-rr-icon-button__icon {
-      width: 25px;
+    .c-rr-header__menu-button {
+      margin-top: 0;
 
-      @media (max-width: $mobile-breakpoint) {
+      &--settings {
+        margin-right: 0.5rem;
+      }
+
+      &--main {
+        margin-left: 0.5rem;
+      }
+
+      .c-rr-icon-button__icon {
         width: 12px;
       }
     }
-  }
 
-  &__title {
-    margin: 0;
-    padding-right: 2rem;
-
-    @media (max-width: $mobile-breakpoint) {
+    .c-rr-header__title {
       padding-bottom: 0.5rem;
       font-size: 1rem;
       margin-top: 1px;
     }
   }
 
-  &__nav {
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+  &__menu-button {
+    margin-top: 4px;
+
+    &--settings {
+      margin-right: 1rem;
     }
 
-    @media (max-width: $mobile-breakpoint) {
-      flex-basis: 100%;
+    &--main {
+      margin-left: 1rem;
+    }
+
+    .c-rr-icon-button__icon {
+      width: 25px;
     }
   }
 
-  &__nav-item {
+  &__title {
+    margin: 0;
+    padding-right: 2rem;
   }
 
-  &__nav-item-link {
-    border: 1px solid white;
-    border-radius: 0.5em;
-    color: white;
-    font-size: 1rem;
-    padding: 0.5rem;
-    font-weight: bold;
-    background-color: $brand-color;
-
-    &:hover {
-      color: $brand-color;
-      background-color: white;
-    }
-
-    @media (max-width: $mobile-breakpoint) {
-      font-size: 0.75rem;
-      padding: 0.4rem;
-    }
+  &--right {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
   }
 }

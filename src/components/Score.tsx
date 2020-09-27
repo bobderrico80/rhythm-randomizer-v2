@@ -4,8 +4,7 @@ import './Score.scss';
 import { createScore } from '../modules/vex';
 import { ScoreData } from '../modules/score';
 import { buildBemClassName } from '../modules/util';
-
-const MOBILE_BREAKPOINT = 768; // px
+import { FormFactor } from '../App';
 
 const buildClassName = buildBemClassName('c-rr-score');
 
@@ -13,6 +12,7 @@ export interface ScoreProps {
   scoreData: ScoreData;
   innerWidth: number;
   transitioning: boolean;
+  currentFormFactor: FormFactor;
   onScoreClick: () => void;
 }
 
@@ -20,6 +20,7 @@ const Score = ({
   scoreData,
   innerWidth,
   transitioning,
+  currentFormFactor,
   onScoreClick,
 }: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,7 +36,7 @@ const Score = ({
       return;
     }
 
-    const measuresPerSystem = innerWidth > MOBILE_BREAKPOINT ? 4 : 2;
+    const measuresPerSystem = currentFormFactor === FormFactor.DESKTOP ? 4 : 2;
 
     createScore(ref.current, scoreData, innerWidth, measuresPerSystem);
 

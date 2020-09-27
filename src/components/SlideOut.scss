@@ -1,0 +1,42 @@
+.c-rr-slide-out {
+  &--open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  &__overlay {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+
+  &__overlay--open {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.5;
+  }
+
+  &__pane {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    max-width: 500px;
+    z-index: 1;
+    background-color: white;
+    color: black;
+    overflow-y: hidden;
+
+    &--open {
+      overflow-y: scroll;
+    }
+  }
+}

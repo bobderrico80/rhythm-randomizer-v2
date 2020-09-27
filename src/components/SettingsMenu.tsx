@@ -11,8 +11,6 @@ import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import SlideOut from './SlideOut';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
-const buildPaneClassName = buildClassName('pane');
-const buildOverlayClassName = buildClassName('overlay');
 
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
@@ -47,8 +45,15 @@ const SettingsMenu = ({
   onMeasureCountChange,
   onOpenAccordionChange,
 }: SettingsMenuProps) => {
-  const paneRef = useRef<HTMLDivElement>(null);
   const [lastOpenedAccordion, setLastOpenedAccordion] = useState('');
+
+  const accordionTransitionHandlerRef = useRef<
+    (open: boolean, id: string) => void
+  >((open: boolean, id: string) => {
+    if (open) {
+      setLastOpenedAccordion(id);
+    }
+  });
 
   // Handle closing menu with escape key
   useEffect(() => {
@@ -64,24 +69,6 @@ const SettingsMenu = ({
       document.removeEventListener('keydown', escapePane);
     };
   }, [onSettingsMenuCloseClick]);
-
-  // TODO: Need to figure out how to do this now that we are using the generic component
-  // Scroll pane to top when error message appears
-  useEffect(() => {
-    if (errorMessage) {
-      paneRef.current?.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
-    }
-  }, [errorMessage]);
-
-  // let handleAccordionTransitionComplete: (open: boolean, id: string) => void;
-
-  const accordionTransitionHandlerRef = useRef<
-    (open: boolean, id: string) => void
-  >((open: boolean, id: string) => {
-    if (open) {
-      setLastOpenedAccordion(id);
-    }
-  });
 
   const renderSettingsMenuPane = (open: boolean, onCloseClick: () => void) => {
     return (
@@ -117,12 +104,8 @@ const SettingsMenu = ({
       open={settingsMenuOpen}
       onCloseClick={onSettingsMenuCloseClick}
       renderPane={renderSettingsMenuPane}
-      className={buildClassName()()}
-      openClassName={buildClassName()('open')}
-      paneClassName={buildPaneClassName()}
-      openPaneClassName={buildPaneClassName('open')}
-      overlayClassName={buildOverlayClassName()}
-      openOverlayClassName={buildOverlayClassName('open')}
+      paneClassName={buildClassName('pane')()}
+      openPaneClassName={buildClassName('pane')('open')}
       scrollToTop={Boolean(errorMessage)}
       focusDependency={lastOpenedAccordion}
     />

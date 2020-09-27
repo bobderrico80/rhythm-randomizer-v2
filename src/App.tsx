@@ -19,10 +19,17 @@ import Header from './components/Header';
 import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
 import { MultiSelectStatusType } from './components/NoteCheckboxGroup';
+import MainMenu from './components/MainMenu';
+
+export enum FormFactor {
+  MOBILE,
+  DESKTOP,
+}
 
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
 const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
+const MOBILE_BREAKPOINT = 768; // px
 
 const App = () => {
   const [measureCount, setMeasureCount] = useState(2);
@@ -34,7 +41,8 @@ const App = () => {
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
   const [errorMessage, setErrorMessage] = useState('');
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(true);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [scoreData, setScoreData] = useState({
     measures: [],
     timeSignature: selectedTimeSignature,
@@ -42,6 +50,11 @@ const App = () => {
   const [transitioning, setTransitioning] = useState(false);
   const [openSettingsAccordion, setOpenSettingsAccordion] = useState(
     'note-selection-accordion'
+  );
+  const [formFactor, setFormFactor] = useState<FormFactor>(
+    window.innerWidth > MOBILE_BREAKPOINT
+      ? FormFactor.DESKTOP
+      : FormFactor.MOBILE
   );
 
   // TODO: Improve how initial state is set
@@ -92,6 +105,21 @@ const App = () => {
     });
   }, [selectedTimeSignature]);
 
+  useEffect(() => {
+    const handleMatchMediaChange = (event: MediaQueryListEvent) => {
+      setFormFactor(event.matches ? FormFactor.MOBILE : FormFactor.DESKTOP);
+    };
+
+    const mediaQueryList = window.matchMedia(
+      `(max-width: ${MOBILE_BREAKPOINT}px)`
+    );
+    mediaQueryList.addEventListener('change', handleMatchMediaChange);
+
+    return () => {
+      mediaQueryList.removeEventListener('change', handleMatchMediaChange);
+    };
+  }, []);
+
   const setNextMeasures = () => {
     try {
       const nextMeasures = getRandomMeasures(
@@ -129,8 +157,16 @@ const App = () => {
     setSettingsMenuOpen(true);
   };
 
+  const handleMainMenuButtonClick = () => {
+    setMainMenuOpen(true);
+  };
+
   const handleSettingsMenuCloseClick = () => {
     setSettingsMenuOpen(false);
+  };
+
+  const handleMainMenuCloseClick = () => {
+    setMainMenuOpen(false);
   };
 
   const handleNoteGroupChange = (
@@ -196,7 +232,13 @@ const App = () => {
         errorMessage={errorMessage}
         onOpenAccordionChange={handleSettingsOpenAccordionChange}
       />
+      <MainMenu
+        mainMenuOpen={mainMenuOpen}
+        onMainMenuCloseClick={handleMainMenuCloseClick}
+      />
       <Header
+        currentFormFactor={formFactor}
+        onMainMenuButtonClick={handleMainMenuButtonClick}
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
         onRandomizeButtonClick={handleRandomizeButtonClick}
       />
@@ -204,6 +246,7 @@ const App = () => {
         scoreData={scoreData}
         innerWidth={innerWidth}
         transitioning={transitioning}
+        currentFormFactor={formFactor}
         onScoreClick={handleRandomizeButtonClick}
       />
     </div>

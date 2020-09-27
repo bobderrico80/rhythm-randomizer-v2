@@ -1,0 +1,33 @@
+@import '../styles/variables.scss';
+
+.c-rr-header-nav {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    flex-basis: 100%;
+  }
+
+  &__item-link {
+    border: 1px solid white;
+    border-radius: 0.5em;
+    color: white;
+    font-size: 1rem;
+    padding: 0.5rem;
+    font-weight: bold;
+    background-color: $brand-color;
+
+    &:hover {
+      color: $brand-color;
+      background-color: white;
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      font-size: 0.75rem;
+      padding: 0.4rem;
+    }
+  }
+}

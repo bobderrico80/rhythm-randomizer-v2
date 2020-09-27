@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
+import './SlideOut.scss';
 
 const FOCUSABLE_ELEMENTS =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';

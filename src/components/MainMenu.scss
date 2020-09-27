@@ -1,0 +1,33 @@
+.c-rr-main-menu {
+  &__pane {
+    right: -500px;
+    transition: right 250ms ease;
+
+    &--open {
+      right: 0;
+      border-left: 2px solid black;
+    }
+  }
+
+  &__button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__close-button {
+    margin-top: 1rem;
+    padding-left: 1rem;
+
+    .c-rr-icon-button__icon {
+      width: 25px;
+      transform: rotate(180deg);
+    }
+  }
+
+  &__content {
+    margin-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 2rem;
+  }
+}
