@@ -7,6 +7,7 @@ import {
   getSelectedNoteGroupTypes,
   NoteGroupCategory,
   getNoteGroup,
+  NoteGroupTypeSelectionMap,
 } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
@@ -20,10 +21,22 @@ import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
 import { MultiSelectStatusType } from './components/NoteCheckboxGroup';
 import MainMenu from './components/MainMenu';
+import { fromJS } from 'immutable';
 
 export enum FormFactor {
   MOBILE,
   DESKTOP,
+}
+
+enum LocalStorageKey {
+  SCORE_SETTINGS = 'rr.scoreSettings',
+  SCORE_DATA = 'rr.scoreData',
+}
+
+interface ScoreSettings {
+  measureCount: number;
+  timeSignatureType: TimeSignatureType;
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
 }
 
 const THROTTLE_INTERVAL = 200; // ms
@@ -32,35 +45,78 @@ const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
 const MOBILE_BREAKPOINT = 768; // px
 
 const App = () => {
+  // Menu/accordion states
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
+  const [openSettingsAccordion, setOpenSettingsAccordion] = useState(
+    'note-selection-accordion'
+  );
+
+  // Score selection settings
   const [measureCount, setMeasureCount] = useState(2);
   const [selectedTimeSignature, setSelectedTimeSignature] = useState(
     getTimeSignature(TimeSignatureType.SIMPLE_4_4)
   );
-  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
   const [errorMessage, setErrorMessage] = useState('');
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
-  const [mainMenuOpen, setMainMenuOpen] = useState(false);
+
+  // Score state
   const [scoreData, setScoreData] = useState({
     measures: [],
     timeSignature: selectedTimeSignature,
   } as ScoreData);
   const [transitioning, setTransitioning] = useState(false);
-  const [openSettingsAccordion, setOpenSettingsAccordion] = useState(
-    'note-selection-accordion'
-  );
+
+  // Page dimension states
+  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [formFactor, setFormFactor] = useState<FormFactor>(
     window.innerWidth > MOBILE_BREAKPOINT
       ? FormFactor.DESKTOP
       : FormFactor.MOBILE
   );
 
-  // TODO: Improve how initial state is set
   useEffect(() => {
-    setNextMeasures();
-  }, []); // eslint-disable-line
+    const scoreSettingsJson = window.localStorage.getItem(
+      LocalStorageKey.SCORE_SETTINGS
+    );
+    const scoreDataJson = window.localStorage.getItem(
+      LocalStorageKey.SCORE_DATA
+    );
+    if (scoreSettingsJson && scoreDataJson) {
+      const scoreSettings = JSON.parse(scoreSettingsJson) as ScoreSettings;
+      const scoreData = JSON.parse(scoreDataJson) as ScoreData;
+
+      setMeasureCount(scoreSettings.measureCount);
+      setSelectedTimeSignature(
+        getTimeSignature(scoreSettings.timeSignatureType)
+      );
+      setNoteGroupTypeSelectionMap(
+        fromJS(scoreSettings.noteGroupTypeSelectionMap)
+      );
+      setScoreData(scoreData);
+    } else {
+      setNextMeasures();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const scoreSettings = {
+      measureCount,
+      timeSignatureType: selectedTimeSignature.type,
+      noteGroupTypeSelectionMap: noteGroupTypeSelectionMap.toJS(),
+    };
+
+    localStorage.setItem(
+      LocalStorageKey.SCORE_SETTINGS,
+      JSON.stringify(scoreSettings)
+    );
+  }, [measureCount, selectedTimeSignature, noteGroupTypeSelectionMap]);
+
+  useEffect(() => {
+    localStorage.setItem(LocalStorageKey.SCORE_DATA, JSON.stringify(scoreData));
+  }, [scoreData]);
 
   // Handle resizing score on window resize
   useEffect(() => {
@@ -105,6 +161,7 @@ const App = () => {
     });
   }, [selectedTimeSignature]);
 
+  // Update form factor value based on media query
   useEffect(() => {
     const handleMatchMediaChange = (event: MediaQueryListEvent) => {
       setFormFactor(event.matches ? FormFactor.MOBILE : FormFactor.DESKTOP);
