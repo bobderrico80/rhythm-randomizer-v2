@@ -45,7 +45,7 @@ const Score = ({
         ref.current.innerHTML = '';
       }
     };
-  }, [scoreData, innerWidth]);
+  }, [scoreData, innerWidth, currentFormFactor]);
 
   return (
     <button

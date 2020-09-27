@@ -1,6 +1,6 @@
 {
   "name": "rhythm-randomizer-v2",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -19,6 +19,7 @@
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-markdown": "^4.3.1",
     "react-scripts": "^3.4.3",
     "typescript": "^3.7.5",
     "vexflow": "^3.0.9"

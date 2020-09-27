@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { buildBemClassName } from '../modules/util';
 import SlideOut from './SlideOut';
 import IconButton from './IconButton';
 import backArrowIcon from '../svg/back-arrow.svg';
 import './MainMenu.scss';
+import releaseNotesPath from '../release-notes.md';
+import { version } from '../../package.json';
 
 const buildClassName = buildBemClassName('c-rr-main-menu');
 
@@ -13,6 +16,19 @@ export interface MainMenuProps {
 }
 
 const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
+  const [releaseNotesSource, setReleaseNotesSource] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await window.fetch(releaseNotesPath);
+        const text = await response.text();
+        setReleaseNotesSource(text);
+      } catch (error) {
+        setReleaseNotesSource('Error loading release notes');
+      }
+    })();
+  }, []);
   const renderMainMenuPane = (open: boolean, onCloseClick: () => void) => {
     return (
       <section>
@@ -26,7 +42,14 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
           />
         </div>
         <section className={buildClassName('content')()}>
-          main menu stuff goes here
+          <ReactMarkdown source={releaseNotesSource} />
+          <footer className={buildClassName('footer')()}>
+            <p>
+              Copyright &copy; {new Date().getFullYear()} Bob D'Errico. All
+              Rights Reserved.
+            </p>
+            <p>Version: {version}</p>
+          </footer>
         </section>
       </section>
     );
