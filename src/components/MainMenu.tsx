@@ -58,6 +58,16 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
                 Connect on Facebook
               </a>
             </p>
+            <p>
+              Prefer the old version? Visit{' '}
+              <a
+                href="http://v1.rhythmrandomizer.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                http://v1.rhythmrandomizer.com
+              </a>
+            </p>
           </footer>
         </section>
       </section>

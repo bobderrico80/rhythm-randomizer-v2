@@ -1,3 +1,9 @@
+## What's New in Version 2.0.1?
+
+- Fixed bug where main menu could be scrolled into view on mobile devices
+- Added Google Analytics tracking script
+- Setup a link to the "old" Rhythm Randomizer: [http://v1.rhythmrandomizer.com](http://v1.rhythmrandomizer.com)
+
 ## What's New in Version 2.0.0?
 
 Welcome to Rhythm Randomizer version 2! This version is a complete rebuild of the original version that was created in 2014, and hasn't been updated since. This new version is more stable, easier to maintain, and easier to update and add new features. There are many exciting features planned for version 2. Be sure to check the main menu for news about updates and new features, or even better, follow my [Facebook Page](https://fb.me/TheRhythmRandomizer)!
