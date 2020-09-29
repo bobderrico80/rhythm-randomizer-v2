@@ -9,6 +9,7 @@ import {
   MeasureConfiguration,
   calculateMeasureWidths,
   ScoreData,
+  ScoreDimensionConfig,
 } from './score';
 
 const VF = Vex.Flow;
@@ -31,12 +32,14 @@ const getContext = (
   targetElement: HTMLElement,
   measures: Measure[],
   innerWidth: number,
-  measuresPerSystem: number
+  measuresPerSystem: number,
+  scoreDimensionConfig: ScoreDimensionConfig
 ) => {
   const dimensions = getScoreDimensions(
     measures.length,
     innerWidth,
-    measuresPerSystem
+    measuresPerSystem,
+    scoreDimensionConfig
   );
 
   const renderer = new VF.Renderer(targetElement, VF.Renderer.Backends.SVG);
@@ -52,14 +55,16 @@ const createNotes = (
   noteGroups: NoteGroup[],
   stave: Vex.Flow.Stave,
   measureConfiguration: MeasureConfiguration,
-  toRender: ToRender
+  toRender: ToRender,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): void => {
   noteGroups.forEach((noteGroup) => {
     const staveNotes = noteGroup.notes.map((note) => {
       const noteConfiguration = getNoteConfiguration(
         note,
         measureConfiguration.measureWidth,
-        measureConfiguration.firstMeasure
+        measureConfiguration.firstMeasure,
+        scoreDimensionConfig
       );
 
       const staveNote = new VF.StaveNote({
@@ -106,14 +111,16 @@ const createMeasure = (
   finalMeasure: boolean,
   measureWidths: number[],
   timeSignature: TimeSignature,
-  toRender: ToRender
+  toRender: ToRender,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): void => {
   const measureConfiguration = getMeasureConfiguration(
     systemIndex,
     measureIndexInSystem,
     measureWidths,
     finalMeasure,
-    timeSignature
+    timeSignature,
+    scoreDimensionConfig
   );
 
   const stave = new VF.Stave(
@@ -137,7 +144,13 @@ const createMeasure = (
     stave.addTimeSignature(measureConfiguration.timeSignature);
   }
 
-  createNotes(measure.noteGroups, stave, measureConfiguration, toRender);
+  createNotes(
+    measure.noteGroups,
+    stave,
+    measureConfiguration,
+    toRender,
+    scoreDimensionConfig
+  );
 };
 
 const createSystem = (
@@ -145,10 +158,11 @@ const createSystem = (
   systemIndex: number,
   totalSystems: number,
   timeSignature: TimeSignature,
-  toRender: ToRender
+  toRender: ToRender,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): void => {
   const isFinalSystem = systemIndex === totalSystems - 1;
-  const measureWidths = calculateMeasureWidths(system);
+  const measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
 
   system.measures.forEach((measure, measureIndex) => {
     createMeasure(
@@ -158,7 +172,8 @@ const createSystem = (
       isFinalSystem && measureIndex === system.measures.length - 1,
       measureWidths,
       timeSignature,
-      toRender
+      toRender,
+      scoreDimensionConfig
     );
   });
 };
@@ -167,20 +182,29 @@ export const createScore = (
   targetElement: HTMLElement,
   scoreData: ScoreData,
   innerWidth: number,
-  measuresPerSystem: number
+  measuresPerSystem: number,
+  scoreDimensionConfig: ScoreDimensionConfig
 ) => {
   const { measures, timeSignature } = scoreData;
   const context = getContext(
     targetElement,
     measures,
     innerWidth,
-    measuresPerSystem
+    measuresPerSystem,
+    scoreDimensionConfig
   );
   const systems = splitMeasuresIntoSystems(measures, measuresPerSystem);
   const toRender: ToRender = { staveNotes: new Map(), beams: [], tuplets: [] };
 
   systems.forEach((system, systemIndex) => {
-    createSystem(system, systemIndex, systems.length, timeSignature, toRender);
+    createSystem(
+      system,
+      systemIndex,
+      systems.length,
+      timeSignature,
+      toRender,
+      scoreDimensionConfig
+    );
   });
 
   toRender.staveNotes.forEach((notes, stave) => {
