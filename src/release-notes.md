@@ -1,3 +1,8 @@
+## What's New in Version 2.0.2?
+
+- Increased maximum width of score, which inherently increases the size of the notation and more closely mimicking the look of the version 1 site.
+- Increased the size of the header buttons on mobile
+
 ## What's New in Version 2.0.1?
 
 - Fixed bug where main menu could be scrolled into view on mobile devices
