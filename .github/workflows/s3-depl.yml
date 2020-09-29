@@ -16,7 +16,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: CI=true npm test
+      - name: Lint source code
+        run: eslint src/**/*.ts src/**/*.tsx
       - name: Build React App
-        run: npm install && npm run build
+        run: npm run build
       - name: Deploy app build to S3 bucket
         run: aws s3 sync ./build/ s3://www.rhythmrandomizer.com --delete
+      - name: Invalidate index.html on CloudFront
+        run: aws cloudfront create-invalidation --distribution-id EDFFBQN7WWVGQ --paths /index.html
