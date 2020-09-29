@@ -1,4 +1,4 @@
-import { getRandomMeasures, validateNoteGroupTypeSelection } from './random';
+import { getRandomMeasures } from './random';
 import {
   NoteGroupType,
   getTotalDuration,
@@ -28,7 +28,7 @@ describe('The random module', () => {
 
   beforeEach(() => {
     noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-      getNoteGroupTypeSelectionMap()
+      getNoteGroupTypeSelectionMap(4)
     );
   });
 
