@@ -21,7 +21,7 @@ jobs:
       - name: Run tests
         run: CI=true npm test
       - name: Lint source code
-        run: eslint src/**/*.ts src/**/*.tsx
+        run: ./node_modules/.bin/eslint src/**/*.ts src/**/*.tsx
       - name: Build React App
         run: npm run build
       - name: Deploy app build to S3 bucket
