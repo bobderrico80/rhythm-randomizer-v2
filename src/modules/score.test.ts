@@ -8,6 +8,7 @@ import {
   NoteConfiguration,
   MeasureConfiguration,
   calculateMeasureWidths,
+  ScoreDimensionConfig,
 } from './score';
 import { Measure, System } from './vex';
 import { Note, getNoteGroup, NoteGroupType, getNoteGroups } from './note';
@@ -25,6 +26,18 @@ interface SetupMeasureConfig {
   timeSignature?: TimeSignature;
 }
 
+const scoreDimensionConfig: ScoreDimensionConfig = {
+  paddingLeft: 10,
+  paddingRight: 10,
+  paddingTop: 40,
+  paddingBottom: 40,
+  maxWidth: 1220,
+  systemVerticalOffset: 150,
+  defaultMeasureWidth: 300,
+  wholeRestCenteringOffset: 0.43,
+  wholeRestCenteringFirstMeasureAdditionalOffset: -0.1,
+};
+
 const setupMeasureConfiguration = (config: SetupMeasureConfig = {}) => {
   const resolvedConfig: SetupMeasureConfig = {
     systemIndex: 0,
@@ -40,7 +53,8 @@ const setupMeasureConfiguration = (config: SetupMeasureConfig = {}) => {
     resolvedConfig.measureIndexInSystem!,
     resolvedConfig.measureWidths!,
     resolvedConfig.finalMeasure!,
-    resolvedConfig.timeSignature!
+    resolvedConfig.timeSignature!,
+    scoreDimensionConfig
   );
 };
 
@@ -50,7 +64,7 @@ describe('The score module', () => {
   describe('getScoreDimensions() function', () => {
     describe('where score width can equal the score max size', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 2000, 4);
+        dimensions = getScoreDimensions(4, 2000, 4, scoreDimensionConfig);
       });
 
       it('has a width equal to the max score width', () => {
@@ -64,7 +78,7 @@ describe('The score module', () => {
 
     describe('with one system-worth of measures', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 2000, 4);
+        dimensions = getScoreDimensions(4, 2000, 4, scoreDimensionConfig);
       });
 
       it('has a height to accommodate one system', () => {
@@ -74,7 +88,7 @@ describe('The score module', () => {
 
     describe('with more than one system-worth of measures', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(8, 2000, 4);
+        dimensions = getScoreDimensions(8, 2000, 4, scoreDimensionConfig);
       });
 
       it('has a height to accommodate multiple systems', () => {
@@ -84,7 +98,7 @@ describe('The score module', () => {
 
     describe('with a score width smaller than the window inner width', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(4, 610, 4);
+        dimensions = getScoreDimensions(4, 610, 4, scoreDimensionConfig);
       });
 
       it('has a width equal to the window inner width', () => {
@@ -102,7 +116,7 @@ describe('The score module', () => {
 
     describe('with a score width smaller than the max score width', () => {
       beforeEach(() => {
-        dimensions = getScoreDimensions(2, 2000, 4);
+        dimensions = getScoreDimensions(2, 2000, 4, scoreDimensionConfig);
       });
 
       it('has a width equal to the maximum score width', () => {
@@ -224,7 +238,8 @@ describe('The score module', () => {
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
-          inFirstMeasure
+          inFirstMeasure,
+          scoreDimensionConfig
         );
       });
 
@@ -264,7 +279,8 @@ describe('The score module', () => {
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
-          inFirstMeasure
+          inFirstMeasure,
+          scoreDimensionConfig
         );
       });
 
@@ -280,7 +296,8 @@ describe('The score module', () => {
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
-          inFirstMeasure
+          inFirstMeasure,
+          scoreDimensionConfig
         );
       });
 
@@ -296,7 +313,8 @@ describe('The score module', () => {
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
-          inFirstMeasure
+          inFirstMeasure,
+          scoreDimensionConfig
         );
       });
 
@@ -465,7 +483,7 @@ describe('The score module', () => {
             { noteGroups: [getNoteGroup(NoteGroupType.WR)] },
           ],
         };
-        measureWidths = calculateMeasureWidths(system);
+        measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
       });
 
       it('includes measure widths that are all equal (to the default measure width)', () => {
@@ -503,7 +521,7 @@ describe('The score module', () => {
             },
           ],
         };
-        measureWidths = calculateMeasureWidths(system);
+        measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
       });
 
       it('includes measure widths that are proportional to the distribution of width units', () => {

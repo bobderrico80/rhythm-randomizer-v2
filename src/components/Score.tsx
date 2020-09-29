@@ -2,9 +2,22 @@ import React, { useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import './Score.scss';
 import { createScore } from '../modules/vex';
-import { ScoreData } from '../modules/score';
+import { ScoreData, ScoreDimensionConfig } from '../modules/score';
 import { buildBemClassName } from '../modules/util';
 import { FormFactor } from '../App';
+
+// All measurements below in px, unless otherwise specified
+const scoreDimensionConfig: ScoreDimensionConfig = {
+  paddingLeft: 50,
+  paddingRight: 50,
+  paddingTop: 40,
+  paddingBottom: 40,
+  maxWidth: 2500,
+  systemVerticalOffset: 150,
+  defaultMeasureWidth: 300,
+  wholeRestCenteringOffset: 0.43, // percent
+  wholeRestCenteringFirstMeasureAdditionalOffset: -0.1, // percent
+};
 
 const buildClassName = buildBemClassName('c-rr-score');
 
@@ -38,7 +51,13 @@ const Score = ({
 
     const measuresPerSystem = currentFormFactor === FormFactor.DESKTOP ? 4 : 2;
 
-    createScore(ref.current, scoreData, innerWidth, measuresPerSystem);
+    createScore(
+      ref.current,
+      scoreData,
+      innerWidth,
+      measuresPerSystem,
+      scoreDimensionConfig
+    );
 
     return () => {
       if (ref && ref.current) {

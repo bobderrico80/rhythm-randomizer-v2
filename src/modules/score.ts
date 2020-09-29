@@ -36,45 +36,55 @@ export interface ScoreData {
   timeSignature: TimeSignature;
 }
 
-// All measurements below in px, unless otherwise specified
-const SCORE_PADDING_LEFT = 10;
-const SCORE_PADDING_RIGHT = 10;
-const SCORE_PADDING_TOP = 40;
-const SCORE_PADDING_BOTTOM = 40;
-
-const MAX_SCORE_WIDTH = 1220;
-
-const SYSTEM_VERTICAL_OFFSET = 150;
-const DEFAULT_MEASURE_WIDTH = 300;
+export interface ScoreDimensionConfig {
+  paddingLeft: number;
+  paddingRight: number;
+  paddingTop: number;
+  paddingBottom: number;
+  maxWidth: number;
+  systemVerticalOffset: number;
+  defaultMeasureWidth: number;
+  wholeRestCenteringOffset: number;
+  wholeRestCenteringFirstMeasureAdditionalOffset: number;
+}
 
 const DEFAULT_CLEF = 'percussion';
 const DEFAULT_PITCHES = ['b/4'];
-const WHOLE_REST_CENTERING_OFFSET = 0.43; // percent
-const WHOLE_REST_CENTERING_FIRST_MEASURE_ADDITIONAL_OFFSET = -0.1; // percent
 
 export const getScoreDimensions = (
   totalMeasures: number,
   innerWidth: number,
-  measuresPerSystem: number
+  measuresPerSystem: number,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): ScoreDimensions => {
+  const {
+    paddingLeft,
+    paddingRight,
+    paddingTop,
+    paddingBottom,
+    maxWidth,
+    systemVerticalOffset,
+    defaultMeasureWidth,
+  } = scoreDimensionConfig;
+
   let effectiveMeasuresPerSystem = measuresPerSystem;
 
   if (totalMeasures < effectiveMeasuresPerSystem) {
     effectiveMeasuresPerSystem = totalMeasures;
   }
 
-  let width = MAX_SCORE_WIDTH;
+  let width = scoreDimensionConfig.maxWidth;
 
   const scoreWidth =
-    SCORE_PADDING_LEFT +
-    DEFAULT_MEASURE_WIDTH * effectiveMeasuresPerSystem +
-    SCORE_PADDING_RIGHT;
+    paddingLeft +
+    defaultMeasureWidth * effectiveMeasuresPerSystem +
+    paddingRight;
 
   let scaleFactor = 1;
 
-  if (scoreWidth < MAX_SCORE_WIDTH) {
-    scaleFactor = MAX_SCORE_WIDTH / scoreWidth;
-    width = MAX_SCORE_WIDTH;
+  if (scoreWidth < maxWidth) {
+    scaleFactor = maxWidth / scoreWidth;
+    width = maxWidth;
   }
 
   if (innerWidth < width) {
@@ -85,9 +95,7 @@ export const getScoreDimensions = (
   const numberOfSystems = Math.ceil(totalMeasures / effectiveMeasuresPerSystem);
 
   const height =
-    (SCORE_PADDING_TOP +
-      SYSTEM_VERTICAL_OFFSET * numberOfSystems +
-      SCORE_PADDING_BOTTOM) *
+    (paddingTop + systemVerticalOffset * numberOfSystems + paddingBottom) *
     scaleFactor;
 
   return {
@@ -132,7 +140,8 @@ export const splitMeasuresIntoSystems = (
 export const getNoteConfiguration = (
   note: Note,
   measureWidth: number,
-  inFirstMeasure: boolean
+  inFirstMeasure: boolean,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): NoteConfiguration => {
   const noteConfiguration: NoteConfiguration = {
     clef: DEFAULT_CLEF,
@@ -145,10 +154,11 @@ export const getNoteConfiguration = (
 
   // Center the whole rest
   if (note.type === NoteType.WR) {
-    let offsetPercent = WHOLE_REST_CENTERING_OFFSET;
+    let offsetPercent = scoreDimensionConfig.wholeRestCenteringOffset;
 
     if (inFirstMeasure) {
-      offsetPercent += WHOLE_REST_CENTERING_FIRST_MEASURE_ADDITIONAL_OFFSET;
+      offsetPercent +=
+        scoreDimensionConfig.wholeRestCenteringFirstMeasureAdditionalOffset;
     }
 
     noteConfiguration.xShift = measureWidth * offsetPercent;
@@ -162,15 +172,22 @@ export const getMeasureConfiguration = (
   measureIndexInSystem: number,
   measureWidths: number[],
   finalMeasure: boolean,
-  timeSignature: TimeSignature
+  timeSignature: TimeSignature,
+  scoreDimensionConfig: ScoreDimensionConfig
 ): MeasureConfiguration => {
   let previousMeasureOffsets = 0;
   for (let i = 0; i < measureIndexInSystem; i++) {
     previousMeasureOffsets += measureWidths[i];
   }
 
-  const xOffset = SCORE_PADDING_LEFT + previousMeasureOffsets;
-  const yOffset = SCORE_PADDING_TOP + SYSTEM_VERTICAL_OFFSET * systemIndex;
+  const {
+    paddingTop,
+    paddingLeft,
+    systemVerticalOffset,
+  } = scoreDimensionConfig;
+
+  const xOffset = paddingLeft + previousMeasureOffsets;
+  const yOffset = paddingTop + systemVerticalOffset * systemIndex;
   const measureWidth = measureWidths[measureIndexInSystem];
   const firstMeasure = measureIndexInSystem === 0 && systemIndex === 0;
 
@@ -212,7 +229,10 @@ const getMeasureWidthUnits = (measure: Measure): number => {
   }, 0);
 };
 
-export const calculateMeasureWidths = (system: System) => {
+export const calculateMeasureWidths = (
+  system: System,
+  scoreDimensionConfig: ScoreDimensionConfig
+) => {
   const measureWidthUnits = system.measures.map((measure) => {
     return getMeasureWidthUnits(measure);
   });
@@ -222,7 +242,8 @@ export const calculateMeasureWidths = (system: System) => {
     0
   );
 
-  const systemMeasureWidth = system.measures.length * DEFAULT_MEASURE_WIDTH;
+  const systemMeasureWidth =
+    system.measures.length * scoreDimensionConfig.defaultMeasureWidth;
   const widthUnitSize = systemMeasureWidth / totalWidthUnits;
 
   return measureWidthUnits.map((measureWidthUnit) => {
