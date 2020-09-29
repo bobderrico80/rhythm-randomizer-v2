@@ -7,10 +7,6 @@
     padding: 0;
   }
 
-  @media (max-width: $mobile-breakpoint) {
-    flex-basis: 100%;
-  }
-
   &__item-link {
     border: 1px solid white;
     border-radius: 0.5em;
@@ -24,9 +20,16 @@
       color: $brand-color;
       background-color: white;
     }
+  }
+}
 
-    @media (max-width: $mobile-breakpoint) {
-      font-size: 0.75rem;
+.c-rr-header--mobile {
+  .c-rr-header-nav {
+    display: flex;
+    justify-content: center;
+
+    &__item-link {
+      font-size: 0.9rem;
       padding: 0.4rem;
     }
   }
