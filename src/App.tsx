@@ -77,7 +77,7 @@ const App = () => {
       : FormFactor.MOBILE
   );
 
-  // Save score settings to local storage
+  // Retrieve score settings and data from local storage
   useEffect(() => {
     const scoreSettingsJson = window.localStorage.getItem(
       LocalStorageKey.SCORE_SETTINGS
@@ -96,13 +96,20 @@ const App = () => {
       setNoteGroupTypeSelectionMap(
         fromJS(scoreSettings.noteGroupTypeSelectionMap)
       );
-      setScoreData(scoreData);
+
+      // Ensure if we get in a weird state and there are no measures in storage that we don't
+      // show a blank score.
+      if (scoreData.measures.length > 0) {
+        setScoreData(scoreData);
+      } else {
+        setNextMeasures();
+      }
     } else {
       setNextMeasures();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Save score data to local storage
+  // Save score settings to local storage
   useEffect(() => {
     const scoreSettings = {
       measureCount,
@@ -116,6 +123,7 @@ const App = () => {
     );
   }, [measureCount, selectedTimeSignature, noteGroupTypeSelectionMap]);
 
+  // Save score data to local storage
   useEffect(() => {
     localStorage.setItem(LocalStorageKey.SCORE_DATA, JSON.stringify(scoreData));
   }, [scoreData]);
@@ -125,7 +133,6 @@ const App = () => {
     const handleWindowResize = throttle(() => {
       setInnerWidth(window.innerWidth);
     }, THROTTLE_INTERVAL);
-
     window.addEventListener('resize', handleWindowResize);
 
     return () => {
