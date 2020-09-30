@@ -1,6 +1,11 @@
+## What's New in Version 2.0.3?
+
+- Fixed issue of the app not loading on older versions of Safari (below version 14)
+- Ensured that when an error occurs, users are not presented with a blank screen, but with an error message containing a link to the Facebook page.
+
 ## What's New in Version 2.0.2?
 
-- Increased maximum width of score, which inherently increases the size of the notation and more closely mimicking the look of the version 1 site.
+- Increased maximum width of score, which inherently increases the size of the notation and more closely mimics the look of the version 1 site.
 - Increased the size of the header buttons on mobile
 
 ## What's New in Version 2.0.1?
