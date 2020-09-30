@@ -77,6 +77,7 @@ const App = () => {
       : FormFactor.MOBILE
   );
 
+  // Save score settings to local storage
   useEffect(() => {
     const scoreSettingsJson = window.localStorage.getItem(
       LocalStorageKey.SCORE_SETTINGS
@@ -101,6 +102,7 @@ const App = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Save score data to local storage
   useEffect(() => {
     const scoreSettings = {
       measureCount,
@@ -170,10 +172,10 @@ const App = () => {
     const mediaQueryList = window.matchMedia(
       `(max-width: ${MOBILE_BREAKPOINT}px)`
     );
-    mediaQueryList.addEventListener('change', handleMatchMediaChange);
+    mediaQueryList.addListener(handleMatchMediaChange);
 
     return () => {
-      mediaQueryList.removeEventListener('change', handleMatchMediaChange);
+      mediaQueryList.removeListener(handleMatchMediaChange);
     };
   }, []);
 
