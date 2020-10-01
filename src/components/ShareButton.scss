@@ -1,0 +1,8 @@
+@import '../styles/variables.scss';
+
+.c-rr-share-button {
+  &:disabled {
+    color: $brand-color;
+    border-color: $brand-color;
+  }
+}

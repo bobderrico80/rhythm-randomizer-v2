@@ -9,6 +9,7 @@ import { NoteGroupChangeHandler } from './NoteSelection';
 import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import SlideOut from './SlideOut';
+import ShareButton from './ShareButton';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 
@@ -27,6 +28,7 @@ export interface SettingsMenuProps {
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
   onMeasureCountChange: (measureCount: number) => void;
   onOpenAccordionChange: (openedAccordion: string) => void;
+  onShareLinkClick: () => void;
 }
 
 const SettingsMenu = ({
@@ -44,6 +46,7 @@ const SettingsMenu = ({
   onTimeSignatureChange,
   onMeasureCountChange,
   onOpenAccordionChange,
+  onShareLinkClick,
 }: SettingsMenuProps) => {
   const [lastOpenedAccordion, setLastOpenedAccordion] = useState('');
 
@@ -73,13 +76,16 @@ const SettingsMenu = ({
   const renderSettingsMenuPane = (open: boolean, onCloseClick: () => void) => {
     return (
       <section>
-        <IconButton
-          className={buildClassName('close-button')()}
-          svg={backArrowIcon}
-          alt="Close Settings Menu"
-          onClick={onCloseClick}
-          id="settings-menu-close"
-        />
+        <div className={buildClassName('button-container')()}>
+          <IconButton
+            className={buildClassName('close-button')()}
+            svg={backArrowIcon}
+            alt="Close Settings Menu"
+            onClick={onCloseClick}
+            id="settings-menu-close"
+          />
+          <ShareButton onShareSettingsClick={onShareLinkClick} />
+        </div>
         <SettingsForm
           openAccordion={openAccordion}
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}

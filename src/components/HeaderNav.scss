@@ -6,21 +6,6 @@
     margin: 0;
     padding: 0;
   }
-
-  &__item-link {
-    border: 1px solid white;
-    border-radius: 0.5em;
-    color: white;
-    font-size: 1rem;
-    padding: 0.5rem;
-    font-weight: bold;
-    background-color: $brand-color;
-
-    &:hover {
-      color: $brand-color;
-      background-color: white;
-    }
-  }
 }
 
 .c-rr-header--mobile {

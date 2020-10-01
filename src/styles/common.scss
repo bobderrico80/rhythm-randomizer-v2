@@ -1,0 +1,34 @@
+@import './variables.scss';
+
+.c-rr-button {
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  border-radius: 0.5em;
+  color: black;
+  font-size: 1rem;
+  padding: 0.5rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:hover {
+    color: $brand-color;
+    border-color: $brand-color;
+  }
+
+  &--dark {
+    border-color: white;
+    color: white;
+    background-color: $brand-color;
+
+    &:hover {
+      color: $brand-color;
+      background-color: white;
+    }
+  }
+}

@@ -22,27 +22,30 @@ import { ScoreData } from './modules/score';
 import { MultiSelectStatusType } from './components/NoteCheckboxGroup';
 import MainMenu from './components/MainMenu';
 import { fromJS } from 'immutable';
+import {
+  getPersistedAppState,
+  persistAppState,
+} from './modules/persisted-state';
+import { encodeScoreSettingsShareString } from './modules/share';
 
 export enum FormFactor {
   MOBILE,
   DESKTOP,
 }
 
-enum LocalStorageKey {
-  SCORE_SETTINGS = 'rr.scoreSettings',
-  SCORE_DATA = 'rr.scoreData',
-}
-
-interface ScoreSettings {
+export interface ScoreSettings {
   measureCount: number;
   timeSignatureType: TimeSignatureType;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
 }
 
+export const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
+
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
-const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
 const MOBILE_BREAKPOINT = 768; // px
+
+const SHARE_STRING_PARAM = 's';
 
 const App = () => {
   // Menu/accordion states
@@ -60,7 +63,8 @@ const App = () => {
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
-  const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrorMessage, setValidationErrorMessage] = useState('');
+  const [shareStringErrorMessage, setShareStringErrorMessage] = useState('');
 
   // Score state
   const [scoreData, setScoreData] = useState({
@@ -77,56 +81,45 @@ const App = () => {
       : FormFactor.MOBILE
   );
 
-  // Retrieve score settings and data from local storage
+  // Retrieve persisted app state
   useEffect(() => {
-    const scoreSettingsJson = window.localStorage.getItem(
-      LocalStorageKey.SCORE_SETTINGS
+    const shareString = new URLSearchParams(window.location.search).get(
+      SHARE_STRING_PARAM
     );
-    const scoreDataJson = window.localStorage.getItem(
-      LocalStorageKey.SCORE_DATA
+
+    const { scoreSettings, scoreData, errorMessage } = getPersistedAppState(
+      shareString as string | undefined
     );
-    if (scoreSettingsJson && scoreDataJson) {
-      const scoreSettings = JSON.parse(scoreSettingsJson) as ScoreSettings;
-      const scoreData = JSON.parse(scoreDataJson) as ScoreData;
 
-      setMeasureCount(scoreSettings.measureCount);
-      setSelectedTimeSignature(
-        getTimeSignature(scoreSettings.timeSignatureType)
-      );
-      setNoteGroupTypeSelectionMap(
-        fromJS(scoreSettings.noteGroupTypeSelectionMap)
-      );
+    setMeasureCount(scoreSettings.measureCount);
+    setSelectedTimeSignature(getTimeSignature(scoreSettings.timeSignatureType));
+    setNoteGroupTypeSelectionMap(
+      fromJS(scoreSettings.noteGroupTypeSelectionMap)
+    );
+    setScoreData(scoreData);
 
-      // Ensure if we get in a weird state and there are no measures in storage that we don't
-      // show a blank score.
-      if (scoreData.measures.length > 0) {
-        setScoreData(scoreData);
-      } else {
-        setNextMeasures();
-      }
-    } else {
-      setNextMeasures();
+    if (errorMessage) {
+      setSettingsMenuOpen(true);
+      setShareStringErrorMessage(errorMessage);
+      window.history.replaceState({}, document.title, '/');
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Save score settings to local storage
+  // Persist app state
   useEffect(() => {
-    const scoreSettings = {
+    const scoreSettings: ScoreSettings = {
       measureCount,
       timeSignatureType: selectedTimeSignature.type,
-      noteGroupTypeSelectionMap: noteGroupTypeSelectionMap.toJS(),
+      noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
     };
 
-    localStorage.setItem(
-      LocalStorageKey.SCORE_SETTINGS,
-      JSON.stringify(scoreSettings)
-    );
-  }, [measureCount, selectedTimeSignature, noteGroupTypeSelectionMap]);
-
-  // Save score data to local storage
-  useEffect(() => {
-    localStorage.setItem(LocalStorageKey.SCORE_DATA, JSON.stringify(scoreData));
-  }, [scoreData]);
+    persistAppState({ scoreSettings, scoreData });
+  }, [
+    measureCount,
+    selectedTimeSignature,
+    noteGroupTypeSelectionMap,
+    scoreData,
+  ]);
 
   // Handle resizing score on window resize
   useEffect(() => {
@@ -146,11 +139,11 @@ const App = () => {
     // selections
 
     if (getSelectedNoteGroupTypes(noteGroupTypeSelectionMap).length === 0) {
-      setErrorMessage('Please select at least one type of note');
+      setValidationErrorMessage('Please select at least one type of note');
       return;
     }
 
-    setErrorMessage('');
+    setValidationErrorMessage('');
   }, [noteGroupTypeSelectionMap, selectedTimeSignature]);
 
   // Handle reconfiguring selection map when time signature changes
@@ -200,7 +193,7 @@ const App = () => {
     } catch (error) {
       setSettingsMenuOpen(true);
       setScoreData({ measures: [], timeSignature: selectedTimeSignature });
-      setErrorMessage(
+      setValidationErrorMessage(
         'The combination of notes selected is not always valid for the given time signature'
       );
     }
@@ -212,7 +205,7 @@ const App = () => {
 
   const handleRandomizeButtonClick = () => {
     setTransitioning(true);
-    setErrorMessage('');
+    setValidationErrorMessage('');
     window.setTimeout(() => {
       setNextMeasures();
       setTransitioning(false);
@@ -229,6 +222,7 @@ const App = () => {
 
   const handleSettingsMenuCloseClick = () => {
     setSettingsMenuOpen(false);
+    setShareStringErrorMessage('');
   };
 
   const handleMainMenuCloseClick = () => {
@@ -280,6 +274,25 @@ const App = () => {
     setOpenSettingsAccordion(openedAccordion);
   };
 
+  const handleShareLinkClick = () => {
+    const shareString = encodeScoreSettingsShareString({
+      measureCount,
+      noteGroupTypeSelectionMap,
+      timeSignatureType: selectedTimeSignature.type,
+    });
+
+    const shareUrl = `${window.location.origin}?s=${shareString}`;
+
+    const textArea = document.createElement('textarea');
+    textArea.value = shareUrl;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
@@ -295,8 +308,9 @@ const App = () => {
         onNoteGroupMultiSelectChange={handleNoteGroupMultiSelectChange}
         onTimeSignatureChange={handleTimeSignatureChange}
         onMeasureCountChange={handleMeasureCountChange}
-        errorMessage={errorMessage}
+        errorMessage={validationErrorMessage || shareStringErrorMessage}
         onOpenAccordionChange={handleSettingsOpenAccordionChange}
+        onShareLinkClick={handleShareLinkClick}
       />
       <MainMenu
         mainMenuOpen={mainMenuOpen}

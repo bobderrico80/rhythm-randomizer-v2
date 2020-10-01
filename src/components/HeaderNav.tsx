@@ -15,7 +15,7 @@ const HeaderNav = ({ onRandomizeButtonClick }: HeaderNavProps) => {
       <ul>
         <li className={buildClassName('item')()}>
           <button
-            className={classnames('e-rr-button', buildClassName('item-link')())}
+            className={classnames('c-rr-button', 'c-rr-button--dark')}
             onClick={onRandomizeButtonClick}
           >
             New Rhythm
