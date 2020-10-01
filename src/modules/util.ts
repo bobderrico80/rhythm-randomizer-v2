@@ -30,3 +30,18 @@ export const buildBemClassName = (block: string) => (element?: string) => (
 
   return className;
 };
+
+export const tryOrNull = <T>(
+  toTry: () => T,
+  catchSideEffect?: (error: any) => void
+): T | null => {
+  try {
+    return toTry();
+  } catch (error) {
+    if (catchSideEffect) {
+      catchSideEffect(error);
+    }
+
+    return null;
+  }
+};

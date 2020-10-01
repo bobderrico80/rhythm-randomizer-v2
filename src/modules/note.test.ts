@@ -9,6 +9,8 @@ import {
   resetNoteGroupTypeSelectionMap,
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
+  NoteGroupTypeSelectionMap,
+  setNoteGroupTypeSelections,
 } from './note';
 
 describe('The note module', () => {
@@ -77,7 +79,7 @@ describe('The note module', () => {
     });
 
     describe('with note groups in different categories', () => {
-      it('puts different-category note groups into the separate categorized note group objects, with categories and note groups sorted by sortOrder', () => {
+      it('puts different-category note groups into the separate categorized note group objects, with categories and note groups sorted by sortOrder/index', () => {
         expect(
           categorizeNoteGroups(
             getNoteGroups(NoteGroupType.QR, NoteGroupType.H, NoteGroupType.W)
@@ -118,6 +120,34 @@ describe('The note module', () => {
       [...resetMap.entries()].forEach(([_, value]) => {
         expect(value).toEqual(false);
       });
+    });
+  });
+
+  describe('setNoteGroupTypeSelections() function', () => {
+    let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+
+    beforeEach(() => {
+      noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap(4)
+      );
+      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap.set(
+        NoteGroupType.W,
+        true
+      );
+      noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
+        noteGroupTypeSelectionMap,
+        NoteGroupType.H,
+        NoteGroupType.Q
+      );
+    });
+
+    it('sets the specified note group types to `true`', () => {
+      expect(noteGroupTypeSelectionMap.get(NoteGroupType.H)).toEqual(true);
+      expect(noteGroupTypeSelectionMap.get(NoteGroupType.Q)).toEqual(true);
+    });
+
+    it('sets all other note group types to `false', () => {
+      expect(noteGroupTypeSelectionMap.get(NoteGroupType.W)).toEqual(false);
     });
   });
 

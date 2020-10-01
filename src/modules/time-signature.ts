@@ -17,6 +17,7 @@ export interface TimeSignature extends TypedItem<TimeSignatureType> {
   beatsPerMeasure: number;
   description: string;
   icon: string;
+  index: number;
 }
 
 export const timeSignatures: TimeSignature[] = [
@@ -26,6 +27,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 2,
     description: '2/4 time signature',
     icon: require('../svg/time-signatures/ts-2-4.svg'),
+    index: 0,
   },
   {
     type: TimeSignatureType.SIMPLE_3_4,
@@ -33,6 +35,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 3,
     description: '3/4 time signature',
     icon: require('../svg/time-signatures/ts-3-4.svg'),
+    index: 1,
   },
   {
     type: TimeSignatureType.SIMPLE_4_4,
@@ -40,6 +43,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 4,
     description: '4/4 time signature',
     icon: require('../svg/time-signatures/ts-4-4.svg'),
+    index: 2,
   },
 ];
 

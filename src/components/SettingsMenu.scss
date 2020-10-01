@@ -12,11 +12,14 @@
   }
 
   &__close-button {
-    margin-top: 1rem;
-    padding-left: 1rem;
-
     .c-rr-icon-button__icon {
       width: 25px;
     }
+  }
+
+  &__button-container {
+    padding: 1rem 1rem 0 1rem;
+    display: flex;
+    justify-content: space-between;
   }
 }

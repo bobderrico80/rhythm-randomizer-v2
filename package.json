@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "husky": "^4.3.0",
+    "jest-localstorage-mock": "^2.4.3",
     "lint-staged": "^10.4.0"
   }
 }

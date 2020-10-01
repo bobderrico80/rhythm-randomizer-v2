@@ -1,4 +1,9 @@
-import { findItemOfType, TypedItem, buildBemClassName } from './util';
+import {
+  findItemOfType,
+  TypedItem,
+  buildBemClassName,
+  tryOrNull,
+} from './util';
 
 enum TestType {
   FOO = 'foo',
@@ -46,6 +51,38 @@ describe('The util module', () => {
       expect(buildBemClassName('c-block')()('modifier')).toEqual(
         'c-block--modifier'
       );
+    });
+  });
+
+  describe('tryOrNull() function', () => {
+    it('returns the expected value if the toTry() callback does not throw', () => {
+      expect(tryOrNull<string>(() => 'foobar')).toEqual('foobar');
+    });
+
+    it('can be wrapped to handle taking parameters', () => {
+      const wrapped = (string: string) => {
+        return tryOrNull<string>(() => string);
+      };
+
+      expect(wrapped('foobar')).toEqual('foobar');
+    });
+
+    it('returns null if the toTry() callback throws', () => {
+      expect(
+        tryOrNull<string>(() => {
+          throw new Error('foo');
+        })
+      ).toEqual(null);
+    });
+
+    it('calls the side effect function when handling the error', () => {
+      const sideEffectFn = jest.fn();
+
+      tryOrNull<string>(() => {
+        throw new Error('foo');
+      }, sideEffectFn);
+
+      expect(sideEffectFn).toHaveBeenCalledWith(new Error('foo'));
     });
   });
 });
