@@ -37,7 +37,7 @@ const Accordion = ({
   onToggleClick,
   onTransitionComplete,
 }: AccordionProps) => {
-  const [open, setOpen] = useState(isOpen || false);
+  const [open, setOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [neverOpened, setNeverOpened] = useState(true);
 
