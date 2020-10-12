@@ -115,15 +115,12 @@ const SlideOut = ({
 
     const handleTransitionEnd = () => {
       focusableElements[0].focus();
+      pane.removeEventListener('transitionend', handleTransitionEnd);
     };
 
     if (focusableElements.length > 0) {
       pane.addEventListener('transitionend', handleTransitionEnd);
     }
-
-    return () => {
-      pane.removeEventListener('transitionend', handleTransitionEnd);
-    };
   }, [open]);
 
   useEffect(() => {
