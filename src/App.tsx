@@ -50,6 +50,10 @@ const SHARE_STRING_PARAM = 's';
 const App = () => {
   // Menu/accordion states
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [
+    lastFocusedElement,
+    setLastFocusElement,
+  ] = useState<HTMLElement | null>(null);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [openSettingsAccordion, setOpenSettingsAccordion] = useState(
     'note-selection-accordion'
@@ -213,20 +217,26 @@ const App = () => {
   };
 
   const handleSettingsMenuButtonClick = () => {
+    setLastFocusElement(document.activeElement as HTMLElement);
     setSettingsMenuOpen(true);
   };
 
   const handleMainMenuButtonClick = () => {
+    setLastFocusElement(document.activeElement as HTMLElement);
     setMainMenuOpen(true);
   };
 
   const handleSettingsMenuCloseClick = () => {
     setSettingsMenuOpen(false);
     setShareStringErrorMessage('');
+    lastFocusedElement?.focus();
+    setLastFocusElement(null);
   };
 
   const handleMainMenuCloseClick = () => {
     setMainMenuOpen(false);
+    lastFocusedElement?.focus();
+    setLastFocusElement(null);
   };
 
   const handleNoteGroupChange = (

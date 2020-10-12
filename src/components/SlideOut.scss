@@ -1,5 +1,9 @@
 .c-rr-slide-out {
+  visibility: hidden;
+  transition: visibility 250ms ease;
+
   &--open {
+    visibility: visible;
     position: fixed;
     top: 0;
     left: 0;
