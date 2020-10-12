@@ -27,6 +27,7 @@ import {
   persistAppState,
 } from './modules/persisted-state';
 import { encodeScoreSettingsShareString } from './modules/share';
+import { EventAction, EventCategory, sendEvent } from './modules/events';
 
 export enum FormFactor {
   MOBILE,
@@ -94,6 +95,11 @@ const App = () => {
     const { scoreSettings, scoreData, errorMessage } = getPersistedAppState(
       shareString as string | undefined
     );
+
+    // Only track that a share string was used if it is valid
+    if (shareString && !errorMessage) {
+      sendEvent(EventCategory.SHARE_LINK, EventAction.USED, shareString);
+    }
 
     setMeasureCount(scoreSettings.measureCount);
     setSelectedTimeSignature(getTimeSignature(scoreSettings.timeSignatureType));
@@ -203,8 +209,34 @@ const App = () => {
     }
   };
 
+  const getScoreSettings = (): ScoreSettings => {
+    return {
+      measureCount,
+      noteGroupTypeSelectionMap,
+      timeSignatureType: selectedTimeSignature.type,
+    };
+  };
+
   const setNextTimeSignature = (timeSignatureType: TimeSignatureType) => {
     setSelectedTimeSignature(getTimeSignature(timeSignatureType));
+  };
+
+  const handleHeaderRandomizeButtonClick = () => {
+    sendEvent(
+      EventCategory.HEADER_NAV,
+      EventAction.NEW_RHYTHM,
+      encodeScoreSettingsShareString(getScoreSettings())
+    );
+    handleRandomizeButtonClick();
+  };
+
+  const handleScoreRandomizeButtonClick = () => {
+    sendEvent(
+      EventCategory.SCORE,
+      EventAction.NEW_RHYTHM,
+      encodeScoreSettingsShareString(getScoreSettings())
+    );
+    handleRandomizeButtonClick();
   };
 
   const handleRandomizeButtonClick = () => {
@@ -223,6 +255,7 @@ const App = () => {
 
   const handleMainMenuButtonClick = () => {
     setLastFocusElement(document.activeElement as HTMLElement);
+    sendEvent(EventCategory.MAIN_MENU, EventAction.OPENED);
     setMainMenuOpen(true);
   };
 
@@ -285,12 +318,7 @@ const App = () => {
   };
 
   const handleShareLinkClick = () => {
-    const shareString = encodeScoreSettingsShareString({
-      measureCount,
-      noteGroupTypeSelectionMap,
-      timeSignatureType: selectedTimeSignature.type,
-    });
-
+    const shareString = encodeScoreSettingsShareString(getScoreSettings());
     const shareUrl = `${window.location.origin}?s=${shareString}`;
 
     const textArea = document.createElement('textarea');
@@ -301,6 +329,7 @@ const App = () => {
 
     document.execCommand('copy');
     document.body.removeChild(textArea);
+    sendEvent(EventCategory.SHARE_LINK, EventAction.COPIED, shareString);
   };
 
   return (
@@ -330,14 +359,14 @@ const App = () => {
         currentFormFactor={formFactor}
         onMainMenuButtonClick={handleMainMenuButtonClick}
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
-        onRandomizeButtonClick={handleRandomizeButtonClick}
+        onRandomizeButtonClick={handleHeaderRandomizeButtonClick}
       />
       <Score
         scoreData={scoreData}
         innerWidth={innerWidth}
         transitioning={transitioning}
         currentFormFactor={formFactor}
-        onScoreClick={handleRandomizeButtonClick}
+        onScoreClick={handleScoreRandomizeButtonClick}
       />
     </div>
   );
