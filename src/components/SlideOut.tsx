@@ -51,14 +51,11 @@ const SlideOut = ({
     const escapePane = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onCloseClick();
+        document.removeEventListener('keydown', escapePane);
       }
     };
 
     document.addEventListener('keydown', escapePane);
-
-    return () => {
-      document.removeEventListener('keydown', escapePane);
-    };
   }, [onCloseClick]);
 
   // Trap focus
@@ -116,9 +113,17 @@ const SlideOut = ({
 
     const focusableElements = getFocusableElements(pane);
 
-    if (focusableElements.length > 0) {
+    const handleTransitionEnd = () => {
       focusableElements[0].focus();
+    };
+
+    if (focusableElements.length > 0) {
+      pane.addEventListener('transitionend', handleTransitionEnd);
     }
+
+    return () => {
+      pane.removeEventListener('transitionend', handleTransitionEnd);
+    };
   }, [open]);
 
   useEffect(() => {
