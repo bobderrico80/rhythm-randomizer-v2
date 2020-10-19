@@ -68,6 +68,7 @@ const App = () => {
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
+  const [shareString, setShareString] = useState<string>('');
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
   const [shareStringErrorMessage, setShareStringErrorMessage] = useState('');
 
@@ -189,6 +190,16 @@ const App = () => {
     };
   }, []);
 
+  // Generate share string state on settings update
+  useEffect(() => {
+    const shareString = encodeScoreSettingsShareString({
+      measureCount,
+      noteGroupTypeSelectionMap,
+      timeSignatureType: selectedTimeSignature.type,
+    });
+    setShareString(shareString);
+  }, [measureCount, noteGroupTypeSelectionMap, selectedTimeSignature]);
+
   const setNextMeasures = () => {
     try {
       const nextMeasures = getRandomMeasures(
@@ -209,33 +220,17 @@ const App = () => {
     }
   };
 
-  const getScoreSettings = (): ScoreSettings => {
-    return {
-      measureCount,
-      noteGroupTypeSelectionMap,
-      timeSignatureType: selectedTimeSignature.type,
-    };
-  };
-
   const setNextTimeSignature = (timeSignatureType: TimeSignatureType) => {
     setSelectedTimeSignature(getTimeSignature(timeSignatureType));
   };
 
   const handleHeaderRandomizeButtonClick = () => {
-    sendEvent(
-      EventCategory.HEADER_NAV,
-      EventAction.NEW_RHYTHM,
-      encodeScoreSettingsShareString(getScoreSettings())
-    );
+    sendEvent(EventCategory.HEADER_NAV, EventAction.NEW_RHYTHM, shareString);
     handleRandomizeButtonClick();
   };
 
   const handleScoreRandomizeButtonClick = () => {
-    sendEvent(
-      EventCategory.SCORE,
-      EventAction.NEW_RHYTHM,
-      encodeScoreSettingsShareString(getScoreSettings())
-    );
+    sendEvent(EventCategory.SCORE, EventAction.NEW_RHYTHM, shareString);
     handleRandomizeButtonClick();
   };
 
@@ -318,7 +313,6 @@ const App = () => {
   };
 
   const handleShareLinkClick = () => {
-    const shareString = encodeScoreSettingsShareString(getScoreSettings());
     const shareUrl = `${window.location.origin}?s=${shareString}`;
 
     const textArea = document.createElement('textarea');
