@@ -1,3 +1,17 @@
+## What's New in Version 2.1.0?
+
+### 'Share Settings' functionality
+
+This update adds a 'Share Settings' button to the settings menu. Clicking this button will copy a share link to the clipboard. This share link is encoded with all of the current score settings, allowing you to easily share the current score configuration with another user.
+
+This feature is useful for sharing specific configurations with different groups of people. For example, a teacher might want to post a link to similar rhythms for younger students, and more complicated rhythms for older students.
+
+Another useful way to use this feature is to bookmark share links. This allows users to quickly get back to a specific configuration.
+
+### Other updates
+
+- Improved keyboard accessibility
+
 ## What's New in Version 2.0.3?
 
 - Fixed issue of the app not loading on older versions of Safari (below version 14)
