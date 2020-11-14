@@ -1,3 +1,7 @@
+## What;s New in Version 2.1.1?
+
+Security updates
+
 ## What's New in Version 2.1.0?
 
 ### 'Share Settings' functionality
