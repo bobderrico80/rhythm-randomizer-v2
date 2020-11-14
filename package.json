@@ -21,12 +21,12 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.3.1",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.0",
     "typescript": "^3.7.5",
     "vexflow": "^3.0.9"
   },
   "scripts": {
-    "start": "EXTEND_ESLINT=true react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
@@ -42,7 +42,8 @@
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!(vexflow)/)"
-    ]
+    ],
+    "resetMocks": false
   },
   "husky": {
     "hooks": {
