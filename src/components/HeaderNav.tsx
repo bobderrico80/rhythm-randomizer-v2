@@ -2,24 +2,43 @@ import React from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import './HeaderNav.scss';
+import Player, { PlaybackStateChangeHandler } from './Player';
+import { Measure } from '../modules/vex';
+import { PlaybackState } from '../modules/tone';
 
 const buildClassName = buildBemClassName('c-rr-header-nav');
 
 export interface HeaderNavProps {
+  measures: Measure[];
+  playbackState: PlaybackState;
+  onPlaybackStateChange: PlaybackStateChangeHandler;
   onRandomizeButtonClick: () => void;
 }
 
-const HeaderNav = ({ onRandomizeButtonClick }: HeaderNavProps) => {
+const HeaderNav = ({
+  measures,
+  playbackState,
+  onPlaybackStateChange,
+  onRandomizeButtonClick,
+}: HeaderNavProps) => {
   return (
     <nav className={buildClassName()()}>
-      <ul>
-        <li className={buildClassName('item')()}>
+      <ul className={buildClassName('list')()}>
+        <li className={buildClassName('list-item')()}>
           <button
             className={classnames('c-rr-button', 'c-rr-button--dark')}
             onClick={onRandomizeButtonClick}
+            disabled={playbackState === PlaybackState.PLAYING}
           >
             New Rhythm
           </button>
+        </li>
+        <li className={buildClassName('list-item')()}>
+          <Player
+            measures={measures}
+            playbackState={playbackState}
+            onPlaybackStateChange={onPlaybackStateChange}
+          />
         </li>
       </ul>
     </nav>

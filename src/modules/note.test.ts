@@ -11,6 +11,7 @@ import {
   getSelectedNoteGroupTypes,
   NoteGroupTypeSelectionMap,
   setNoteGroupTypeSelections,
+  getPlaybackPatternsForNoteGroup,
 } from './note';
 
 describe('The note module', () => {
@@ -39,7 +40,7 @@ describe('The note module', () => {
         {
           categoryType: NoteGroupCategoryType.BASIC_RESTS,
           type: NoteGroupType.WR,
-          notes: [{ type: NoteType.WR, dotted: false, widthUnit: 13 }],
+          notes: [{ type: NoteType.W, rest: true, dotted: false, widthUnit: 13 }],
           description: 'a whole rest',
           duration: 4,
         },
@@ -176,6 +177,63 @@ describe('The note module', () => {
       );
 
       expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([]);
+    });
+  });
+
+  describe('getPlaybackPatternsForNoteGroup() function', () => {
+    it('handles single-note note groups', () => {
+      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.W))).toEqual([{
+        rest: false,
+        toneDuration: '1n'
+      }]);
+    });
+
+    it('handles multi note note-groups', () => {
+      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.EE))).toEqual([
+        {
+          rest: false,
+          toneDuration: '8n'
+        },
+        {
+          rest: false,
+          toneDuration: '8n'
+        }
+      ])
+    });
+
+    it('handles rests', () => {
+      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.WR))).toEqual([
+        {
+          rest: true,
+          toneDuration: '1n'
+        }
+      ]);
+    });
+
+    it('handles dotted notes', () => {
+      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.HD))).toEqual([
+        {
+          rest: false,
+          toneDuration: '2n.'
+        }
+      ]);
+    });
+
+    it('handles tuplets', () => {
+      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.TEEE))).toEqual([
+        {
+          rest: false,
+          toneDuration: '8t'
+        },
+        {
+          rest: false,
+          toneDuration: '8t'
+        },
+        {
+          rest: false,
+          toneDuration: '8t'
+        }
+      ]);
     });
   });
 });

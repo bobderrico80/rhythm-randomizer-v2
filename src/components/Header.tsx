@@ -7,9 +7,15 @@ import './Header.scss';
 import IconButton from './IconButton';
 import { FormFactor } from '../App';
 import HeaderNav from './HeaderNav';
+import { Measure } from '../modules/vex';
+import { PlaybackState } from '../modules/tone';
+import { PlaybackStateChangeHandler } from './Player';
 
 export interface HeaderProps {
   currentFormFactor: FormFactor;
+  measures: Measure[];
+  playbackState: PlaybackState;
+  onPlaybackStateChange: PlaybackStateChangeHandler;
   onRandomizeButtonClick: () => void;
   onSettingsMenuButtonClick: () => void;
   onMainMenuButtonClick: () => void;
@@ -19,10 +25,24 @@ const buildClassName = buildBemClassName('c-rr-header');
 
 const Header = ({
   currentFormFactor,
+  measures,
+  playbackState,
+  onPlaybackStateChange,
   onRandomizeButtonClick,
   onSettingsMenuButtonClick,
   onMainMenuButtonClick,
 }: HeaderProps) => {
+  const renderHeaderNav = () => {
+    return (
+      <HeaderNav
+        measures={measures}
+        playbackState={playbackState}
+        onPlaybackStateChange={onPlaybackStateChange}
+        onRandomizeButtonClick={onRandomizeButtonClick}
+      />
+    );
+  };
+
   return (
     <header
       className={classnames(buildClassName()(), {
@@ -40,9 +60,7 @@ const Header = ({
           onClick={onSettingsMenuButtonClick}
         />
         <h1 className={buildClassName('title')()}>The Rhythm Randomizer</h1>
-        {currentFormFactor === FormFactor.DESKTOP && (
-          <HeaderNav onRandomizeButtonClick={onRandomizeButtonClick} />
-        )}
+        {currentFormFactor === FormFactor.DESKTOP && renderHeaderNav()}
         <div className={buildClassName()('right')}>
           <IconButton
             className={classnames(
@@ -55,11 +73,7 @@ const Header = ({
           />
         </div>
       </div>
-      {currentFormFactor === FormFactor.MOBILE && (
-        <div className={buildClassName('mobile-nav-container')()}>
-          <HeaderNav onRandomizeButtonClick={onRandomizeButtonClick} />
-        </div>
-      )}
+      {currentFormFactor === FormFactor.MOBILE && renderHeaderNav()}
     </header>
   );
 };

@@ -153,7 +153,7 @@ export const getNoteConfiguration = (
   };
 
   // Center the whole rest
-  if (note.type === NoteType.WR) {
+  if (note.type === NoteType.W && note.rest) {
     let offsetPercent = scoreDimensionConfig.wholeRestCenteringOffset;
 
     if (inFirstMeasure) {

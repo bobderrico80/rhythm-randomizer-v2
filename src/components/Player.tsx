@@ -1,0 +1,76 @@
+import React, { useEffect } from 'react';
+import classnames from 'classnames';
+import { PlaybackState } from '../modules/tone';
+import { Measure } from '../modules/vex';
+import {
+  Transport,
+  startPlayback,
+  stopPlayback,
+  scheduleMeasures,
+} from '../modules/tone';
+import { buildBemClassName } from '../modules/util';
+
+export interface PlayerProps {
+  measures: Measure[];
+  playbackState: PlaybackState;
+  onPlaybackStateChange: PlaybackStateChangeHandler;
+}
+
+export type PlaybackStateChangeHandler = (playbackState: PlaybackState) => void;
+
+const buildClassName = buildBemClassName('c-rr-player');
+
+const Player = ({
+  measures,
+  playbackState,
+  onPlaybackStateChange,
+}: PlayerProps) => {
+  // Set up transport event listeners
+  useEffect(() => {
+    const startHandler = () => {
+      onPlaybackStateChange(PlaybackState.PLAYING);
+    };
+
+    const stopHandler = () => {
+      onPlaybackStateChange(PlaybackState.STOPPED);
+    };
+
+    Transport.on('start', startHandler);
+    Transport.on('stop', stopHandler);
+
+    return () => {
+      Transport.off('start', startHandler);
+      Transport.off('stop', stopHandler);
+    };
+  }, [onPlaybackStateChange]);
+
+  // Schedule measures when they change
+  useEffect(() => {
+    scheduleMeasures(measures);
+  }, [measures]);
+
+  const handlePlayToggle = () => {
+    if (playbackState === PlaybackState.STOPPED) {
+      startPlayback();
+    } else {
+      stopPlayback();
+    }
+  };
+
+  return (
+    <div className={buildClassName()()}>
+      <button
+        className={classnames(
+          'c-rr-button',
+          'c-rr-button--dark',
+          buildClassName('play-toggle')()
+        )}
+        onClick={handlePlayToggle}
+      >
+        {playbackState === PlaybackState.PLAYING ? 'Stop' : 'Play'}
+      </button>
+    </div>
+  );
+};
+
+export default Player;

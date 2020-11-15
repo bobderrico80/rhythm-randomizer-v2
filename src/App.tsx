@@ -28,6 +28,7 @@ import {
 } from './modules/persisted-state';
 import { encodeScoreSettingsShareString } from './modules/share';
 import { EventAction, EventCategory, sendEvent } from './modules/events';
+import { PlaybackState } from './modules/tone';
 
 export enum FormFactor {
   MOBILE,
@@ -85,6 +86,11 @@ const App = () => {
     window.innerWidth > MOBILE_BREAKPOINT
       ? FormFactor.DESKTOP
       : FormFactor.MOBILE
+  );
+
+  // Player states
+  const [playbackState, setPlaybackState] = useState<PlaybackState>(
+    PlaybackState.STOPPED
   );
 
   // Retrieve persisted app state
@@ -326,6 +332,10 @@ const App = () => {
     sendEvent(EventCategory.SHARE_LINK, EventAction.COPIED, shareString);
   };
 
+  const handlePlaybackStateChange = (playbackState: PlaybackState) => {
+    setPlaybackState(playbackState);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
@@ -351,6 +361,9 @@ const App = () => {
       />
       <Header
         currentFormFactor={formFactor}
+        measures={scoreData.measures}
+        playbackState={playbackState}
+        onPlaybackStateChange={handlePlaybackStateChange}
         onMainMenuButtonClick={handleMainMenuButtonClick}
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
         onRandomizeButtonClick={handleHeaderRandomizeButtonClick}
