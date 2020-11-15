@@ -26,7 +26,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 2,
     description: '2/4 time signature',
-    icon: require('../svg/time-signatures/ts-2-4.svg'),
+    icon: require('../svg/time-signatures/ts-2-4.svg').default,
     index: 0,
   },
   {
@@ -34,7 +34,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 3,
     description: '3/4 time signature',
-    icon: require('../svg/time-signatures/ts-3-4.svg'),
+    icon: require('../svg/time-signatures/ts-3-4.svg').default,
     index: 1,
   },
   {
@@ -42,7 +42,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     beatsPerMeasure: 4,
     description: '4/4 time signature',
-    icon: require('../svg/time-signatures/ts-4-4.svg'),
+    icon: require('../svg/time-signatures/ts-4-4.svg').default,
     index: 2,
   },
 ];
