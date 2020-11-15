@@ -57,22 +57,20 @@ export enum NoteGroupType {
 }
 
 export enum NoteType {
-  // W = whole, H = half, Q = quarter, E = 8th, S = 16th, add R for the rest
+  // W = whole, H = half, Q = quarter, E = 8th, S = 16th
   W = 'w',
   H = 'h',
   Q = 'q',
   E = '8',
   S = '16',
-  WR = 'wr',
-  HR = 'hr',
-  QR = 'qr',
-  ER = '8r',
 }
 
 export interface Note {
   type: string;
   widthUnit: number;
-  dotted?: boolean;
+  playbackUnit: string;
+  rest: boolean;
+  dotted: boolean;
 }
 
 export interface NoteGroup extends TypedItem<NoteGroupType> {
@@ -98,6 +96,11 @@ export interface NoteGroupCategory {
   sortOrder: number;
 }
 
+export interface PlaybackPattern {
+  toneDuration: string;
+  rest: boolean;
+}
+
 export type NoteGroupTypeSelectionMap = Map<NoteGroupType, Boolean>;
 
 const noteWidthUnitMap = {
@@ -106,13 +109,18 @@ const noteWidthUnitMap = {
   [NoteType.Q]: 5,
   [NoteType.E]: 3,
   [NoteType.S]: 1,
-  [NoteType.WR]: 13,
-  [NoteType.HR]: 8,
-  [NoteType.QR]: 5,
-  [NoteType.ER]: 3,
 };
 
-const createNote = (type: NoteType, dotted: boolean = false): Note => {
+const notePlaybackUnitMap = {
+  [NoteType.W]: '1',
+  [NoteType.H]: '2',
+  [NoteType.Q]: '4',
+  [NoteType.E]: '8',
+  [NoteType.S]: '16',
+}
+
+const createNote = (type: NoteType, rest: boolean = false, dotted: boolean = false): Note => {
+  const playbackUnit = notePlaybackUnitMap[type];
   let widthUnit = noteWidthUnitMap[type];
 
   if (dotted) {
@@ -122,7 +130,9 @@ const createNote = (type: NoteType, dotted: boolean = false): Note => {
   return {
     type,
     dotted,
+    rest,
     widthUnit,
+    playbackUnit
   };
 };
 
@@ -201,7 +211,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.WR,
-    notes: [c(NoteType.WR)],
+    notes: [c(NoteType.W, true)],
     description: 'a whole rest',
     duration: 4,
     icon: require('../svg/notes/wr.svg').default,
@@ -211,7 +221,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.HR,
-    notes: [c(NoteType.HR)],
+    notes: [c(NoteType.H, true)],
     description: 'a half rest',
     duration: 2,
     icon: require('../svg/notes/hr.svg').default,
@@ -221,7 +231,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.QR,
-    notes: [c(NoteType.QR)],
+    notes: [c(NoteType.Q, true)],
     description: 'a quarter rest',
     duration: 1,
     icon: require('../svg/notes/qr.svg').default,
@@ -317,7 +327,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.HD,
-    notes: [c(NoteType.H, true)],
+    notes: [c(NoteType.H, false, true)],
     description: 'a dotted half note',
     duration: 3,
     icon: require('../svg/notes/hd.svg').default,
@@ -327,7 +337,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.QDE,
-    notes: [c(NoteType.Q, true), c(NoteType.E)],
+    notes: [c(NoteType.Q, false, true), c(NoteType.E)],
     description: 'a dotted quarter note and an 8th note',
     duration: 2,
     icon: require('../svg/notes/qde.svg').default,
@@ -337,7 +347,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EQD,
-    notes: [c(NoteType.E), c(NoteType.Q, true)],
+    notes: [c(NoteType.E), c(NoteType.Q, false, true)],
     description: 'an 8th note and a dotted quarter note',
     duration: 2,
     icon: require('../svg/notes/eqd.svg').default,
@@ -347,7 +357,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.EDS,
-    notes: [c(NoteType.E, true), c(NoteType.S)],
+    notes: [c(NoteType.E, false, true), c(NoteType.S)],
     beam: true,
     description: 'a dotted 8th note and a 16th note, beamed',
     duration: 1,
@@ -358,7 +368,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.SED,
-    notes: [c(NoteType.S), c(NoteType.E, true)],
+    notes: [c(NoteType.S), c(NoteType.E, false, true)],
     beam: true,
     description: 'a 16th note and a dotted 8th note, beamed',
     duration: 1,
@@ -371,7 +381,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.EER,
-    notes: [c(NoteType.E), c(NoteType.ER)],
+    notes: [c(NoteType.E), c(NoteType.E, true)],
     description: 'an 8th note and an 8th rest',
     duration: 1,
     icon: require('../svg/notes/eer.svg').default,
@@ -381,7 +391,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERE,
-    notes: [c(NoteType.ER), c(NoteType.E)],
+    notes: [c(NoteType.E, true), c(NoteType.E)],
     description: 'an 8th rest and an 8th note',
     duration: 1,
     icon: require('../svg/notes/ere.svg').default,
@@ -391,7 +401,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.SSER,
-    notes: [c(NoteType.S), c(NoteType.S), c(NoteType.ER)],
+    notes: [c(NoteType.S), c(NoteType.S), c(NoteType.E, true)],
     beam: true,
     description: 'two beamed 16th notes and an 8th rest',
     duration: 1,
@@ -402,7 +412,7 @@ export const noteGroups: NoteGroup[] = [
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
     type: NoteGroupType.ERSS,
-    notes: [c(NoteType.ER), c(NoteType.S), c(NoteType.S)],
+    notes: [c(NoteType.E, true), c(NoteType.S), c(NoteType.S)],
     beam: true,
     description: 'an 8th rest and two beamed 16th notes',
     duration: 1,
@@ -571,3 +581,16 @@ export const getSelectedNoteGroupTypes = (
     [] as NoteGroupType[]
   );
 };
+
+export const getPlaybackPatternsForNoteGroup = (noteGroup: NoteGroup): PlaybackPattern[] => {
+  return noteGroup.notes.map((note) => {
+    const unit = noteGroup.tuplet ? 't' : 'n';
+    const dotIndicator = note.dotted ? '.' : '';
+    const toneDuration = `${note.playbackUnit}${unit}${dotIndicator}`;
+
+    return {
+      toneDuration,
+      rest: note.rest
+    }
+  });
+}

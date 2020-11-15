@@ -70,7 +70,7 @@ const createNotes = (
       const staveNote = new VF.StaveNote({
         clef: noteConfiguration.clef,
         keys: noteConfiguration.keys,
-        duration: noteConfiguration.duration,
+        duration: noteConfiguration.duration + (note.rest ? 'r': ''),
         stem_direction: noteConfiguration.stemDirection,
         auto_stem: noteConfiguration.autoStem,
       });

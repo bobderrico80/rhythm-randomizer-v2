@@ -30,5 +30,15 @@
       color: $brand-color;
       background-color: white;
     }
+
+    &:disabled {
+      color: $gray-medium;
+      border-color: $gray-medium;
+
+      &:hover {
+        color: $gray-medium;
+        background-color: $brand-color;
+      }
+    }
   }
 }
