@@ -1,6 +1,10 @@
-## What;s New in Version 2.1.1?
+## What's New in Version 2.1.2?
 
-Security updates
+- Fixed broken time signature icons
+
+## What's New in Version 2.1.1?
+
+- Security updates
 
 ## What's New in Version 2.1.0?
 
