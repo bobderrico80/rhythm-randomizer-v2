@@ -10,12 +10,14 @@ import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import SlideOut from './SlideOut';
 import ShareButton from './ShareButton';
+import { TempoChangeHandler } from './TempoControl';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
   openAccordion: string;
+  tempo: number;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
@@ -23,6 +25,7 @@ export interface SettingsMenuProps {
   selectedMeasureCount: number;
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
+  onTempoChange: TempoChangeHandler;
   onNoteGroupChange: NoteGroupChangeHandler;
   onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
@@ -34,6 +37,7 @@ export interface SettingsMenuProps {
 const SettingsMenu = ({
   settingsMenuOpen,
   openAccordion,
+  tempo,
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
@@ -41,6 +45,7 @@ const SettingsMenu = ({
   selectedMeasureCount,
   errorMessage,
   onSettingsMenuCloseClick,
+  onTempoChange,
   onNoteGroupChange,
   onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
@@ -88,12 +93,14 @@ const SettingsMenu = ({
         </div>
         <SettingsForm
           openAccordion={openAccordion}
+          tempo={tempo}
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
           timeSignatures={timeSignatures}
           selectedTimeSignature={selectedTimeSignature}
           measureCountOptions={measureCountOptions}
           selectedMeasureCount={selectedMeasureCount}
           errorMessage={errorMessage}
+          onTempoChange={onTempoChange}
           onNoteGroupChange={onNoteGroupChange}
           onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
           onTimeSignatureChange={onTimeSignatureChange}

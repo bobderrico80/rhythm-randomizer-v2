@@ -15,6 +15,7 @@ export interface HeaderProps {
   currentFormFactor: FormFactor;
   measures: Measure[];
   playbackState: PlaybackState;
+  tempo: number;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onRandomizeButtonClick: () => void;
   onSettingsMenuButtonClick: () => void;
@@ -27,6 +28,7 @@ const Header = ({
   currentFormFactor,
   measures,
   playbackState,
+  tempo,
   onPlaybackStateChange,
   onRandomizeButtonClick,
   onSettingsMenuButtonClick,
@@ -37,6 +39,7 @@ const Header = ({
       <HeaderNav
         measures={measures}
         playbackState={playbackState}
+        tempo={tempo}
         onPlaybackStateChange={onPlaybackStateChange}
         onRandomizeButtonClick={onRandomizeButtonClick}
       />

@@ -10,7 +10,6 @@ export enum PlaybackState {
 const NOTE_PITCH = 'F4';
 const NOTE_SPACING = 0.85; // %
 const TRAILING_TIME = 1; // seconds
-const TEMPO = 80 // bpm
 
 let initialized = false;
 let synth: Tone.Synth | null = null;
@@ -22,7 +21,6 @@ const init = () => {
     synth = new Tone.Synth().toDestination();
     synth.envelope.decay = 20;
     synth.envelope.sustain = 0.1;
-    Transport.bpm.value = TEMPO;
     initialized = true;
   }
 }
@@ -34,6 +32,10 @@ export const startPlayback = () => {
 
 export const stopPlayback = () => {
   Transport.stop();
+}
+
+export const setTempo = (tempo: number) => {
+  Transport.bpm.value = tempo;
 }
 
 const triggerNote = (toneDuration: string) => {

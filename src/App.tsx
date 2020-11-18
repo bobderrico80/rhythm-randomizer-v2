@@ -42,6 +42,7 @@ export interface ScoreSettings {
 }
 
 export const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
+const DEFAULT_TEMPO = 80; // bpm
 
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
@@ -92,6 +93,7 @@ const App = () => {
   const [playbackState, setPlaybackState] = useState<PlaybackState>(
     PlaybackState.STOPPED
   );
+  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
 
   // Retrieve persisted app state
   useEffect(() => {
@@ -336,17 +338,23 @@ const App = () => {
     setPlaybackState(playbackState);
   };
 
+  const handleTempoChange = (tempo: number) => {
+    setTempo(tempo);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
         settingsMenuOpen={settingsMenuOpen}
         openAccordion={openSettingsAccordion}
+        tempo={tempo}
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         timeSignatures={timeSignatures}
         selectedTimeSignature={selectedTimeSignature}
         measureCountOptions={MEASURE_COUNT_OPTIONS}
         selectedMeasureCount={measureCount}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
+        onTempoChange={handleTempoChange}
         onNoteGroupChange={handleNoteGroupChange}
         onNoteGroupMultiSelectChange={handleNoteGroupMultiSelectChange}
         onTimeSignatureChange={handleTimeSignatureChange}
@@ -363,6 +371,7 @@ const App = () => {
         currentFormFactor={formFactor}
         measures={scoreData.measures}
         playbackState={playbackState}
+        tempo={tempo}
         onPlaybackStateChange={handlePlaybackStateChange}
         onMainMenuButtonClick={handleMainMenuButtonClick}
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}

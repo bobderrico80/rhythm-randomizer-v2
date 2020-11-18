@@ -11,6 +11,7 @@ const buildClassName = buildBemClassName('c-rr-header-nav');
 export interface HeaderNavProps {
   measures: Measure[];
   playbackState: PlaybackState;
+  tempo: number;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onRandomizeButtonClick: () => void;
 }
@@ -18,6 +19,7 @@ export interface HeaderNavProps {
 const HeaderNav = ({
   measures,
   playbackState,
+  tempo,
   onPlaybackStateChange,
   onRandomizeButtonClick,
 }: HeaderNavProps) => {
@@ -37,6 +39,7 @@ const HeaderNav = ({
           <Player
             measures={measures}
             playbackState={playbackState}
+            tempo={tempo}
             onPlaybackStateChange={onPlaybackStateChange}
           />
         </li>
