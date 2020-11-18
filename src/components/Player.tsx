@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import { PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
 import { Measure } from '../modules/vex';
 import {
   Transport,
@@ -16,6 +16,7 @@ export interface PlayerProps {
   playbackState: PlaybackState;
   tempo: number;
   onPlaybackStateChange: PlaybackStateChangeHandler;
+  onNoteTrigger: NoteTriggerHandler;
 }
 
 export type PlaybackStateChangeHandler = (playbackState: PlaybackState) => void;
@@ -27,6 +28,7 @@ const Player = ({
   playbackState,
   tempo,
   onPlaybackStateChange,
+  onNoteTrigger,
 }: PlayerProps) => {
   // Set up transport event listeners
   useEffect(() => {
@@ -49,8 +51,8 @@ const Player = ({
 
   // Schedule measures when they change
   useEffect(() => {
-    scheduleMeasures(measures);
-  }, [measures]);
+    scheduleMeasures(measures, onNoteTrigger);
+  }, [measures, onNoteTrigger]);
 
   // Set tempo when it changes
   useEffect(() => {

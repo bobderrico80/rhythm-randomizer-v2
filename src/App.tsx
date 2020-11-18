@@ -94,6 +94,7 @@ const App = () => {
     PlaybackState.STOPPED
   );
   const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  const [playingNoteIndex, setPlayingNoteIndex] = useState<number | null>(null);
 
   // Retrieve persisted app state
   useEffect(() => {
@@ -336,10 +337,18 @@ const App = () => {
 
   const handlePlaybackStateChange = (playbackState: PlaybackState) => {
     setPlaybackState(playbackState);
+
+    if (playbackState === PlaybackState.STOPPED) {
+      setPlayingNoteIndex(null);
+    }
   };
 
   const handleTempoChange = (tempo: number) => {
     setTempo(tempo);
+  };
+
+  const handleNoteTrigger = (index: number | null) => {
+    setPlayingNoteIndex(index);
   };
 
   return (
@@ -373,6 +382,7 @@ const App = () => {
         playbackState={playbackState}
         tempo={tempo}
         onPlaybackStateChange={handlePlaybackStateChange}
+        onNoteTrigger={handleNoteTrigger}
         onMainMenuButtonClick={handleMainMenuButtonClick}
         onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
         onRandomizeButtonClick={handleHeaderRandomizeButtonClick}
@@ -382,6 +392,7 @@ const App = () => {
         innerWidth={innerWidth}
         transitioning={transitioning}
         currentFormFactor={formFactor}
+        playingNoteIndex={playingNoteIndex}
         onScoreClick={handleScoreRandomizeButtonClick}
       />
     </div>

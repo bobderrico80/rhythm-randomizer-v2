@@ -26,6 +26,7 @@ export interface ScoreProps {
   innerWidth: number;
   transitioning: boolean;
   currentFormFactor: FormFactor;
+  playingNoteIndex: number | null;
   onScoreClick: () => void;
 }
 
@@ -34,9 +35,11 @@ const Score = ({
   innerWidth,
   transitioning,
   currentFormFactor,
+  playingNoteIndex,
   onScoreClick,
 }: ScoreProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const noteHeadsRef = useRef<NodeListOf<HTMLElement> | null>(null);
 
   useEffect(() => {
     const ref = containerRef;
@@ -59,12 +62,38 @@ const Score = ({
       scoreDimensionConfig
     );
 
+    if (containerRef.current) {
+      noteHeadsRef.current = containerRef.current.querySelectorAll(
+        '.vf-notehead path'
+      );
+    }
+
     return () => {
       if (ref && ref.current) {
         ref.current.innerHTML = '';
       }
+      noteHeadsRef.current = null;
     };
   }, [scoreData, innerWidth, currentFormFactor]);
+
+  useEffect(() => {
+    if (noteHeadsRef.current) {
+      if (playingNoteIndex !== null) {
+        // Reset previous note
+        if (noteHeadsRef.current[playingNoteIndex - 1]) {
+          noteHeadsRef.current[playingNoteIndex - 1].style.fill = '';
+        }
+
+        // Set current note to red;
+        noteHeadsRef.current[playingNoteIndex].style.fill = 'red';
+      } else {
+        // reset all notes
+        [...noteHeadsRef.current].forEach(
+          (noteHead) => (noteHead.style.fill = '')
+        );
+      }
+    }
+  }, [playingNoteIndex]);
 
   return (
     <button
