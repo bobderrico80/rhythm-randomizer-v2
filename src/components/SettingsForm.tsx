@@ -8,15 +8,19 @@ import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
 import MeasureCountSelection from './MeasureCountSelection';
 import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import Accordion from './Accordion';
+import PlaybackSettings from './PlaybackSettings';
+import { TempoChangeHandler } from './TempoControl';
 
 export interface SettingsFormProps {
   openAccordion: string;
+  tempo: number;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
   measureCountOptions: number[];
   selectedMeasureCount: number;
   errorMessage: string;
+  onTempoChange: TempoChangeHandler;
   onNoteGroupChange: NoteGroupChangeHandler;
   onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
@@ -29,12 +33,14 @@ const buildClassName = buildBemClassName('c-rr-settings-form');
 
 const SettingsForm = ({
   openAccordion,
+  tempo,
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
   measureCountOptions,
   selectedMeasureCount,
   errorMessage,
+  onTempoChange,
   onNoteGroupChange,
   onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
@@ -53,6 +59,18 @@ const SettingsForm = ({
       {errorMessage && (
         <p className={buildClassName('error-message')()}>{errorMessage}</p>
       )}
+      <Accordion
+        id="playback-settings-accordion"
+        isOpen={openAccordion === 'playback-settings-accordion'}
+        onToggleClick={handleAccordionToggleClick}
+        onTransitionComplete={onAccordionTransitionComplete}
+        renderButtonContents={() => 'Playback Settings'}
+        renderPaneContents={() => {
+          return (
+            <PlaybackSettings tempo={tempo} onTempoChange={onTempoChange} />
+          );
+        }}
+      />
       <Accordion
         id="measure-count-selection-accordion"
         isOpen={openAccordion === 'measure-count-selection-accordion'}

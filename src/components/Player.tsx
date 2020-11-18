@@ -7,12 +7,14 @@ import {
   startPlayback,
   stopPlayback,
   scheduleMeasures,
+  setTempo,
 } from '../modules/tone';
 import { buildBemClassName } from '../modules/util';
 
 export interface PlayerProps {
   measures: Measure[];
   playbackState: PlaybackState;
+  tempo: number;
   onPlaybackStateChange: PlaybackStateChangeHandler;
 }
 
@@ -23,6 +25,7 @@ const buildClassName = buildBemClassName('c-rr-player');
 const Player = ({
   measures,
   playbackState,
+  tempo,
   onPlaybackStateChange,
 }: PlayerProps) => {
   // Set up transport event listeners
@@ -48,6 +51,11 @@ const Player = ({
   useEffect(() => {
     scheduleMeasures(measures);
   }, [measures]);
+
+  // Set tempo when it changes
+  useEffect(() => {
+    setTempo(tempo);
+  }, [tempo]);
 
   const handlePlayToggle = () => {
     if (playbackState === PlaybackState.STOPPED) {

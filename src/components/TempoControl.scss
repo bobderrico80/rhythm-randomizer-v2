@@ -1,0 +1,28 @@
+.c-rr-tempo-control {
+  &__label {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  &__container {
+    display: flex;
+    margin-left: 1rem;
+  }
+
+  &__button {
+    height: 35px;
+    width: 35px;
+  }
+
+  &__input {
+    height: 35px;
+    width: 51px;
+    margin: 0 3px;
+    text-align: center;
+    font-size: 1em;
+    padding: 8px;
+    border-radius: 0.5em;
+    border: 1px solid black;
+  }
+}
