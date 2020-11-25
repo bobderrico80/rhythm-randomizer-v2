@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
 import { Measure } from '../modules/vex';
 import {
   Transport,
@@ -15,6 +15,7 @@ export interface PlayerProps {
   measures: Measure[];
   playbackState: PlaybackState;
   tempo: number;
+  pitch: Pitch;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
 }
@@ -27,6 +28,7 @@ const Player = ({
   measures,
   playbackState,
   tempo,
+  pitch,
   onPlaybackStateChange,
   onNoteTrigger,
 }: PlayerProps) => {
@@ -51,13 +53,20 @@ const Player = ({
 
   // Schedule measures when they change
   useEffect(() => {
-    scheduleMeasures(measures, onNoteTrigger);
-  }, [measures, onNoteTrigger]);
+    if (playbackState === PlaybackState.STOPPED) {
+      scheduleMeasures(measures, pitch, onNoteTrigger);
+    }
+  }, [playbackState, measures, pitch, onNoteTrigger]);
 
   // Set tempo when it changes
   useEffect(() => {
     setTempo(tempo);
   }, [tempo]);
+
+  // Set pitch when it changes
+  useEffect(() => {
+    //
+  });
 
   const handlePlayToggle = () => {
     if (playbackState === PlaybackState.STOPPED) {

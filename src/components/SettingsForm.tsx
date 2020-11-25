@@ -10,10 +10,13 @@ import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import Accordion from './Accordion';
 import PlaybackSettings from './PlaybackSettings';
 import { TempoChangeHandler } from './TempoControl';
+import { PitchChangeHandler } from './PitchControl';
+import { Pitch } from '../modules/tone';
 
 export interface SettingsFormProps {
   openAccordion: string;
   tempo: number;
+  pitch: Pitch;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
@@ -21,6 +24,7 @@ export interface SettingsFormProps {
   selectedMeasureCount: number;
   errorMessage: string;
   onTempoChange: TempoChangeHandler;
+  onPitchChange: PitchChangeHandler;
   onNoteGroupChange: NoteGroupChangeHandler;
   onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
@@ -34,6 +38,7 @@ const buildClassName = buildBemClassName('c-rr-settings-form');
 const SettingsForm = ({
   openAccordion,
   tempo,
+  pitch,
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
@@ -41,6 +46,7 @@ const SettingsForm = ({
   selectedMeasureCount,
   errorMessage,
   onTempoChange,
+  onPitchChange,
   onNoteGroupChange,
   onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
@@ -67,7 +73,12 @@ const SettingsForm = ({
         renderButtonContents={() => 'Playback Settings'}
         renderPaneContents={() => {
           return (
-            <PlaybackSettings tempo={tempo} onTempoChange={onTempoChange} />
+            <PlaybackSettings
+              tempo={tempo}
+              pitch={pitch}
+              onTempoChange={onTempoChange}
+              onPitchChange={onPitchChange}
+            />
           );
         }}
       />

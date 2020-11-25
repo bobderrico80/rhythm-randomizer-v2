@@ -11,6 +11,8 @@ import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import SlideOut from './SlideOut';
 import ShareButton from './ShareButton';
 import { TempoChangeHandler } from './TempoControl';
+import { PitchChangeHandler } from './PitchControl';
+import { Pitch } from '../modules/tone';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 
@@ -18,6 +20,7 @@ export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
   openAccordion: string;
   tempo: number;
+  pitch: Pitch;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
   selectedTimeSignature: TimeSignature;
@@ -26,6 +29,7 @@ export interface SettingsMenuProps {
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
   onTempoChange: TempoChangeHandler;
+  onPitchChange: PitchChangeHandler;
   onNoteGroupChange: NoteGroupChangeHandler;
   onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
   onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
@@ -38,6 +42,7 @@ const SettingsMenu = ({
   settingsMenuOpen,
   openAccordion,
   tempo,
+  pitch,
   noteGroupTypeSelectionMap,
   timeSignatures,
   selectedTimeSignature,
@@ -46,6 +51,7 @@ const SettingsMenu = ({
   errorMessage,
   onSettingsMenuCloseClick,
   onTempoChange,
+  onPitchChange,
   onNoteGroupChange,
   onNoteGroupMultiSelectChange,
   onTimeSignatureChange,
@@ -94,6 +100,7 @@ const SettingsMenu = ({
         <SettingsForm
           openAccordion={openAccordion}
           tempo={tempo}
+          pitch={pitch}
           noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
           timeSignatures={timeSignatures}
           selectedTimeSignature={selectedTimeSignature}
@@ -101,6 +108,7 @@ const SettingsMenu = ({
           selectedMeasureCount={selectedMeasureCount}
           errorMessage={errorMessage}
           onTempoChange={onTempoChange}
+          onPitchChange={onPitchChange}
           onNoteGroupChange={onNoteGroupChange}
           onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
           onTimeSignatureChange={onTimeSignatureChange}

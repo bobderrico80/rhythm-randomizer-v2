@@ -28,7 +28,7 @@ import {
 } from './modules/persisted-state';
 import { encodeScoreSettingsShareString } from './modules/share';
 import { EventAction, EventCategory, sendEvent } from './modules/events';
-import { PlaybackState } from './modules/tone';
+import { Octave, Pitch, PitchClass, PlaybackState } from './modules/tone';
 
 export enum FormFactor {
   MOBILE,
@@ -42,7 +42,9 @@ export interface ScoreSettings {
 }
 
 export const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
+
 const DEFAULT_TEMPO = 80; // bpm
+const DEFAULT_PITCH: Pitch = { pitchClass: PitchClass.F, octave: Octave._3 };
 
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
@@ -94,6 +96,7 @@ const App = () => {
     PlaybackState.STOPPED
   );
   const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  const [pitch, setPitch] = useState(DEFAULT_PITCH);
   const [playingNoteIndex, setPlayingNoteIndex] = useState<number | null>(null);
 
   // Retrieve persisted app state
@@ -351,12 +354,17 @@ const App = () => {
     setPlayingNoteIndex(index);
   };
 
+  const handlePitchChange = (newPitch: Pitch) => {
+    setPitch(newPitch);
+  };
+
   return (
     <div className="c-rr-app">
       <SettingsMenu
         settingsMenuOpen={settingsMenuOpen}
         openAccordion={openSettingsAccordion}
         tempo={tempo}
+        pitch={pitch}
         noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
         timeSignatures={timeSignatures}
         selectedTimeSignature={selectedTimeSignature}
@@ -364,6 +372,7 @@ const App = () => {
         selectedMeasureCount={measureCount}
         onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
         onTempoChange={handleTempoChange}
+        onPitchChange={handlePitchChange}
         onNoteGroupChange={handleNoteGroupChange}
         onNoteGroupMultiSelectChange={handleNoteGroupMultiSelectChange}
         onTimeSignatureChange={handleTimeSignatureChange}
@@ -381,6 +390,7 @@ const App = () => {
         measures={scoreData.measures}
         playbackState={playbackState}
         tempo={tempo}
+        pitch={pitch}
         onPlaybackStateChange={handlePlaybackStateChange}
         onNoteTrigger={handleNoteTrigger}
         onMainMenuButtonClick={handleMainMenuButtonClick}

@@ -8,7 +8,7 @@ import IconButton from './IconButton';
 import { FormFactor } from '../App';
 import HeaderNav from './HeaderNav';
 import { Measure } from '../modules/vex';
-import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
 import { PlaybackStateChangeHandler } from './Player';
 
 export interface HeaderProps {
@@ -16,6 +16,7 @@ export interface HeaderProps {
   measures: Measure[];
   playbackState: PlaybackState;
   tempo: number;
+  pitch: Pitch;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
   onRandomizeButtonClick: () => void;
@@ -30,6 +31,7 @@ const Header = ({
   measures,
   playbackState,
   tempo,
+  pitch,
   onPlaybackStateChange,
   onNoteTrigger,
   onRandomizeButtonClick,
@@ -42,6 +44,7 @@ const Header = ({
         measures={measures}
         playbackState={playbackState}
         tempo={tempo}
+        pitch={pitch}
         onPlaybackStateChange={onPlaybackStateChange}
         onNoteTrigger={onNoteTrigger}
         onRandomizeButtonClick={onRandomizeButtonClick}

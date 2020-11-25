@@ -7,9 +7,40 @@ export enum PlaybackState {
   STOPPED
 }
 
+export enum PitchClass {
+  A = 'A',
+  Bb = 'Bb',
+  B = 'B',
+  C = 'C',
+  Db = 'Db',
+  D = 'D',
+  Eb = 'Eb',
+  E = 'E',
+  F = 'F',
+  Gb = 'Gb',
+  G = 'G',
+  Ab = 'Ab',
+}
+
+export enum Octave {
+  _0 = '1',
+  _1 = '2',
+  _2 = '3',
+  _3 = '4',
+  _4 = '5',
+  _5 = '6',
+  _6 = '7',
+  _7 = '8',
+}
+
+export interface Pitch {
+  pitchClass: PitchClass;
+  octave: Octave;
+}
+
+
 export type NoteTriggerHandler = (index: number | null) => void;
 
-const NOTE_PITCH = 'F4';
 const NOTE_SPACING = 0.85; // %
 const TRAILING_TIME = 1; // seconds
 
@@ -40,25 +71,29 @@ export const setTempo = (tempo: number) => {
   Transport.bpm.value = tempo;
 }
 
-const triggerNote = (playbackPattern: PlaybackPattern, index: number, onNoteTrigger: NoteTriggerHandler) => {
+const getPitchString = (pitch: Pitch) => {
+  return `${pitch.pitchClass}${pitch.octave}`;
+}
+
+const triggerNote = (playbackPattern: PlaybackPattern, index: number, pitch: Pitch, onNoteTrigger: NoteTriggerHandler) => {
   return (time: number) => {
     onNoteTrigger(index);
     if (synth) {
       if (!playbackPattern.rest) {
         synth.triggerAttackRelease(
-          NOTE_PITCH,
+          getPitchString(pitch),
           Tone.Time(playbackPattern.toneDuration).valueOf() * NOTE_SPACING,
           time
         )
       }
     } else {
       init();
-      triggerNote(playbackPattern, index, onNoteTrigger);
+      triggerNote(playbackPattern, index, pitch, onNoteTrigger);
     }
   }
 }
 
-export const scheduleMeasures = (measures: Measure[], onNoteTrigger: NoteTriggerHandler) => {
+export const scheduleMeasures = (measures: Measure[], pitch: Pitch, onNoteTrigger: NoteTriggerHandler) => {
   if (!initialized) {
     init();
   }
@@ -86,7 +121,7 @@ export const scheduleMeasures = (measures: Measure[], onNoteTrigger: NoteTrigger
       }
 
       playbackPatterns.forEach((playbackPattern) => {
-        Transport.schedule(triggerNote(playbackPattern, playbackPatternIndex, onNoteTrigger), elapsedTime)
+        Transport.schedule(triggerNote(playbackPattern, playbackPatternIndex, pitch, onNoteTrigger), elapsedTime)
         elapsedTime += Tone.Time(playbackPattern.toneDuration).toSeconds();
         playbackPatternIndex += 1;
       });

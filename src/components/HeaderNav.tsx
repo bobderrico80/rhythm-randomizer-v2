@@ -4,7 +4,7 @@ import { buildBemClassName } from '../modules/util';
 import './HeaderNav.scss';
 import Player, { PlaybackStateChangeHandler } from './Player';
 import { Measure } from '../modules/vex';
-import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
 
 const buildClassName = buildBemClassName('c-rr-header-nav');
 
@@ -12,6 +12,7 @@ export interface HeaderNavProps {
   measures: Measure[];
   playbackState: PlaybackState;
   tempo: number;
+  pitch: Pitch;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
   onRandomizeButtonClick: () => void;
@@ -21,6 +22,7 @@ const HeaderNav = ({
   measures,
   playbackState,
   tempo,
+  pitch,
   onPlaybackStateChange,
   onNoteTrigger,
   onRandomizeButtonClick,
@@ -42,6 +44,7 @@ const HeaderNav = ({
             measures={measures}
             playbackState={playbackState}
             tempo={tempo}
+            pitch={pitch}
             onPlaybackStateChange={onPlaybackStateChange}
             onNoteTrigger={onNoteTrigger}
           />

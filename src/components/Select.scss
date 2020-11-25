@@ -1,0 +1,14 @@
+.c-rr-select {
+  &__label {
+    font-weight: bold;
+  }
+
+  &__dropdown {
+    margin-left: 1rem;
+    height: 35px;
+    border-radius: 0.5em;
+    min-width: 35px;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+}
