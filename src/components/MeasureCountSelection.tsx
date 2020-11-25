@@ -1,7 +1,8 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import './MeasureCountSelection.scss';
+import Select from './Select';
 
 export interface MeasureCountSelectionProps {
   measureCountOptions: number[];
@@ -16,8 +17,8 @@ const MeasureCountSelection = ({
   selectedMeasureCount,
   onMeasureCountChange,
 }: MeasureCountSelectionProps) => {
-  const handleMeasureCountChange = (event: FormEvent<HTMLSelectElement>) => {
-    onMeasureCountChange(parseInt(event.currentTarget.value, 10));
+  const handleMeasureCountChange = (measureCount: string) => {
+    onMeasureCountChange(parseInt(measureCount, 10));
   };
 
   return (
@@ -25,25 +26,18 @@ const MeasureCountSelection = ({
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
       <fieldset className={buildClassName('fieldset')()}>
-        <label htmlFor="measure-count" className={buildClassName('label')()}>
-          Total measures:
-          <select
-            id="measure-count"
-            className={buildClassName('dropdown')()}
-            onChange={handleMeasureCountChange}
-            value={selectedMeasureCount}
-          >
-            {measureCountOptions.map((measureCountOption) => {
-              return (
-                <option value={measureCountOption} key={measureCountOption}>
-                  {`${measureCountOption} measure${
-                    measureCountOption > 1 ? 's' : ''
-                  }`}
-                </option>
-              );
-            })}
-          </select>
-        </label>
+        <Select
+          id="measure-count"
+          label="Total measures:"
+          value={selectedMeasureCount.toString()}
+          onChange={handleMeasureCountChange}
+          options={measureCountOptions.map((measureCountOption) => ({
+            value: measureCountOption.toString(),
+            display: `${measureCountOption} measure${
+              measureCountOption > 1 ? 's' : ''
+            }`,
+          }))}
+        />
       </fieldset>
     </section>
   );
