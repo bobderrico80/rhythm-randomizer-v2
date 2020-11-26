@@ -26,7 +26,10 @@ import {
   getPersistedAppState,
   persistAppState,
 } from './modules/persisted-state';
-import { encodeScoreSettingsShareString } from './modules/share';
+import {
+  encodeScoreSettingsShareString,
+  ShareStringEncodingVersion,
+} from './modules/share';
 import { EventAction, EventCategory, sendEvent } from './modules/events';
 import { Octave, Pitch, PitchClass, PlaybackState } from './modules/tone';
 
@@ -39,12 +42,19 @@ export interface ScoreSettings {
   measureCount: number;
   timeSignatureType: TimeSignatureType;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+  tempo: number;
+  pitch: Pitch;
 }
+
+const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._1;
 
 export const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
 
-const DEFAULT_TEMPO = 80; // bpm
-const DEFAULT_PITCH: Pitch = { pitchClass: PitchClass.F, octave: Octave._3 };
+export const DEFAULT_TEMPO = 80; // bpm
+export const DEFAULT_PITCH: Pitch = {
+  pitchClass: PitchClass.F,
+  octave: Octave._4,
+};
 
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
@@ -72,6 +82,10 @@ const App = () => {
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
     getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
   );
+  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
+  const [pitch, setPitch] = useState(DEFAULT_PITCH);
+
+  // Share string state
   const [shareString, setShareString] = useState<string>('');
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
   const [shareStringErrorMessage, setShareStringErrorMessage] = useState('');
@@ -95,8 +109,6 @@ const App = () => {
   const [playbackState, setPlaybackState] = useState<PlaybackState>(
     PlaybackState.STOPPED
   );
-  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
-  const [pitch, setPitch] = useState(DEFAULT_PITCH);
   const [playingNoteIndex, setPlayingNoteIndex] = useState<number | null>(null);
 
   // Retrieve persisted app state
@@ -119,6 +131,8 @@ const App = () => {
     setNoteGroupTypeSelectionMap(
       fromJS(scoreSettings.noteGroupTypeSelectionMap)
     );
+    setTempo(scoreSettings.tempo);
+    setPitch(scoreSettings.pitch);
     setScoreData(scoreData);
 
     if (errorMessage) {
@@ -134,6 +148,8 @@ const App = () => {
       measureCount,
       timeSignatureType: selectedTimeSignature.type,
       noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
+      tempo: tempo,
+      pitch: pitch,
     };
 
     persistAppState({ scoreSettings, scoreData });
@@ -142,6 +158,8 @@ const App = () => {
     selectedTimeSignature,
     noteGroupTypeSelectionMap,
     scoreData,
+    tempo,
+    pitch,
   ]);
 
   // Handle resizing score on window resize
@@ -204,13 +222,24 @@ const App = () => {
 
   // Generate share string state on settings update
   useEffect(() => {
-    const shareString = encodeScoreSettingsShareString({
-      measureCount,
-      noteGroupTypeSelectionMap,
-      timeSignatureType: selectedTimeSignature.type,
-    });
+    const shareString = encodeScoreSettingsShareString(
+      {
+        measureCount,
+        noteGroupTypeSelectionMap,
+        timeSignatureType: selectedTimeSignature.type,
+        tempo,
+        pitch,
+      },
+      CURRENT_SHARE_STRING_VERSION
+    );
     setShareString(shareString);
-  }, [measureCount, noteGroupTypeSelectionMap, selectedTimeSignature]);
+  }, [
+    measureCount,
+    noteGroupTypeSelectionMap,
+    selectedTimeSignature,
+    tempo,
+    pitch,
+  ]);
 
   const setNextMeasures = () => {
     try {

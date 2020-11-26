@@ -1,10 +1,11 @@
 import { Map } from 'immutable';
-import { ScoreSettings } from '../App';
+import { DEFAULT_PITCH, DEFAULT_TEMPO, ScoreSettings } from '../App';
 import { getNoteGroupTypeSelectionMap } from './note';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
 import { decodeScoreSettingsShareString } from './share';
 import { getTimeSignature, TimeSignatureType } from './time-signature';
+import { Pitch } from './tone';
 import { tryOrNull } from './util';
 
 const logger = console;
@@ -51,6 +52,18 @@ const compareScoreSettings = (
     return false;
   }
 
+  if (scoreSettingsA.tempo !== scoreSettingsB.tempo) {
+    return false;
+  }
+
+  if (scoreSettingsA.pitch.pitchClass !== scoreSettingsB.pitch.pitchClass) {
+    return false;
+  }
+
+  if (scoreSettingsA.pitch.octave !== scoreSettingsB.pitch.octave) {
+    return false;
+  }
+
   if (
     scoreSettingsA.noteGroupTypeSelectionMap.size !==
     scoreSettingsB.noteGroupTypeSelectionMap.size
@@ -89,11 +102,15 @@ const getDefaultPersistedAppState = (): PersistedAppState => {
   const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(
     timeSignature.beatsPerMeasure
   );
+  const tempo = DEFAULT_TEMPO;
+  const pitch: Pitch = DEFAULT_PITCH;
 
   const scoreSettings = {
     measureCount,
     timeSignatureType: timeSignature.type,
     noteGroupTypeSelectionMap,
+    tempo,
+    pitch,
   };
 
   return {
@@ -110,6 +127,14 @@ const getPersistedScoreSettings = () =>
 
     if (!scoreSettings) {
       return null;
+    }
+
+    if (!scoreSettings.tempo) {
+      scoreSettings.tempo = DEFAULT_TEMPO;
+    }
+
+    if (!scoreSettings.pitch) {
+      scoreSettings.pitch = DEFAULT_PITCH;
     }
 
     scoreSettings.noteGroupTypeSelectionMap = Map(
