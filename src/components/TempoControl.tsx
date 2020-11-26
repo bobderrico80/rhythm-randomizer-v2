@@ -12,8 +12,9 @@ export type TempoChangeHandler = (tempo: number) => void;
 
 const buildClassName = buildBemClassName('c-rr-tempo-control');
 
-const MIN_TEMPO = 40; // bpm
-const MAX_TEMPO = 300; // bpm
+export const MIN_TEMPO = 40; // bpm
+export const MAX_TEMPO = 300; // bpm
+
 const MOUSE_HOLD_DELAY = 500; // ms
 const HOLD_DELAY_INTERVAL = 10; // bpm
 

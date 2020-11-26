@@ -1,3 +1,4 @@
+import { DEFAULT_PITCH, DEFAULT_TEMPO } from '../App';
 import {
   getNoteGroupTypeSelectionMap,
   NoteGroupType,
@@ -12,8 +13,10 @@ import {
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
 import { getTimeSignature, TimeSignatureType } from './time-signature';
+import { Octave, Pitch, PitchClass } from './tone';
 import { Measure } from './vex';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const filterIconProperty = ({ icon, ...others }: any) => ({ ...others });
 
 const filterIconPropertyFromMeasures = (measures: Measure[]) => {
@@ -47,7 +50,9 @@ const verifyScoreNoteGroupTypes = (
 const setupLocalStorageScoreSettings = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   measureCount: number,
-  timeSignatureType: TimeSignatureType
+  timeSignatureType: TimeSignatureType,
+  tempo?: number,
+  pitch?: Pitch
 ) => {
   localStorage.setItem(
     'rr.scoreSettings',
@@ -55,6 +60,8 @@ const setupLocalStorageScoreSettings = (
       measureCount,
       timeSignatureType,
       noteGroupTypeSelectionMap,
+      tempo,
+      pitch,
     })
   );
 };
@@ -97,6 +104,68 @@ describe('The persisted-state module', () => {
         setupLocalStorageScoreSettings(
           noteGroupTypeSelectionMap,
           4,
+          TimeSignatureType.SIMPLE_3_4,
+          120,
+          { pitchClass: PitchClass.Bb, octave: Octave._4 }
+        );
+        setupLocalStorageScoreData(
+          randomMeasures,
+          TimeSignatureType.SIMPLE_3_4
+        );
+
+        persistedAppState = getPersistedAppState();
+      });
+
+      it('returns expected measure count', () => {
+        expect(persistedAppState.scoreSettings.measureCount).toEqual(4);
+      });
+
+      it('returns expected time signature type', () => {
+        expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+          TimeSignatureType.SIMPLE_3_4
+        );
+      });
+
+      it('returns the expected note group type selection map', () => {
+        expect(
+          persistedAppState.scoreSettings.noteGroupTypeSelectionMap
+        ).toEqual(noteGroupTypeSelectionMap);
+      });
+
+      it('returns expected tempo', () => {
+        expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+      });
+
+      it('returns expected pitch', () => {
+        expect(persistedAppState.scoreSettings.pitch).toEqual({
+          pitchClass: PitchClass.Bb,
+          octave: Octave._4,
+        });
+      });
+
+      it('returns the expected score time signature', () => {
+        expect(persistedAppState.scoreData.timeSignature).toMatchObject(
+          filterIconProperty(getTimeSignature(TimeSignatureType.SIMPLE_3_4))
+        );
+      });
+
+      it('returns the expected measures', () => {
+        expect(persistedAppState.scoreData.measures).toMatchObject(
+          filterIconPropertyFromMeasures(randomMeasures)
+        );
+      });
+    });
+
+    describe('with previous persisted state that does not include tempo or pitch information', () => {
+      let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+      let randomMeasures: Measure[];
+
+      beforeEach(() => {
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
+        randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 2, 4);
+        setupLocalStorageScoreSettings(
+          noteGroupTypeSelectionMap,
+          4,
           TimeSignatureType.SIMPLE_3_4
         );
         setupLocalStorageScoreData(
@@ -121,6 +190,14 @@ describe('The persisted-state module', () => {
         expect(
           persistedAppState.scoreSettings.noteGroupTypeSelectionMap
         ).toEqual(noteGroupTypeSelectionMap);
+      });
+
+      it('returns the default tempo', () => {
+        expect(persistedAppState.scoreSettings.tempo).toEqual(DEFAULT_TEMPO);
+      });
+
+      it('returns the default pitch', () => {
+        expect(persistedAppState.scoreSettings.pitch).toEqual(DEFAULT_PITCH);
       });
 
       it('returns the expected score time signature', () => {
@@ -209,6 +286,18 @@ describe('The persisted-state module', () => {
             ).toEqual(getNoteGroupTypeSelectionMap(4));
           });
 
+          it('returns the default tempo', () => {
+            expect(persistedAppState.scoreSettings.tempo).toEqual(
+              DEFAULT_TEMPO
+            );
+          });
+
+          it('returns the default pitch', () => {
+            expect(persistedAppState.scoreSettings.pitch).toEqual(
+              DEFAULT_PITCH
+            );
+          });
+
           it('returns default number of measures in the score', () => {
             expect(persistedAppState.scoreData.measures).toHaveLength(2);
           });
@@ -239,7 +328,7 @@ describe('The persisted-state module', () => {
     describe('with a valid share string query parameter', () => {
       describe('without a previous state', () => {
         beforeEach(() => {
-          persistedAppState = getPersistedAppState('042000102');
+          persistedAppState = getPersistedAppState('14212033000102');
         });
 
         it('returns the expected measure count from the share string', () => {
@@ -262,6 +351,17 @@ describe('The persisted-state module', () => {
           expect(
             persistedAppState.scoreSettings.noteGroupTypeSelectionMap
           ).toEqual(expectedNoteGroupTypeSelectionMap);
+        });
+
+        it('returns the expected tempo', () => {
+          expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+        });
+
+        it('returns the expected pitch', () => {
+          expect(persistedAppState.scoreSettings.pitch).toEqual({
+            pitchClass: PitchClass.C,
+            octave: Octave._3,
+          });
         });
 
         it('returns a score with the expected measure count', () => {
@@ -299,14 +399,16 @@ describe('The persisted-state module', () => {
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             4,
-            TimeSignatureType.SIMPLE_4_4
+            TimeSignatureType.SIMPLE_4_4,
+            120,
+            { pitchClass: PitchClass.C, octave: Octave._3 }
           );
           setupLocalStorageScoreData(
             randomMeasures,
             TimeSignatureType.SIMPLE_4_4
           );
 
-          persistedAppState = getPersistedAppState('042000102');
+          persistedAppState = getPersistedAppState('04212033000102');
         });
 
         it('uses the persisted measure count', () => {
@@ -323,6 +425,17 @@ describe('The persisted-state module', () => {
           expect(
             persistedAppState.scoreSettings.noteGroupTypeSelectionMap
           ).toEqual(noteGroupTypeSelectionMap);
+        });
+
+        it('uses the persisted tempo', () => {
+          expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+        });
+
+        it('uses the persisted pitch', () => {
+          expect(persistedAppState.scoreSettings.pitch).toEqual({
+            pitchClass: PitchClass.C,
+            octave: Octave._3,
+          });
         });
 
         it('uses the persisted score data', () => {
@@ -349,14 +462,16 @@ describe('The persisted-state module', () => {
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             2,
-            TimeSignatureType.SIMPLE_3_4
+            TimeSignatureType.SIMPLE_3_4,
+            80,
+            { pitchClass: PitchClass.F, octave: Octave._3 }
           );
           setupLocalStorageScoreData(
             randomMeasures,
             TimeSignatureType.SIMPLE_3_4
           );
 
-          persistedAppState = getPersistedAppState('042000102');
+          persistedAppState = getPersistedAppState('14212033000102');
         });
 
         it('uses the measure count from the share string', () => {
@@ -380,6 +495,17 @@ describe('The persisted-state module', () => {
               NoteGroupType.Q
             )
           );
+        });
+
+        it('uses the tempo from the share string', () => {
+          expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+        });
+
+        it('uses the pitch from the share string', () => {
+          expect(persistedAppState.scoreSettings.pitch).toEqual({
+            pitchClass: PitchClass.C,
+            octave: Octave._3,
+          });
         });
 
         it('uses the score time signature from the share string', () => {
@@ -428,7 +554,9 @@ describe('The persisted-state module', () => {
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             4,
-            TimeSignatureType.SIMPLE_3_4
+            TimeSignatureType.SIMPLE_3_4,
+            120,
+            { pitchClass: PitchClass.C, octave: Octave._3 }
           );
           setupLocalStorageScoreData(
             randomMeasures,
@@ -458,6 +586,17 @@ describe('The persisted-state module', () => {
           expect(
             persistedAppState.scoreSettings.noteGroupTypeSelectionMap
           ).toEqual(noteGroupTypeSelectionMap);
+        });
+
+        it('returns the previously-saved tempo', () => {
+          expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+        });
+
+        it('returns the previously-saved pitch', () => {
+          expect(persistedAppState.scoreSettings.pitch).toEqual({
+            pitchClass: PitchClass.C,
+            octave: Octave._3,
+          });
         });
 
         it('returns score data with the previously-used time signature', () => {
@@ -494,6 +633,8 @@ describe('The persisted-state module', () => {
           measureCount: 2,
           timeSignatureType: TimeSignatureType.SIMPLE_3_4,
           noteGroupTypeSelectionMap,
+          tempo: 120,
+          pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
         },
         scoreData: {
           timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
@@ -509,6 +650,8 @@ describe('The persisted-state module', () => {
           measureCount: 2,
           timeSignatureType: TimeSignatureType.SIMPLE_3_4,
           noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
+          tempo: 120,
+          pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
         })
       );
     });
