@@ -1,3 +1,7 @@
+## What's New in Version 2.2.1?
+
+Fixes issue where playback would freeze when attempting to playback a previously-generated rhythm prior to version 2.2.0.
+
 ## What's New in Version 2.2.0?
 
 Playback functionality! This oft-requested feature is finally available! Click the 'Play' button in the header navigation area to start playback. Note heads and rests will highlight along with the playback.
