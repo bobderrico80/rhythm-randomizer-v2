@@ -146,7 +146,23 @@ const getPersistedScoreSettings = () =>
 
 const getPersistedScoreData = () =>
   tryOrNull<ScoreData | null>(() => {
-    return getFromLocalStorage<ScoreData>(LocalStorageKey.SCORE_DATA);
+    const scoreData = getFromLocalStorage<ScoreData>(
+      LocalStorageKey.SCORE_DATA
+    );
+
+    // Check for pre-playback score data. Trying to play this post-playback release will cause
+    // playback to freeze. This checks if any of the notes are missing the `playbackUnit` property,
+    // and returns `null`, which will generate a fresh score downstream.
+    if (
+      scoreData?.measures.some((measure) =>
+        measure.noteGroups.some((noteGroup) =>
+          noteGroup.notes.some((note) => !note.playbackUnit)
+        )
+      )
+    ) {
+      return null;
+    }
+    return scoreData;
   }, logger.warn);
 
 const getSharedScoreSettings = (shareString: string) =>
