@@ -63,11 +63,6 @@ const Player = ({
     setTempo(tempo);
   }, [tempo]);
 
-  // Set pitch when it changes
-  useEffect(() => {
-    //
-  });
-
   const handlePlayToggle = () => {
     if (playbackState === PlaybackState.STOPPED) {
       startPlayback();
