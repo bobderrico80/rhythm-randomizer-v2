@@ -1,3 +1,11 @@
+## What's New in Version 2.2.0?
+
+Playback functionality! This oft-requested feature is finally available! Click the 'Play' button in the header navigation area to start playback. Note heads and rests will highlight along with the playback.
+
+The settings menu now contains a new section for adjusting playback settings including both the tempo and the pitch of the playback tone.
+
+The 'Share Settings' button also shares the current pitch and tempo settings allowing easy sharing and saving of the playback settings in addition to other settings.
+
 ## What's New in Version 2.1.2?
 
 - Fixed broken time signature icons
