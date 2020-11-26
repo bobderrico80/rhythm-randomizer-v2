@@ -1,6 +1,6 @@
 {
   "name": "rhythm-randomizer-v2",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -38,7 +38,12 @@
     "rules": {
       "no-console": "warn",
       "no-debugger": "warn",
-      "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "_+" }]
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "varsIgnorePattern": "_+"
+        }
+      ]
     }
   },
   "jest": {
