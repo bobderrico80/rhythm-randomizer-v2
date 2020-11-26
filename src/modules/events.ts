@@ -4,6 +4,7 @@ export enum EventCategory {
   SHARE_LINK = 'shareLink',
   MAIN_MENU = 'mainMenu',
   SETTINGS_MENU = 'settingsMenu',
+  PLAYBACK = 'playback',
 }
 
 export enum EventAction {
@@ -12,6 +13,7 @@ export enum EventAction {
   COPIED = 'copied',
   OPENED = 'opened',
   CLOSED = 'closed',
+  STARTED = 'started',
 }
 
 export const sendEvent = (

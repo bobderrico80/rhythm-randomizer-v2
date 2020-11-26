@@ -373,6 +373,14 @@ const App = () => {
     if (playbackState === PlaybackState.STOPPED) {
       setPlayingNoteIndex(null);
     }
+
+    if (playbackState === PlaybackState.PLAYING) {
+      sendEvent(
+        EventCategory.PLAYBACK,
+        EventAction.STARTED,
+        `${tempo}:${pitch.pitchClass}${pitch.octave}`
+      );
+    }
   };
 
   const handleTempoChange = (tempo: number) => {
