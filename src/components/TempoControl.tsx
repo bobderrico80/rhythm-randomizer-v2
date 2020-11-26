@@ -158,6 +158,7 @@ const TempoControl = ({ tempo, onTempoChange }: TempoControlProps) => {
         Tempo:
         <div className={buildClassName('container')()}>
           <button
+            type="button"
             id="tempo-decrease"
             className={classnames(
               'c-rr-button',
@@ -179,6 +180,7 @@ const TempoControl = ({ tempo, onTempoChange }: TempoControlProps) => {
             onBlur={handleInputBlur}
           />
           <button
+            type="button"
             id="tempo-increase"
             className={classnames(
               'c-rr-button',

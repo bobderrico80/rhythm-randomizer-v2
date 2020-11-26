@@ -74,6 +74,7 @@ const Player = ({
   return (
     <div className={buildClassName()()}>
       <button
+        type="button"
         className={classnames(
           'c-rr-button',
           'c-rr-button--dark',

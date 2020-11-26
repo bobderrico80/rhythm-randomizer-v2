@@ -20,6 +20,7 @@ const IconButton = ({
 }: IconButtonProps) => {
   return (
     <button
+      type="button"
       id={id}
       className={classnames('e-rr-button', 'c-rr-icon-button', className)}
       onClick={onClick}
