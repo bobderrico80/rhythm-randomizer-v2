@@ -97,6 +97,7 @@ const Score = ({
 
   return (
     <button
+      type="button"
       className={classnames(buildClassName()(), {
         [buildClassName()('transitioning')]: transitioning,
       })}

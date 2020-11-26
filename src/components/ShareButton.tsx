@@ -35,6 +35,7 @@ const ShareButton = ({ onShareSettingsClick }: ShareButtonProps) => {
 
   return (
     <button
+      type="button"
       className={classnames(buildClassName()(), 'c-rr-button')}
       onClick={handleClick}
       disabled={clicked}

@@ -32,6 +32,7 @@ const HeaderNav = ({
       <ul className={buildClassName('list')()}>
         <li className={buildClassName('list-item')()}>
           <button
+            type="button"
             className={classnames('c-rr-button', 'c-rr-button--dark')}
             onClick={onRandomizeButtonClick}
             disabled={playbackState === PlaybackState.PLAYING}
