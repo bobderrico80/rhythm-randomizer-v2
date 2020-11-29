@@ -1,3 +1,7 @@
+## What's New in Version 2.2.2?
+
+Fixes issue where sharing settings with a non-three-digit value for the tempo did not work.
+
 ## What's New in Version 2.2.1?
 
 Fixes issue where playback would freeze when attempting to playback a previously-generated rhythm prior to version 2.2.0.
