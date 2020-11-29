@@ -142,7 +142,7 @@ const encodeVersion1ShareString = (scoreSettings: ScoreSettings): string => {
   );
 
   // 4th-6th characters - tempo in BPM
-  shareString += scoreSettings.tempo;
+  shareString += scoreSettings.tempo.toString().padStart(3, '0');
 
   // 7th character - pitch class index (hex)
   shareString += pitchClassIndexMap[scoreSettings.pitch.pitchClass].toString(

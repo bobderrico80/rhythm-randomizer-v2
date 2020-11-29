@@ -70,7 +70,7 @@ describe('The share module', () => {
         measureCount: 4,
         timeSignatureType: TimeSignatureType.SIMPLE_4_4,
         noteGroupTypeSelectionMap,
-        tempo: 120,
+        tempo: 80,
         pitch: { pitchClass: PitchClass.Bb, octave: Octave._4 },
       };
 
@@ -84,7 +84,7 @@ describe('The share module', () => {
       });
 
       it('returns the expected full share string', () => {
-        expect(shareString).toEqual('1421201400010203040506070c');
+        expect(shareString).toEqual('1420801400010203040506070c');
       });
 
       it('contains the current version `1` as the first character', () => {
@@ -100,7 +100,7 @@ describe('The share module', () => {
       });
 
       it('contains the tempo in BPM in the 4th, 5th, and 6th characters', () => {
-        expect(shareString.substr(3, 3)).toEqual('120');
+        expect(shareString.substr(3, 3)).toEqual('080');
       });
 
       it('contains the pitch class index at the 7th character', () => {
