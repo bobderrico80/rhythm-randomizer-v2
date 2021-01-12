@@ -9,6 +9,7 @@ import {
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
+import { TimeSignature } from './time-signature';
 
 const logger = console;
 
@@ -24,10 +25,11 @@ const getRandomNoteDefinition = (
 
 const getRandomMeasure = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
-  durationPerMeasure: number
+  timeSignature: TimeSignature
 ): Measure => {
   const selectedNoteGroupTypes = getSelectedNoteGroupTypes(
-    noteGroupTypeSelectionMap
+    noteGroupTypeSelectionMap,
+    timeSignature
   );
 
   if (selectedNoteGroupTypes.length === 0) {
@@ -38,6 +40,8 @@ const getRandomMeasure = (
   const uniqueDurations = [
     ...new Set(possibleNoteGroups.map((ng) => ng.duration)),
   ];
+
+  const durationPerMeasure = timeSignature.beatsPerMeasure;
 
   // If any duration is larger than the measure, not valid
   if (uniqueDurations.some((d) => d > durationPerMeasure)) {
@@ -89,15 +93,13 @@ const getRandomMeasure = (
 
 export const getRandomMeasures = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
-  durationPerMeasure: number,
+  timeSignature: TimeSignature,
   measureCount: number
 ): Measure[] => {
   let measures: Measure[] = [];
 
   for (let i = 0; i < measureCount; i++) {
-    measures.push(
-      getRandomMeasure(noteGroupTypeSelectionMap, durationPerMeasure)
-    );
+    measures.push(getRandomMeasure(noteGroupTypeSelectionMap, timeSignature));
   }
 
   return measures;

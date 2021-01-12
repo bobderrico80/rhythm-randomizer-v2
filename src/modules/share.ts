@@ -36,6 +36,7 @@ import { MAX_TEMPO, MIN_TEMPO } from '../components/TempoControl';
 import {
   getNoteGroup,
   getNoteGroupTypeSelectionMap,
+  isValidNoteGroupForTimeSignature,
   noteGroups,
   NoteGroupTypeSelectionMap,
   resetNoteGroupTypeSelectionMap,
@@ -92,13 +93,15 @@ const encodeMeasureCountAndTimeSignature = (
 };
 
 const encodeNoteGroupTypeSelectionMap = (
-  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
+  timeSignature: TimeSignature
 ) => {
   const selectedNoteGroupIndices: number[] = [];
 
   noteGroupTypeSelectionMap.forEach((checked, noteGroupType) => {
-    if (checked) {
-      selectedNoteGroupIndices.push(getNoteGroup(noteGroupType).index);
+    const noteGroup = getNoteGroup(noteGroupType);
+    if (isValidNoteGroupForTimeSignature(noteGroup, timeSignature) && checked) {
+      selectedNoteGroupIndices.push(noteGroup.index);
     }
   });
 
@@ -124,7 +127,8 @@ const encodeVersion0ShareString = (scoreSettings: ScoreSettings): string => {
 
   // Remaining characters, encoded note group type selections
   shareString += encodeNoteGroupTypeSelectionMap(
-    scoreSettings.noteGroupTypeSelectionMap
+    scoreSettings.noteGroupTypeSelectionMap,
+    getTimeSignature(scoreSettings.timeSignatureType)
   );
 
   return shareString;
@@ -154,7 +158,8 @@ const encodeVersion1ShareString = (scoreSettings: ScoreSettings): string => {
 
   // Remaining characters, encoded note group type selections
   shareString += encodeNoteGroupTypeSelectionMap(
-    scoreSettings.noteGroupTypeSelectionMap
+    scoreSettings.noteGroupTypeSelectionMap,
+    getTimeSignature(scoreSettings.timeSignatureType)
   );
 
   return shareString;
@@ -195,10 +200,7 @@ const decodeTimeSignature = (shareString: string): TimeSignature => {
   return timeSignature;
 };
 
-const decodeNoteGroupTypeSelectionMap = (
-  selectedNoteGroupIndices: string,
-  timeSignature: TimeSignature
-) => {
+const decodeNoteGroupTypeSelectionMap = (selectedNoteGroupIndices: string) => {
   // We should have an even number of characters
   if (selectedNoteGroupIndices.length % 2 > 0) {
     throw new Error(SHARE_DECODE_ERROR_MESSAGE);
@@ -224,7 +226,7 @@ const decodeNoteGroupTypeSelectionMap = (
 
   // Initiate a fresh "empty" note group type selection map
   let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-    getNoteGroupTypeSelectionMap(timeSignature.beatsPerMeasure)
+    getNoteGroupTypeSelectionMap()
   );
 
   // Set each note group type to checked
@@ -292,8 +294,7 @@ const decodeVersion0ShareString = (shareString: string): ScoreSettings => {
   // Extract selected note groups (remaining characters)
   const selectedNoteGroupIndices = shareString.substr(3);
   const noteGroupTypeSelectionMap = decodeNoteGroupTypeSelectionMap(
-    selectedNoteGroupIndices,
-    timeSignature
+    selectedNoteGroupIndices
   );
 
   return {
@@ -328,8 +329,7 @@ const decodeVersion1ShareString = (shareString: string) => {
   // Extract selected note groups (remaining characters)
   const selectedNoteGroupIndices = shareString.substr(8);
   const noteGroupTypeSelectionMap = decodeNoteGroupTypeSelectionMap(
-    selectedNoteGroupIndices,
-    timeSignature
+    selectedNoteGroupIndices
   );
 
   return {

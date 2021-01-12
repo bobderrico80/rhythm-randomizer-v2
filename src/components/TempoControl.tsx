@@ -2,9 +2,17 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import './TempoControl.scss';
+import Icon from './Icon';
+import quarterNote from '../svg/notes/q.svg';
+import dottedQuarterNote from '../svg/notes/cqd.svg';
+import {
+  TimeSignature,
+  TimeSignatureComplexity,
+} from '../modules/time-signature';
 
 export interface TempoControlProps {
   tempo: number;
+  timeSignature: TimeSignature;
   onTempoChange: TempoChangeHandler;
 }
 
@@ -18,12 +26,19 @@ export const MAX_TEMPO = 300; // bpm
 const MOUSE_HOLD_DELAY = 500; // ms
 const HOLD_DELAY_INTERVAL = 10; // bpm
 
-const TempoControl = ({ tempo, onTempoChange }: TempoControlProps) => {
+const TempoControl = ({
+  tempo,
+  timeSignature,
+  onTempoChange,
+}: TempoControlProps) => {
   const [displayedTempo, setDisplayedTempo] = useState('');
   const [_, setIntervalId] = useState<number | null>(null);
   const [__, setHolding] = useState(false);
 
   const displayedTempoRef = useRef<string | null>(null);
+  const isCompoundMeter =
+    timeSignature.complexity === TimeSignatureComplexity.COMPOUND;
+  const mmMarkingSvg = isCompoundMeter ? dottedQuarterNote : quarterNote;
 
   useEffect(() => {
     setDisplayedTempo(tempo.toString());
@@ -155,7 +170,15 @@ const TempoControl = ({ tempo, onTempoChange }: TempoControlProps) => {
   return (
     <div className={buildClassName()()}>
       <label htmlFor="tempo" className={buildClassName('label')()}>
-        Tempo:
+        <div className={buildClassName('label-text')()}>Tempo:</div>
+        <div className={buildClassName('mm-marking')()}>
+          <Icon
+            svg={mmMarkingSvg}
+            alt={`${isCompoundMeter ? 'dotted ' : ''} quarter note`}
+            className={buildClassName('mm-marking-icon')()}
+          />
+          {' = '}
+        </div>
         <div className={buildClassName('container')()}>
           <button
             type="button"

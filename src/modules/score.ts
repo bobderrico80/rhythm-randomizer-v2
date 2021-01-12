@@ -46,6 +46,7 @@ export interface ScoreDimensionConfig {
   defaultMeasureWidth: number;
   wholeRestCenteringOffset: number;
   wholeRestCenteringFirstMeasureAdditionalOffset: number;
+  dottedWholeRestCenteringAdditionalOffset: number;
 }
 
 const DEFAULT_CLEF = 'percussion';
@@ -159,6 +160,11 @@ export const getNoteConfiguration = (
     if (inFirstMeasure) {
       offsetPercent +=
         scoreDimensionConfig.wholeRestCenteringFirstMeasureAdditionalOffset;
+    }
+
+    if (note.dotted) {
+      offsetPercent +=
+        scoreDimensionConfig.dottedWholeRestCenteringAdditionalOffset;
     }
 
     noteConfiguration.xShift = measureWidth * offsetPercent;

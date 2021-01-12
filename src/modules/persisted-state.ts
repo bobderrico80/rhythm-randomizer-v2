@@ -1,6 +1,11 @@
 import { Map } from 'immutable';
 import { DEFAULT_PITCH, DEFAULT_TEMPO, ScoreSettings } from '../App';
-import { getNoteGroupTypeSelectionMap } from './note';
+import {
+  getNoteGroup,
+  getNoteGroupTypeSelectionMap,
+  isValidNoteGroupForTimeSignature,
+  NoteGroupTypeSelectionMap,
+} from './note';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
 import { decodeScoreSettingsShareString } from './share';
@@ -90,7 +95,7 @@ const getFreshScoreData = (scoreSettings: ScoreSettings): ScoreData => {
     timeSignature,
     measures: getRandomMeasures(
       scoreSettings.noteGroupTypeSelectionMap,
-      timeSignature.beatsPerMeasure,
+      timeSignature,
       scoreSettings.measureCount
     ),
   };
@@ -99,9 +104,7 @@ const getFreshScoreData = (scoreSettings: ScoreSettings): ScoreData => {
 const getDefaultPersistedAppState = (): PersistedAppState => {
   const measureCount = 2;
   const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
-  const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(
-    timeSignature.beatsPerMeasure
-  );
+  const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
   const tempo = DEFAULT_TEMPO;
   const pitch: Pitch = DEFAULT_PITCH;
 
@@ -191,6 +194,37 @@ export const getPersistedAppState = (
 
   // Handle having a valid share string
   if (sharedScoreSettings) {
+    // Ensure that unselected notes from invalid time signatures do not inadvertently affect
+    // persisted score data (i.e. we do not want to toggle off all of the user's persisted
+    // compound meter settings because the share string was for simple meter)
+
+    let resolvedNoteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+    if (persistedScoreSettings) {
+      resolvedNoteGroupTypeSelectionMap =
+        persistedScoreSettings.noteGroupTypeSelectionMap;
+    } else {
+      resolvedNoteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+    }
+
+    sharedScoreSettings.noteGroupTypeSelectionMap.forEach(
+      (checked, noteGroupType) => {
+        if (
+          sharedScoreSettings &&
+          isValidNoteGroupForTimeSignature(
+            getNoteGroup(noteGroupType),
+            getTimeSignature(sharedScoreSettings.timeSignatureType)
+          )
+        ) {
+          resolvedNoteGroupTypeSelectionMap = resolvedNoteGroupTypeSelectionMap.set(
+            noteGroupType,
+            checked
+          );
+        }
+      }
+    );
+
+    sharedScoreSettings.noteGroupTypeSelectionMap = resolvedNoteGroupTypeSelectionMap;
+
     // If the share string matches persisted settings return settings and persisted score
     // This will prevent losing the current store if the page is reloaded with the same share URL
     if (

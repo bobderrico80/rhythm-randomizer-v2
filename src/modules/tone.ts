@@ -4,6 +4,7 @@ import {
   getPlaybackPatternsForNoteGroup,
   PlaybackPattern,
 } from './note';
+import { TimeSignature } from './time-signature';
 import { Measure } from './vex';
 
 export enum PlaybackState {
@@ -45,6 +46,7 @@ export interface Pitch {
 export type NoteTriggerHandler = (index: number | null) => void;
 
 const NOTE_SPACING = 0.75; // %
+const HEADING_TIME = 0.1; // seconds
 const TRAILING_TIME = 1; // seconds
 
 let initialized = false;
@@ -104,6 +106,7 @@ const triggerNote = (
 export const scheduleMeasures = (
   measures: Measure[],
   pitch: Pitch,
+  timeSignature: TimeSignature,
   onNoteTrigger: NoteTriggerHandler
 ) => {
   if (!initialized) {
@@ -112,7 +115,7 @@ export const scheduleMeasures = (
 
   Transport.cancel();
 
-  let elapsedTime = 0;
+  let elapsedTime = HEADING_TIME;
 
   if (measures.length === 0) {
     return;
@@ -126,7 +129,10 @@ export const scheduleMeasures = (
     }
 
     measure.noteGroups.forEach((noteGroup) => {
-      const playbackPatterns = getPlaybackPatternsForNoteGroup(noteGroup);
+      const playbackPatterns = getPlaybackPatternsForNoteGroup(
+        noteGroup,
+        timeSignature
+      );
 
       if (playbackPatterns.length === 0) {
         return;

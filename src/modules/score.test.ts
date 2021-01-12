@@ -36,6 +36,7 @@ const scoreDimensionConfig: ScoreDimensionConfig = {
   defaultMeasureWidth: 300,
   wholeRestCenteringOffset: 0.43,
   wholeRestCenteringFirstMeasureAdditionalOffset: -0.1,
+  dottedWholeRestCenteringAdditionalOffset: -0.05,
 };
 
 const setupMeasureConfiguration = (config: SetupMeasureConfig = {}) => {

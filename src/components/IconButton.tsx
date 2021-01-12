@@ -1,11 +1,9 @@
 import React, { MouseEvent } from 'react';
 import classnames from 'classnames';
 import './IconButton.scss';
+import Icon, { IconProps } from './Icon';
 
-export interface IconButtonProps {
-  svg: string;
-  alt: string;
-  className?: string;
+export interface IconButtonProps extends IconProps {
   id?: string;
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
@@ -26,7 +24,7 @@ const IconButton = ({
       onClick={onClick}
       {...rest}
     >
-      <img src={svg} alt={alt} className="c-rr-icon-button__icon" title={alt} />
+      <Icon svg={svg} alt={alt} className="c-rr-icon-button__icon" />
     </button>
   );
 };

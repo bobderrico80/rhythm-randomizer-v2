@@ -1,16 +1,26 @@
-import { sortBy } from 'lodash';
 import { Map } from 'immutable';
-import { TypedItem, findItemOfType } from './util';
+import { TimeSignature, TimeSignatureComplexity } from './time-signature';
+import {
+  findItemOfType,
+  CategorizedItem,
+  categorizeItems,
+  CategorizableTypedItem,
+  Category,
+} from './util';
 
 export enum NoteGroupCategoryType {
+  // Simple meter categories
   BASIC_NOTES = 'Basic Notes',
+  COMPOUND_BASIC_NOTES = 'Basic Dotted Notes',
   BASIC_RESTS = 'Basic Rests',
+  COMPOUND_BASIC_RESTS = 'Basic Dotted Rests',
   SIMPLE_BEAMED_NOTES = 'Simple Beamed Notes',
   MIXED_BEAMED_NOTES = 'Mixed Beamed Notes',
   TUPLETS = 'Tuplets',
   DOTTED_NOTE_COMBINATIONS = 'Dotted Note Combinations',
   EIGHTH_REST_COMBINATIONS = '8th Rest Combinations',
   SYNCOPATED_COMBINATIONS = 'Syncopated Combinations',
+  COMPOUND_EIGHTH_NOTE_COMBINATIONS = 'Compound 8th Note Combinations',
 }
 
 export enum NoteGroupType {
@@ -54,6 +64,22 @@ export enum NoteGroupType {
   EQE = 'eqe',
   EQQE = 'eqqe',
   EQQQE = 'eqqqe',
+
+  // Compound Meter dotted notes (C prefix = Compound)
+  CWD = 'cwd',
+  CHD = 'chd',
+  CQD = 'cqd',
+
+  // Compound meter dotted rests
+  CWDR = 'cwdr',
+  CHDR = 'chdr',
+  CQDR = 'cqdr',
+
+  // Compound meter 8th note combinations
+  CQE = 'cqe',
+  CEQ = 'ceq',
+  CEEE = 'ceee',
+  CTEE = 'ctee',
 }
 
 export enum NoteType {
@@ -73,28 +99,23 @@ export interface Note {
   dotted: boolean;
 }
 
-export interface NoteGroup extends TypedItem<NoteGroupType> {
-  type: NoteGroupType;
+export interface NoteGroup
+  extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType> {
   notes: Note[];
   beam?: boolean;
   tuplet?: boolean;
   description: string;
   duration: number;
   icon: string;
-  categoryType: NoteGroupCategoryType;
   defaultSelectionValue: boolean;
   index: number;
+  timeSignatureComplexity: TimeSignatureComplexity;
 }
 
-export interface CategorizedNoteGroup {
-  category: NoteGroupCategory;
-  noteGroups: NoteGroup[];
-}
+export interface CategorizedNoteGroup
+  extends CategorizedItem<NoteGroupCategory, NoteGroup> {}
 
-export interface NoteGroupCategory {
-  type: NoteGroupCategoryType;
-  sortOrder: number;
-}
+export interface NoteGroupCategory extends Category<NoteGroupCategoryType> {}
 
 export interface PlaybackPattern {
   toneDuration: string;
@@ -117,9 +138,13 @@ const notePlaybackUnitMap = {
   [NoteType.Q]: '4',
   [NoteType.E]: '8',
   [NoteType.S]: '16',
-}
+};
 
-const createNote = (type: NoteType, rest: boolean = false, dotted: boolean = false): Note => {
+const createNote = (
+  type: NoteType,
+  rest: boolean = false,
+  dotted: boolean = false
+): Note => {
   const playbackUnit = notePlaybackUnitMap[type];
   let widthUnit = noteWidthUnitMap[type];
 
@@ -132,7 +157,7 @@ const createNote = (type: NoteType, rest: boolean = false, dotted: boolean = fal
     dotted,
     rest,
     widthUnit,
-    playbackUnit
+    playbackUnit,
   };
 };
 
@@ -142,32 +167,44 @@ export const noteGroupCategories: NoteGroupCategory[] = [
     sortOrder: 0,
   },
   {
-    type: NoteGroupCategoryType.BASIC_RESTS,
+    type: NoteGroupCategoryType.COMPOUND_BASIC_NOTES,
     sortOrder: 1,
   },
   {
-    type: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
+    type: NoteGroupCategoryType.BASIC_RESTS,
     sortOrder: 2,
   },
   {
-    type: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
+    type: NoteGroupCategoryType.COMPOUND_BASIC_RESTS,
     sortOrder: 3,
   },
   {
-    type: NoteGroupCategoryType.TUPLETS,
+    type: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
     sortOrder: 4,
   },
   {
-    type: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
+    type: NoteGroupCategoryType.COMPOUND_EIGHTH_NOTE_COMBINATIONS,
     sortOrder: 5,
   },
   {
-    type: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
+    type: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
     sortOrder: 6,
   },
   {
-    type: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
+    type: NoteGroupCategoryType.TUPLETS,
     sortOrder: 7,
+  },
+  {
+    type: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
+    sortOrder: 8,
+  },
+  {
+    type: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
+    sortOrder: 9,
+  },
+  {
+    type: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
+    sortOrder: 10,
   },
 ];
 
@@ -175,7 +212,7 @@ export const noteGroupCategories: NoteGroupCategory[] = [
 const c = createNote;
 
 export const noteGroups: NoteGroup[] = [
-  // Basic notes
+  // Basic notes - Simple
   {
     categoryType: NoteGroupCategoryType.BASIC_NOTES,
     type: NoteGroupType.W,
@@ -185,6 +222,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/w.svg').default,
     defaultSelectionValue: true,
     index: 0,
+    sortOrder: 0,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_NOTES,
@@ -195,6 +234,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/h.svg').default,
     defaultSelectionValue: true,
     index: 1,
+    sortOrder: 1,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_NOTES,
@@ -205,9 +246,49 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/q.svg').default,
     defaultSelectionValue: true,
     index: 2,
+    sortOrder: 2,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
-  // Basic rests
+  // Basic notes - Compound
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_NOTES,
+    type: NoteGroupType.CWD,
+    notes: [c(NoteType.W, false, true)],
+    description: 'a dotted whole note',
+    duration: 4,
+    icon: require('../svg/notes/cwd.svg').default,
+    defaultSelectionValue: true,
+    index: 25,
+    sortOrder: 3,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_NOTES,
+    type: NoteGroupType.CHD,
+    notes: [c(NoteType.H, false, true)],
+    description: 'a dotted half note',
+    duration: 2,
+    icon: require('../svg/notes/chd.svg').default,
+    defaultSelectionValue: true,
+    index: 26,
+    sortOrder: 4,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_NOTES,
+    type: NoteGroupType.CQD,
+    notes: [c(NoteType.Q, false, true)],
+    description: 'a dotted quarter note',
+    duration: 1,
+    icon: require('../svg/notes/cqd.svg').default,
+    defaultSelectionValue: true,
+    index: 27,
+    sortOrder: 5,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+
+  // Basic rests - simple
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
     type: NoteGroupType.WR,
@@ -217,6 +298,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/wr.svg').default,
     defaultSelectionValue: true,
     index: 3,
+    sortOrder: 6,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
@@ -227,6 +310,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/hr.svg').default,
     defaultSelectionValue: true,
     index: 4,
+    sortOrder: 7,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.BASIC_RESTS,
@@ -237,6 +322,46 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/qr.svg').default,
     defaultSelectionValue: true,
     index: 5,
+    sortOrder: 8,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+  },
+
+  // Dotted rests - compound
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_RESTS,
+    type: NoteGroupType.CWDR,
+    notes: [c(NoteType.W, true, true)],
+    description: 'a dotted whole rest',
+    duration: 4,
+    icon: require('../svg/notes/cwdr.svg').default,
+    defaultSelectionValue: true,
+    index: 28,
+    sortOrder: 9,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_RESTS,
+    type: NoteGroupType.CHDR,
+    notes: [c(NoteType.H, true, true)],
+    description: 'a dotted half rest',
+    duration: 2,
+    icon: require('../svg/notes/chdr.svg').default,
+    defaultSelectionValue: true,
+    index: 29,
+    sortOrder: 10,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_BASIC_RESTS,
+    type: NoteGroupType.CQDR,
+    notes: [c(NoteType.Q, true, true)],
+    description: 'a dotted quarter rest',
+    duration: 1,
+    icon: require('../svg/notes/cqdr.svg').default,
+    defaultSelectionValue: true,
+    index: 30,
+    sortOrder: 11,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
   },
 
   // Simple beamed notes
@@ -250,6 +375,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ee.svg').default,
     defaultSelectionValue: true,
     index: 6,
+    sortOrder: 12,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.SIMPLE_BEAMED_NOTES,
@@ -261,6 +388,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ssss.svg').default,
     defaultSelectionValue: true,
     index: 7,
+    sortOrder: 13,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
   // Mixed beamed notes
@@ -274,6 +403,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/sse.svg').default,
     defaultSelectionValue: false,
     index: 8,
+    sortOrder: 14,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
@@ -285,6 +416,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ess.svg').default,
     defaultSelectionValue: false,
     index: 9,
+    sortOrder: 15,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.MIXED_BEAMED_NOTES,
@@ -296,6 +429,63 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ses.svg').default,
     defaultSelectionValue: false,
     index: 10,
+    sortOrder: 16,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+  },
+
+  // Compound 8th note combinations
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_EIGHTH_NOTE_COMBINATIONS,
+    type: NoteGroupType.CQE,
+    notes: [c(NoteType.Q), c(NoteType.E)],
+    beam: false,
+    description: 'a quarter note and an 8th note',
+    duration: 1,
+    icon: require('../svg/notes/cqe.svg').default,
+    defaultSelectionValue: true,
+    index: 31,
+    sortOrder: 17,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_EIGHTH_NOTE_COMBINATIONS,
+    type: NoteGroupType.CEQ,
+    notes: [c(NoteType.E), c(NoteType.Q)],
+    beam: false,
+    description: 'an 8th note and an quarter note',
+    duration: 1,
+    icon: require('../svg/notes/ceq.svg').default,
+    defaultSelectionValue: true,
+    index: 32,
+    sortOrder: 18,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_EIGHTH_NOTE_COMBINATIONS,
+    type: NoteGroupType.CEEE,
+    notes: [c(NoteType.E), c(NoteType.E), c(NoteType.E)],
+    beam: true,
+    description: 'three 8th notes, beamed',
+    duration: 1,
+    icon: require('../svg/notes/ceee.svg').default,
+    defaultSelectionValue: true,
+    index: 33,
+    sortOrder: 19,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_EIGHTH_NOTE_COMBINATIONS,
+    type: NoteGroupType.CTEE,
+    notes: [c(NoteType.E), c(NoteType.E)],
+    beam: true,
+    tuplet: true,
+    description: 'an 8th note tuplet',
+    duration: 1,
+    icon: require('../svg/notes/ctee.svg').default,
+    defaultSelectionValue: true,
+    index: 34,
+    sortOrder: 20,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
   },
 
   // Tuplets
@@ -309,6 +499,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/tqqq.svg').default,
     defaultSelectionValue: false,
     index: 11,
+    sortOrder: 21,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.TUPLETS,
@@ -321,6 +513,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/teee.svg').default,
     defaultSelectionValue: false,
     index: 12,
+    sortOrder: 22,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
   // Dotted note combinations
@@ -333,6 +527,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/hd.svg').default,
     defaultSelectionValue: false,
     index: 13,
+    sortOrder: 23,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -343,6 +539,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/qde.svg').default,
     defaultSelectionValue: false,
     index: 14,
+    sortOrder: 24,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -353,6 +551,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqd.svg').default,
     defaultSelectionValue: false,
     index: 15,
+    sortOrder: 25,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -364,6 +564,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eds.svg').default,
     defaultSelectionValue: false,
     index: 16,
+    sortOrder: 26,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
@@ -375,6 +577,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/sed.svg').default,
     defaultSelectionValue: false,
     index: 17,
+    sortOrder: 27,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
   // Combinations with 8th rests
@@ -387,6 +591,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eer.svg').default,
     defaultSelectionValue: false,
     index: 18,
+    sortOrder: 28,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -397,6 +603,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ere.svg').default,
     defaultSelectionValue: false,
     index: 19,
+    sortOrder: 29,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -408,6 +616,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/sser.svg').default,
     defaultSelectionValue: false,
     index: 20,
+    sortOrder: 30,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.EIGHTH_REST_COMBINATIONS,
@@ -419,6 +629,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/erss.svg').default,
     defaultSelectionValue: false,
     index: 21,
+    sortOrder: 31,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
   // Syncopated combinations
@@ -431,6 +643,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqe.svg').default,
     defaultSelectionValue: false,
     index: 22,
+    sortOrder: 32,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
@@ -441,6 +655,8 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqqe.svg').default,
     defaultSelectionValue: false,
     index: 23,
+    sortOrder: 33,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
     categoryType: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
@@ -457,59 +673,25 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqqqe.svg').default,
     defaultSelectionValue: false,
     index: 24,
+    sortOrder: 34,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 ];
 
 export const categorizeNoteGroups = (
   noteGroups: NoteGroup[]
 ): CategorizedNoteGroup[] => {
-  let categorizedNoteGroups = noteGroups.reduce(
-    (
-      previousCategorizedNoteGroups: CategorizedNoteGroup[],
-      noteGroup: NoteGroup
-    ) => {
-      const existingCategorizedNoteGroup = previousCategorizedNoteGroups.find(
-        (categorizedNoteGroup) =>
-          categorizedNoteGroup.category.type === noteGroup.categoryType
-      );
-
-      if (existingCategorizedNoteGroup) {
-        existingCategorizedNoteGroup.noteGroups.push(noteGroup);
-      } else {
-        previousCategorizedNoteGroups.push({
-          category: getNoteGroupCategory(noteGroup.categoryType),
-          noteGroups: [noteGroup],
-        });
-      }
-      return previousCategorizedNoteGroups;
-    },
-    []
-  );
-
-  categorizedNoteGroups = sortBy<CategorizedNoteGroup>(
-    categorizedNoteGroups,
-    (categorizedNoteGroup) => {
-      return categorizedNoteGroup.category.sortOrder;
-    }
-  );
-
-  categorizedNoteGroups.forEach((categorizedNoteGroup) => {
-    categorizedNoteGroup.noteGroups = sortBy<NoteGroup>(
-      categorizedNoteGroup.noteGroups,
-      ['index']
-    );
-  });
-
-  return categorizedNoteGroups;
+  return categorizeItems<
+    NoteGroupCategoryType,
+    NoteGroupCategory,
+    NoteGroup,
+    CategorizedNoteGroup
+  >(noteGroups, noteGroupCategories);
 };
 
-export const getNoteGroupTypeSelectionMap = (
-  maxDuration: number
-): NoteGroupTypeSelectionMap => {
+export const getNoteGroupTypeSelectionMap = (): NoteGroupTypeSelectionMap => {
   const noteGroupSelections = noteGroups.reduce((accumulator, noteGroup) => {
-    if (noteGroup.duration <= maxDuration) {
-      accumulator[noteGroup.type] = noteGroup.defaultSelectionValue;
-    }
+    accumulator[noteGroup.type] = noteGroup.defaultSelectionValue;
     return accumulator;
   }, {} as { [key: string]: boolean });
   return Map(noteGroupSelections) as NoteGroupTypeSelectionMap;
@@ -528,11 +710,14 @@ export const resetNoteGroupTypeSelectionMap = (
 
 export const setNoteGroupTypeSelections = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
+  reset: boolean,
   ...noteGroupTypes: NoteGroupType[]
 ) => {
-  noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-    noteGroupTypeSelectionMap
-  );
+  if (reset) {
+    noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+      noteGroupTypeSelectionMap
+    );
+  }
 
   noteGroupTypes.forEach((noteGroupType) => {
     noteGroupTypeSelectionMap = noteGroupTypeSelectionMap.set(
@@ -567,14 +752,35 @@ export const getTotalDuration = (noteGroups: NoteGroup[]): number => {
   }, 0);
 };
 
+export const isValidNoteGroupForTimeSignature = (
+  noteGroup: NoteGroup,
+  timeSignature: TimeSignature
+): boolean => {
+  return (
+    noteGroup.duration <= timeSignature.beatsPerMeasure &&
+    noteGroup.timeSignatureComplexity === timeSignature.complexity
+  );
+};
+
 export const getSelectedNoteGroupTypes = (
-  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
+  timeSignature: TimeSignature
 ) => {
   return [...noteGroupTypeSelectionMap.entries()].reduce(
     (previousNoteGroupTypes, [noteGroupType, checked]) => {
-      if (checked) {
-        previousNoteGroupTypes.push(noteGroupType);
+      // Exclude notes that were not selected
+      if (!checked) {
+        return previousNoteGroupTypes;
       }
+
+      const noteGroup = getNoteGroup(noteGroupType);
+
+      // Exclude notes that don't match with the current time signature
+      if (!isValidNoteGroupForTimeSignature(noteGroup, timeSignature)) {
+        return previousNoteGroupTypes;
+      }
+
+      previousNoteGroupTypes.push(noteGroupType);
 
       return previousNoteGroupTypes;
     },
@@ -582,15 +788,64 @@ export const getSelectedNoteGroupTypes = (
   );
 };
 
-export const getPlaybackPatternsForNoteGroup = (noteGroup: NoteGroup): PlaybackPattern[] => {
+/**
+ * Implementation note:
+ * Compound time signatures are "converted" into simple time signature rhythms for playback,
+ * applying the following algorithm:
+ * - Non-tupleted notes (like 3 beamed 8th notes) are converted into tuplets (3-8th note triplet)
+ * - Dotted notes (like a dotted half note) have the dot removed (a half note)
+ * - Tupleted notes (like a an 8th note duplet) are converted into regular notes (2-8th notes)
+ *
+ * @param noteGroup {NoteGroup}
+ * @param timeSignature {TimeSignature}
+ * @return {PlaybackPattern[]}
+ */
+export const getPlaybackPatternsForNoteGroup = (
+  noteGroup: NoteGroup,
+  timeSignature: TimeSignature
+): PlaybackPattern[] => {
   return noteGroup.notes.map((note) => {
-    const unit = noteGroup.tuplet ? 't' : 'n';
-    const dotIndicator = note.dotted ? '.' : '';
+    let unit = '';
+    let dotIndicator = '';
+
+    switch (timeSignature.complexity) {
+      case TimeSignatureComplexity.SIMPLE:
+        if (note.dotted && noteGroup.tuplet) {
+          unit = 'n';
+          dotIndicator = '';
+        } else if (note.dotted) {
+          unit = 'n';
+          dotIndicator = '.';
+        } else if (noteGroup.tuplet) {
+          unit = 't';
+          dotIndicator = '';
+        } else {
+          unit = 'n';
+          dotIndicator = '';
+        }
+        break;
+      case TimeSignatureComplexity.COMPOUND:
+        if (note.dotted && noteGroup.tuplet) {
+          unit = 't';
+          dotIndicator = '';
+        } else if (note.dotted) {
+          unit = 'n';
+          dotIndicator = '';
+        } else if (noteGroup.tuplet) {
+          unit = 'n';
+          dotIndicator = '';
+        } else {
+          unit = 't';
+          dotIndicator = '';
+        }
+        break;
+    }
+
     const toneDuration = `${note.playbackUnit}${unit}${dotIndicator}`;
 
     return {
       toneDuration,
-      rest: note.rest
-    }
+      rest: note.rest,
+    };
   });
-}
+};

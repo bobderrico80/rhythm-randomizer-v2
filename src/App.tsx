@@ -80,7 +80,7 @@ const App = () => {
     getTimeSignature(TimeSignatureType.SIMPLE_4_4)
   );
   const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
-    getNoteGroupTypeSelectionMap(selectedTimeSignature.beatsPerMeasure)
+    getNoteGroupTypeSelectionMap()
   );
   const [tempo, setTempo] = useState(DEFAULT_TEMPO);
   const [pitch, setPitch] = useState(DEFAULT_PITCH);
@@ -179,7 +179,12 @@ const App = () => {
     // TODO: Do more robust checks here, including smarter validation of potentially impossible
     // selections
 
-    if (getSelectedNoteGroupTypes(noteGroupTypeSelectionMap).length === 0) {
+    if (
+      getSelectedNoteGroupTypes(
+        noteGroupTypeSelectionMap,
+        selectedTimeSignature
+      ).length === 0
+    ) {
       setValidationErrorMessage('Please select at least one type of note');
       return;
     }
@@ -190,9 +195,7 @@ const App = () => {
   // Handle reconfiguring selection map when time signature changes
   useEffect(() => {
     setNoteGroupTypeSelectionMap((oldMap) => {
-      let newMap = getNoteGroupTypeSelectionMap(
-        selectedTimeSignature.beatsPerMeasure
-      );
+      let newMap = getNoteGroupTypeSelectionMap();
 
       [...oldMap.entries()].forEach(([noteGroupType, checked]) => {
         if (newMap.has(noteGroupType)) {
@@ -245,7 +248,7 @@ const App = () => {
     try {
       const nextMeasures = getRandomMeasures(
         noteGroupTypeSelectionMap,
-        selectedTimeSignature.beatsPerMeasure,
+        selectedTimeSignature,
         measureCount
       );
       setScoreData({
@@ -428,6 +431,7 @@ const App = () => {
         playbackState={playbackState}
         tempo={tempo}
         pitch={pitch}
+        timeSignature={selectedTimeSignature}
         onPlaybackStateChange={handlePlaybackStateChange}
         onNoteTrigger={handleNoteTrigger}
         onMainMenuButtonClick={handleMainMenuButtonClick}

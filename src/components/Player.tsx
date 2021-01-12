@@ -10,12 +10,14 @@ import {
   setTempo,
 } from '../modules/tone';
 import { buildBemClassName } from '../modules/util';
+import { TimeSignature } from '../modules/time-signature';
 
 export interface PlayerProps {
   measures: Measure[];
   playbackState: PlaybackState;
   tempo: number;
   pitch: Pitch;
+  timeSignature: TimeSignature;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
 }
@@ -29,6 +31,7 @@ const Player = ({
   playbackState,
   tempo,
   pitch,
+  timeSignature,
   onPlaybackStateChange,
   onNoteTrigger,
 }: PlayerProps) => {
@@ -54,9 +57,9 @@ const Player = ({
   // Schedule measures when they change
   useEffect(() => {
     if (playbackState === PlaybackState.STOPPED) {
-      scheduleMeasures(measures, pitch, onNoteTrigger);
+      scheduleMeasures(measures, pitch, timeSignature, onNoteTrigger);
     }
-  }, [playbackState, measures, pitch, onNoteTrigger]);
+  }, [playbackState, measures, pitch, timeSignature, onNoteTrigger]);
 
   // Set tempo when it changes
   useEffect(() => {

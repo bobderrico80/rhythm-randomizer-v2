@@ -17,6 +17,7 @@ const scoreDimensionConfig: ScoreDimensionConfig = {
   defaultMeasureWidth: 300,
   wholeRestCenteringOffset: 0.43, // percent
   wholeRestCenteringFirstMeasureAdditionalOffset: -0.1, // percent
+  dottedWholeRestCenteringAdditionalOffset: -0.05, // percent
 };
 
 const buildClassName = buildBemClassName('c-rr-score');
