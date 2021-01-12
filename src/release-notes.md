@@ -1,3 +1,7 @@
+## What's New in Version 2.2.3?
+
+Security updates.
+
 ## What's New in Version 2.2.2?
 
 Fixes issue where sharing settings with a non-three-digit value for the tempo did not work.
