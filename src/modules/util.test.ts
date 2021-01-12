@@ -1,26 +1,50 @@
 import {
   findItemOfType,
-  TypedItem,
   buildBemClassName,
   tryOrNull,
+  Category,
+  CategorizableTypedItem,
+  CategorizedItem,
+  categorizeItems,
 } from './util';
 
 enum TestType {
   FOO = 'foo',
+  FAA = 'faa',
+  FEE = 'fee',
   BAR = 'bar',
   BAZ = 'baz',
+  BAY = 'bay',
 }
 
-interface TestItem extends TypedItem<TestType> {}
+enum TestCategoryType {
+  FS = 'Fs',
+  BS = 'Bs',
+}
 
-const testItems: TestItem[] = [{ type: TestType.FOO }, { type: TestType.BAR }];
+interface TestItem extends CategorizableTypedItem<TestType, TestCategoryType> {}
+interface TestCategory extends Category<TestCategoryType> {}
+interface CategorizedTestItem extends CategorizedItem<TestCategory, TestItem> {}
+
+const testCategories: TestCategory[] = [
+  { type: TestCategoryType.FS, sortOrder: 0 },
+  { type: TestCategoryType.BS, sortOrder: 1 },
+];
+
+const testItems: TestItem[] = [
+  { type: TestType.FOO, categoryType: TestCategoryType.FS, sortOrder: 0 },
+  { type: TestType.FAA, categoryType: TestCategoryType.FS, sortOrder: 1 },
+  { type: TestType.FEE, categoryType: TestCategoryType.FS, sortOrder: 2 },
+  { type: TestType.BAR, categoryType: TestCategoryType.BS, sortOrder: 3 },
+  { type: TestType.BAY, categoryType: TestCategoryType.BS, sortOrder: 4 },
+];
 
 describe('The util module', () => {
   describe('findItemOfType() function', () => {
     it('returns the found item if it exists', () => {
       expect(
         findItemOfType<TestType, TestItem>(TestType.FOO, testItems)
-      ).toEqual({ type: TestType.FOO });
+      ).toMatchObject({ type: TestType.FOO });
     });
 
     it('throws an error if the item cannot be found', () => {
@@ -83,6 +107,148 @@ describe('The util module', () => {
       }, sideEffectFn);
 
       expect(sideEffectFn).toHaveBeenCalledWith(new Error('foo'));
+    });
+  });
+
+  describe('categorizeItems() function', () => {
+    describe('with items in the same category', () => {
+      it('puts same-category note groups into the same categorized note group object', () => {
+        expect(
+          categorizeItems<
+            TestCategoryType,
+            TestCategory,
+            TestItem,
+            CategorizedTestItem
+          >(
+            [
+              {
+                type: TestType.FOO,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 0,
+              },
+              {
+                type: TestType.FEE,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 2,
+              },
+              {
+                type: TestType.FAA,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 1,
+              },
+            ],
+            testCategories
+          )
+        ).toEqual([
+          {
+            category: {
+              type: TestCategoryType.FS,
+              sortOrder: 0,
+            },
+            items: [
+              {
+                type: TestType.FOO,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 0,
+              },
+              {
+                type: TestType.FAA,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 1,
+              },
+              {
+                type: TestType.FEE,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 2,
+              },
+            ],
+          },
+        ]);
+      });
+    });
+
+    describe('with note groups in different categories', () => {
+      it('puts different-category note groups into the separate categorized note group objects, with categories and note groups sorted by sortOrder/index', () => {
+        expect(
+          categorizeItems<
+            TestCategoryType,
+            TestCategory,
+            TestItem,
+            CategorizedTestItem
+          >(
+            [
+              {
+                type: TestType.FOO,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 0,
+              },
+              {
+                type: TestType.FEE,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 2,
+              },
+              {
+                type: TestType.BAR,
+                categoryType: TestCategoryType.BS,
+                sortOrder: 3,
+              },
+              {
+                type: TestType.BAY,
+                categoryType: TestCategoryType.BS,
+                sortOrder: 4,
+              },
+              {
+                type: TestType.FAA,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 1,
+              },
+            ],
+            testCategories
+          )
+        ).toEqual([
+          {
+            category: {
+              type: TestCategoryType.FS,
+              sortOrder: 0,
+            },
+            items: [
+              {
+                type: TestType.FOO,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 0,
+              },
+              {
+                type: TestType.FAA,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 1,
+              },
+              {
+                type: TestType.FEE,
+                categoryType: TestCategoryType.FS,
+                sortOrder: 2,
+              },
+            ],
+          },
+          {
+            category: {
+              type: TestCategoryType.BS,
+              sortOrder: 1,
+            },
+            items: [
+              {
+                type: TestType.BAR,
+                categoryType: TestCategoryType.BS,
+                sortOrder: 3,
+              },
+              {
+                type: TestType.BAY,
+                categoryType: TestCategoryType.BS,
+                sortOrder: 4,
+              },
+            ],
+          },
+        ]);
+      });
     });
   });
 });

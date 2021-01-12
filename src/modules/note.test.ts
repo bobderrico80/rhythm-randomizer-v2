@@ -4,7 +4,6 @@ import {
   getTotalDuration,
   NoteGroupType,
   NoteType,
-  categorizeNoteGroups,
   NoteGroupCategoryType,
   resetNoteGroupTypeSelectionMap,
   getNoteGroupTypeSelectionMap,
@@ -12,7 +11,13 @@ import {
   NoteGroupTypeSelectionMap,
   setNoteGroupTypeSelections,
   getPlaybackPatternsForNoteGroup,
+  isValidNoteGroupForTimeSignature,
 } from './note';
+import {
+  getTimeSignature,
+  TimeSignature,
+  TimeSignatureType,
+} from './time-signature';
 
 describe('The note module', () => {
   describe('getNoteGroup() function', () => {
@@ -40,7 +45,9 @@ describe('The note module', () => {
         {
           categoryType: NoteGroupCategoryType.BASIC_RESTS,
           type: NoteGroupType.WR,
-          notes: [{ type: NoteType.W, rest: true, dotted: false, widthUnit: 13 }],
+          notes: [
+            { type: NoteType.W, rest: true, dotted: false, widthUnit: 13 },
+          ],
           description: 'a whole rest',
           duration: 4,
         },
@@ -56,66 +63,10 @@ describe('The note module', () => {
     });
   });
 
-  describe('categorizeNoteGroups() function', () => {
-    describe('with note groups in the same category', () => {
-      it('puts same-category note groups into the same categorized note group object', () => {
-        expect(
-          categorizeNoteGroups(
-            getNoteGroups(NoteGroupType.W, NoteGroupType.H, NoteGroupType.Q)
-          )
-        ).toEqual([
-          {
-            category: {
-              type: NoteGroupCategoryType.BASIC_NOTES,
-              sortOrder: 0,
-            },
-            noteGroups: getNoteGroups(
-              NoteGroupType.W,
-              NoteGroupType.H,
-              NoteGroupType.Q
-            ),
-          },
-        ]);
-      });
-    });
-
-    describe('with note groups in different categories', () => {
-      it('puts different-category note groups into the separate categorized note group objects, with categories and note groups sorted by sortOrder/index', () => {
-        expect(
-          categorizeNoteGroups(
-            getNoteGroups(NoteGroupType.QR, NoteGroupType.H, NoteGroupType.W)
-          )
-        ).toEqual([
-          {
-            category: { type: NoteGroupCategoryType.BASIC_NOTES, sortOrder: 0 },
-            noteGroups: getNoteGroups(NoteGroupType.W, NoteGroupType.H),
-          },
-          {
-            category: {
-              type: NoteGroupCategoryType.BASIC_RESTS,
-              sortOrder: 1,
-            },
-            noteGroups: getNoteGroups(NoteGroupType.QR),
-          },
-        ]);
-      });
-    });
-  });
-
-  describe('getNoteGroupTypeSelectionMap() function', () => {
-    it('returns a map containing only note groups less than or equal to the max duration', () => {
-      const map = getNoteGroupTypeSelectionMap(3);
-
-      [...map.entries()].forEach(([noteGroupType]) => {
-        expect(getNoteGroup(noteGroupType).duration).toBeLessThanOrEqual(3);
-      });
-    });
-  });
-
   describe('resetNoteGroupTypeSelectionMap() function', () => {
     it('resets all note group type selections to `false`', () => {
       const resetMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap(4)
+        getNoteGroupTypeSelectionMap()
       );
 
       [...resetMap.entries()].forEach(([_, value]) => {
@@ -129,7 +80,7 @@ describe('The note module', () => {
 
     beforeEach(() => {
       noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap(4)
+        getNoteGroupTypeSelectionMap()
       );
       noteGroupTypeSelectionMap = noteGroupTypeSelectionMap.set(
         NoteGroupType.W,
@@ -137,6 +88,7 @@ describe('The note module', () => {
       );
       noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
         noteGroupTypeSelectionMap,
+        true,
         NoteGroupType.H,
         NoteGroupType.Q
       );
@@ -147,93 +99,248 @@ describe('The note module', () => {
       expect(noteGroupTypeSelectionMap.get(NoteGroupType.Q)).toEqual(true);
     });
 
-    it('sets all other note group types to `false', () => {
+    it('if `reset` is true, sets all other note group types to `false', () => {
       expect(noteGroupTypeSelectionMap.get(NoteGroupType.W)).toEqual(false);
+    });
+
+    it('if `reset` is false, does not affect other note group types', () => {
+      noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap()
+      ).set(NoteGroupType.W, true);
+
+      noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
+        noteGroupTypeSelectionMap,
+        false,
+        NoteGroupType.H
+      );
+
+      expect(noteGroupTypeSelectionMap.get(NoteGroupType.W)).toEqual(true);
+      expect(noteGroupTypeSelectionMap.get(NoteGroupType.H)).toEqual(true);
     });
   });
 
   describe('getSelectedNoteGroupTypes() function', () => {
-    it('returns an array of all note group types that are mapped to the value of `true`', () => {
-      // Start with a mapping of all note group types selected as `false`
-      let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap(4)
-      );
+    let timeSignature: TimeSignature;
+    let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
 
+    beforeEach(() => {
+      timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+      noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+        getNoteGroupTypeSelectionMap()
+      );
+    });
+
+    it('returns an array of all note group types that are mapped to the value of `true`', () => {
       noteGroupTypeSelectionMap = noteGroupTypeSelectionMap
         .set(NoteGroupType.W, true)
         .set(NoteGroupType.H, true)
         .set(NoteGroupType.Q, true);
 
-      expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([
-        NoteGroupType.H,
-        NoteGroupType.Q,
-        NoteGroupType.W,
-      ]);
+      expect(
+        getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)
+      ).toEqual([NoteGroupType.H, NoteGroupType.Q, NoteGroupType.W]);
     });
 
     it('returns an empty array if all note group types are mapped to the value of `false`', () => {
       let noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-        getNoteGroupTypeSelectionMap(4)
+        getNoteGroupTypeSelectionMap()
       );
 
-      expect(getSelectedNoteGroupTypes(noteGroupTypeSelectionMap)).toEqual([]);
+      expect(
+        getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)
+      ).toEqual([]);
+    });
+
+    it('does not include note groups that have durations too large for the current time signature', () => {
+      timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_3_4);
+      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap
+        .set(NoteGroupType.W, true)
+        .set(NoteGroupType.H, true)
+        .set(NoteGroupType.Q, true);
+
+      expect(
+        getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)
+      ).toEqual([NoteGroupType.H, NoteGroupType.Q]);
+    });
+
+    it('does not include note groups that have differing complexity from the current time signature', () => {
+      timeSignature = getTimeSignature(TimeSignatureType.COMPOUND_6_8);
+      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap
+        .set(NoteGroupType.H, true)
+        .set(NoteGroupType.CHD, true);
+
+      expect(
+        getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)
+      ).toEqual([NoteGroupType.CHD]);
     });
   });
 
   describe('getPlaybackPatternsForNoteGroup() function', () => {
     it('handles single-note note groups', () => {
-      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.W))).toEqual([{
-        rest: false,
-        toneDuration: '1n'
-      }]);
+      expect(
+        getPlaybackPatternsForNoteGroup(
+          getNoteGroup(NoteGroupType.W),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual([
+        {
+          rest: false,
+          toneDuration: '1n',
+        },
+      ]);
     });
 
     it('handles multi note note-groups', () => {
-      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.EE))).toEqual([
+      expect(
+        getPlaybackPatternsForNoteGroup(
+          getNoteGroup(NoteGroupType.EE),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual([
         {
           rest: false,
-          toneDuration: '8n'
+          toneDuration: '8n',
         },
         {
           rest: false,
-          toneDuration: '8n'
-        }
-      ])
+          toneDuration: '8n',
+        },
+      ]);
     });
 
     it('handles rests', () => {
-      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.WR))).toEqual([
+      expect(
+        getPlaybackPatternsForNoteGroup(
+          getNoteGroup(NoteGroupType.WR),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual([
         {
           rest: true,
-          toneDuration: '1n'
-        }
+          toneDuration: '1n',
+        },
       ]);
     });
 
     it('handles dotted notes', () => {
-      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.HD))).toEqual([
+      expect(
+        getPlaybackPatternsForNoteGroup(
+          getNoteGroup(NoteGroupType.HD),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual([
         {
           rest: false,
-          toneDuration: '2n.'
-        }
+          toneDuration: '2n.',
+        },
       ]);
     });
 
     it('handles tuplets', () => {
-      expect(getPlaybackPatternsForNoteGroup(getNoteGroup(NoteGroupType.TEEE))).toEqual([
+      expect(
+        getPlaybackPatternsForNoteGroup(
+          getNoteGroup(NoteGroupType.TEEE),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual([
         {
           rest: false,
-          toneDuration: '8t'
+          toneDuration: '8t',
         },
         {
           rest: false,
-          toneDuration: '8t'
+          toneDuration: '8t',
         },
         {
           rest: false,
-          toneDuration: '8t'
-        }
+          toneDuration: '8t',
+        },
       ]);
+    });
+
+    describe('with a compound meter time signature', () => {
+      it('converts non-tupleted notes into tupleted notes', () => {
+        expect(
+          getPlaybackPatternsForNoteGroup(
+            getNoteGroup(NoteGroupType.CEEE),
+            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+          )
+        ).toEqual([
+          {
+            rest: false,
+            toneDuration: '8t',
+          },
+          {
+            rest: false,
+            toneDuration: '8t',
+          },
+          {
+            rest: false,
+            toneDuration: '8t',
+          },
+        ]);
+      });
+
+      it('converts tupleted notes into non-tupleted notes', () => {
+        expect(
+          getPlaybackPatternsForNoteGroup(
+            getNoteGroup(NoteGroupType.CTEE),
+            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+          )
+        ).toEqual([
+          {
+            rest: false,
+            toneDuration: '8n',
+          },
+          {
+            rest: false,
+            toneDuration: '8n',
+          },
+        ]);
+      });
+
+      it('removes the dot from dotted notes', () => {
+        expect(
+          getPlaybackPatternsForNoteGroup(
+            getNoteGroup(NoteGroupType.CHD),
+            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+          )
+        ).toEqual([
+          {
+            rest: false,
+            toneDuration: '2n',
+          },
+        ]);
+      });
+    });
+  });
+
+  describe('isValidNoteGroupForTimeSignature() function', () => {
+    it('returns true if the note group duration AND time signature complexity fit the given time signature', () => {
+      expect(
+        isValidNoteGroupForTimeSignature(
+          getNoteGroup(NoteGroupType.W),
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual(true);
+    });
+
+    it('returns false if the note group duration is too large for the time signature', () => {
+      expect(
+        isValidNoteGroupForTimeSignature(
+          getNoteGroup(NoteGroupType.W),
+          getTimeSignature(TimeSignatureType.SIMPLE_3_4)
+        )
+      ).toEqual(false);
+    });
+
+    it('returns false if the note group time signature complexity does not match the time signature', () => {
+      expect(
+        isValidNoteGroupForTimeSignature(
+          getNoteGroup(NoteGroupType.W),
+          getTimeSignature(TimeSignatureType.COMPOUND_12_8)
+        )
+      ).toEqual(false);
     });
   });
 });

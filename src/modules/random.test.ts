@@ -8,6 +8,7 @@ import {
 } from './note';
 import { InvalidNoteSelectionError } from './error';
 import { Measure } from './vex';
+import { getTimeSignature, TimeSignatureType } from './time-signature';
 
 const setNoteGroupTypeSelections = (
   noteGroupTypes: NoteGroupType[],
@@ -28,7 +29,7 @@ describe('The random module', () => {
 
   beforeEach(() => {
     noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
-      getNoteGroupTypeSelectionMap(4)
+      getNoteGroupTypeSelectionMap()
     );
   });
 
@@ -36,17 +37,23 @@ describe('The random module', () => {
     describe('happy path', () => {
       const noteGroupTypes = [
         NoteGroupType.W,
-        NoteGroupType.WR,
         NoteGroupType.H,
+        NoteGroupType.Q,
+        NoteGroupType.CQD,
       ];
       let measures: Measure[];
+      const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_3_4);
 
       beforeEach(() => {
         noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
           noteGroupTypes,
           noteGroupTypeSelectionMap
         );
-        measures = getRandomMeasures(noteGroupTypeSelectionMap, 4, 4);
+        measures = getRandomMeasures(
+          noteGroupTypeSelectionMap,
+          timeSignature,
+          4
+        );
       });
 
       it('returns the expected number of measures', () => {
@@ -55,7 +62,7 @@ describe('The random module', () => {
 
       it('returns measures with the expected duration', () => {
         measures.forEach((measure) => {
-          expect(getTotalDuration(measure.noteGroups)).toEqual(4);
+          expect(getTotalDuration(measure.noteGroups)).toEqual(3);
         });
       });
 
@@ -66,12 +73,32 @@ describe('The random module', () => {
           });
         });
       });
+
+      it('does not contain note definitions that are too large for the time signature', () => {
+        measures.forEach((measure) => {
+          measure.noteGroups.forEach((noteGroup) => {
+            expect(noteGroup.type).not.toEqual(NoteGroupType.W);
+          });
+        });
+      });
+
+      it('does not contain note definitions that have a different complexity than the time signature', () => {
+        measures.forEach((measure) => {
+          measure.noteGroups.forEach((noteGroup) => {
+            expect(noteGroup.type).not.toEqual(NoteGroupType.CQD);
+          });
+        });
+      });
     });
 
     describe('with no note group types', () => {
       it('throws an InvalidNoteSelectionError', () => {
         expect(() => {
-          getRandomMeasures(noteGroupTypeSelectionMap, 4, 4);
+          getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+            4
+          );
         }).toThrow(InvalidNoteSelectionError);
       });
     });
@@ -85,7 +112,11 @@ describe('The random module', () => {
       });
       it('throws an InvalidNoteSelectionError', () => {
         expect(() => {
-          getRandomMeasures(noteGroupTypeSelectionMap, 2, 4);
+          getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_2_4),
+            4
+          );
         }).toThrow(InvalidNoteSelectionError);
       });
     });
@@ -99,24 +130,11 @@ describe('The random module', () => {
       });
       it('throws an InvalidNoteSelectionError', () => {
         expect(() => {
-          getRandomMeasures(noteGroupTypeSelectionMap, 4, 4);
-        }).toThrow(InvalidNoteSelectionError);
-      });
-    });
-
-    // TODO: Re-enable when we've found a way to deterministic way to validate a note selection in
-    // this scenario (the current implementation results in a flaky test)
-    describe.skip('with a combination of note types that would prevent a full measure from being completed', () => {
-      beforeEach(() => {
-        noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
-          [NoteGroupType.HD, NoteGroupType.H],
-          noteGroupTypeSelectionMap
-        );
-      });
-
-      it('throws an InvalidNoteSelectionError', () => {
-        expect(() => {
-          getRandomMeasures(noteGroupTypeSelectionMap, 6, 4);
+          getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+            4
+          );
         }).toThrow(InvalidNoteSelectionError);
       });
     });

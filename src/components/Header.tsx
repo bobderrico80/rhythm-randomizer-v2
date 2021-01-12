@@ -10,6 +10,7 @@ import HeaderNav from './HeaderNav';
 import { Measure } from '../modules/vex';
 import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
 import { PlaybackStateChangeHandler } from './Player';
+import { TimeSignature } from '../modules/time-signature';
 
 export interface HeaderProps {
   currentFormFactor: FormFactor;
@@ -17,6 +18,7 @@ export interface HeaderProps {
   playbackState: PlaybackState;
   tempo: number;
   pitch: Pitch;
+  timeSignature: TimeSignature;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
   onRandomizeButtonClick: () => void;
@@ -32,6 +34,7 @@ const Header = ({
   playbackState,
   tempo,
   pitch,
+  timeSignature,
   onPlaybackStateChange,
   onNoteTrigger,
   onRandomizeButtonClick,
@@ -45,6 +48,7 @@ const Header = ({
         playbackState={playbackState}
         tempo={tempo}
         pitch={pitch}
+        timeSignature={timeSignature}
         onPlaybackStateChange={onPlaybackStateChange}
         onNoteTrigger={onNoteTrigger}
         onRandomizeButtonClick={onRandomizeButtonClick}

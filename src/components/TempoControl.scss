@@ -5,6 +5,18 @@
     font-weight: bold;
   }
 
+  &__mm-marking {
+    position: relative;
+    top: -5px;
+  }
+
+  &__mm-marking-icon {
+    position: relative;
+    height: 1.5em;
+    margin-left: 1em;
+    top: 0.25em;
+  }
+
   &__container {
     display: flex;
     margin-left: 1rem;

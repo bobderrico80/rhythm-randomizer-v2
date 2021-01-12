@@ -76,6 +76,7 @@ const SettingsForm = ({
             <PlaybackSettings
               tempo={tempo}
               pitch={pitch}
+              timeSignature={selectedTimeSignature}
               onTempoChange={onTempoChange}
               onPitchChange={onPitchChange}
             />
@@ -124,6 +125,7 @@ const SettingsForm = ({
           return (
             <NoteSelection
               noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
+              timeSignature={selectedTimeSignature}
               onNoteGroupChange={onNoteGroupChange}
               onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
             />

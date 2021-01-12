@@ -3,35 +3,38 @@ import {
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
   NoteGroupType,
+  NoteGroupTypeSelectionMap,
+  resetNoteGroupTypeSelectionMap,
 } from './note';
 import {
   decodeScoreSettingsShareString,
   encodeScoreSettingsShareString,
   ShareStringEncodingVersion,
 } from './share';
-import { TimeSignatureType } from './time-signature';
+import { getTimeSignature, TimeSignatureType } from './time-signature';
 import { Octave, PitchClass } from './tone';
 
 describe('The share module', () => {
   describe('encodeScoreSettingsShareString() function', () => {
     describe('with a version 0 share string', () => {
-      let noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(4);
-      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap.set(
-        NoteGroupType.TEEE,
-        true
-      );
-
-      const scoreSettings: ScoreSettings = {
-        measureCount: 4,
-        timeSignatureType: TimeSignatureType.SIMPLE_4_4,
-        noteGroupTypeSelectionMap,
-        tempo: DEFAULT_TEMPO,
-        pitch: DEFAULT_PITCH,
-      };
-
+      let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+      let scoreSettings: ScoreSettings;
       let shareString: string;
 
       beforeEach(() => {
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap().set(
+          NoteGroupType.TEEE,
+          true
+        );
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignatureType: TimeSignatureType.SIMPLE_4_4,
+          noteGroupTypeSelectionMap,
+          tempo: DEFAULT_TEMPO,
+          pitch: DEFAULT_PITCH,
+        };
+
         shareString = encodeScoreSettingsShareString(
           scoreSettings,
           ShareStringEncodingVersion._0
@@ -57,26 +60,51 @@ describe('The share module', () => {
       it('contains a 8-bit hex code of the index of each selected note group in the note group type selection map', () => {
         expect(shareString.substring(3)).toEqual('00010203040506070c');
       });
+
+      it('does not include selected invalid note groups for the current time signature', () => {
+        noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+          getNoteGroupTypeSelectionMap()
+        )
+          .set(NoteGroupType.W, true)
+          .set(NoteGroupType.H, true)
+          .set(NoteGroupType.CHD, true);
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignatureType: TimeSignatureType.SIMPLE_3_4,
+          noteGroupTypeSelectionMap,
+          tempo: DEFAULT_TEMPO,
+          pitch: DEFAULT_PITCH,
+        };
+
+        shareString = encodeScoreSettingsShareString(
+          scoreSettings,
+          ShareStringEncodingVersion._0
+        );
+
+        expect(shareString.substring(3)).toEqual('01');
+      });
     });
 
     describe('with a version 1 share string', () => {
-      let noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(4);
-      noteGroupTypeSelectionMap = noteGroupTypeSelectionMap.set(
-        NoteGroupType.TEEE,
-        true
-      );
-
-      const scoreSettings: ScoreSettings = {
-        measureCount: 4,
-        timeSignatureType: TimeSignatureType.SIMPLE_4_4,
-        noteGroupTypeSelectionMap,
-        tempo: 80,
-        pitch: { pitchClass: PitchClass.Bb, octave: Octave._4 },
-      };
-
+      let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+      let scoreSettings: ScoreSettings;
       let shareString: string;
 
       beforeEach(() => {
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap().set(
+          NoteGroupType.TEEE,
+          true
+        );
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignatureType: TimeSignatureType.SIMPLE_4_4,
+          noteGroupTypeSelectionMap,
+          tempo: 80,
+          pitch: { pitchClass: PitchClass.Bb, octave: Octave._4 },
+        };
+
         shareString = encodeScoreSettingsShareString(
           scoreSettings,
           ShareStringEncodingVersion._1
@@ -114,6 +142,30 @@ describe('The share module', () => {
       it('contains a 8-bit hex code of the index of each selected note group in the note group type selection map for the remaining characters', () => {
         expect(shareString.substring(8)).toEqual('00010203040506070c');
       });
+
+      it('does not include selected invalid note groups for the current time signature', () => {
+        noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+          getNoteGroupTypeSelectionMap()
+        )
+          .set(NoteGroupType.W, true)
+          .set(NoteGroupType.H, true)
+          .set(NoteGroupType.CHD, true);
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignatureType: TimeSignatureType.SIMPLE_3_4,
+          noteGroupTypeSelectionMap,
+          tempo: DEFAULT_TEMPO,
+          pitch: DEFAULT_PITCH,
+        };
+
+        shareString = encodeScoreSettingsShareString(
+          scoreSettings,
+          ShareStringEncodingVersion._1
+        );
+
+        expect(shareString.substring(8)).toEqual('01');
+      });
     });
   });
 
@@ -137,7 +189,10 @@ describe('The share module', () => {
 
       it('parses the correct selected note groups', () => {
         expect(
-          getSelectedNoteGroupTypes(scoreSettings.noteGroupTypeSelectionMap)
+          getSelectedNoteGroupTypes(
+            scoreSettings.noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          )
         ).toEqual([
           NoteGroupType.EE,
           NoteGroupType.SSSS,
@@ -181,7 +236,10 @@ describe('The share module', () => {
 
       it('parses the correct selected note groups', () => {
         expect(
-          getSelectedNoteGroupTypes(scoreSettings.noteGroupTypeSelectionMap)
+          getSelectedNoteGroupTypes(
+            scoreSettings.noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          )
         ).toEqual([
           NoteGroupType.EE,
           NoteGroupType.SSSS,
@@ -229,7 +287,7 @@ describe('The share module', () => {
         },
         {
           description: 'where the time signature is not a valid selection',
-          shareString: '04300',
+          shareString: '04900',
         },
         {
           description:
@@ -284,7 +342,7 @@ describe('The share module', () => {
         },
         {
           description: 'where the time signature is not a valid selection',
-          shareString: '1431203300',
+          shareString: '1491203300',
         },
         {
           description:

@@ -97,21 +97,24 @@ describe('The persisted-state module', () => {
     describe('with previously valid persisted state', () => {
       let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
       let randomMeasures: Measure[];
+      let timeSignatureType: TimeSignatureType;
 
       beforeEach(() => {
-        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
-        randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 2, 4);
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+        timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+        randomMeasures = getRandomMeasures(
+          noteGroupTypeSelectionMap,
+          getTimeSignature(timeSignatureType),
+          4
+        );
         setupLocalStorageScoreSettings(
           noteGroupTypeSelectionMap,
           4,
-          TimeSignatureType.SIMPLE_3_4,
+          timeSignatureType,
           120,
           { pitchClass: PitchClass.Bb, octave: Octave._4 }
         );
-        setupLocalStorageScoreData(
-          randomMeasures,
-          TimeSignatureType.SIMPLE_3_4
-        );
+        setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
         persistedAppState = getPersistedAppState();
       });
@@ -159,19 +162,22 @@ describe('The persisted-state module', () => {
     describe('with previous persisted state that does not include tempo or pitch information', () => {
       let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
       let randomMeasures: Measure[];
+      let timeSignatureType: TimeSignatureType;
 
       beforeEach(() => {
-        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
-        randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 2, 4);
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+        timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+        randomMeasures = getRandomMeasures(
+          noteGroupTypeSelectionMap,
+          getTimeSignature(timeSignatureType),
+          4
+        );
         setupLocalStorageScoreSettings(
           noteGroupTypeSelectionMap,
           4,
-          TimeSignatureType.SIMPLE_3_4
+          timeSignatureType
         );
-        setupLocalStorageScoreData(
-          randomMeasures,
-          TimeSignatureType.SIMPLE_3_4
-        );
+        setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
         persistedAppState = getPersistedAppState();
       });
@@ -227,7 +233,7 @@ describe('The persisted-state module', () => {
           description: 'with persisted score settings, but no score data',
           setup: () => {
             setupLocalStorageScoreSettings(
-              getNoteGroupTypeSelectionMap(3),
+              getNoteGroupTypeSelectionMap(),
               4,
               TimeSignatureType.SIMPLE_3_4
             );
@@ -237,7 +243,11 @@ describe('The persisted-state module', () => {
           description: 'with persisted score data, but no score settings',
           setup: () => {
             setupLocalStorageScoreData(
-              getRandomMeasures(getNoteGroupTypeSelectionMap(2), 2, 4),
+              getRandomMeasures(
+                getNoteGroupTypeSelectionMap(),
+                getTimeSignature(TimeSignatureType.SIMPLE_3_4),
+                4
+              ),
               TimeSignatureType.SIMPLE_3_4
             );
           },
@@ -246,7 +256,7 @@ describe('The persisted-state module', () => {
           description:
             'with persisted settings and score data with empty measures',
           setup: () => {
-            const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
+            const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
             setupLocalStorageScoreSettings(
               noteGroupTypeSelectionMap,
               4,
@@ -283,7 +293,7 @@ describe('The persisted-state module', () => {
           it('returns the default note group type selection map', () => {
             expect(
               persistedAppState.scoreSettings.noteGroupTypeSelectionMap
-            ).toEqual(getNoteGroupTypeSelectionMap(4));
+            ).toEqual(getNoteGroupTypeSelectionMap());
           });
 
           it('returns the default tempo', () => {
@@ -343,11 +353,17 @@ describe('The persisted-state module', () => {
 
         it('returns the expected selected notes', () => {
           const expectedNoteGroupTypeSelectionMap = setNoteGroupTypeSelections(
-            getNoteGroupTypeSelectionMap(4),
+            getNoteGroupTypeSelectionMap(),
+            false,
             NoteGroupType.W,
             NoteGroupType.H,
             NoteGroupType.Q
-          );
+          )
+            .set(NoteGroupType.EE, false)
+            .set(NoteGroupType.SSSS, false)
+            .set(NoteGroupType.QR, false)
+            .set(NoteGroupType.HR, false)
+            .set(NoteGroupType.WR, false);
           expect(
             persistedAppState.scoreSettings.noteGroupTypeSelectionMap
           ).toEqual(expectedNoteGroupTypeSelectionMap);
@@ -386,27 +402,31 @@ describe('The persisted-state module', () => {
 
       describe('with a previous score setting state that matches the share string', () => {
         let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+        let timeSignatureType: TimeSignatureType;
         let randomMeasures: Measure[];
 
         beforeEach(() => {
           noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
-            getNoteGroupTypeSelectionMap(4),
+            getNoteGroupTypeSelectionMap(),
+            true,
             NoteGroupType.W,
             NoteGroupType.H,
             NoteGroupType.Q
           );
-          randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 4, 4);
+          timeSignatureType = TimeSignatureType.SIMPLE_4_4;
+          randomMeasures = getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(timeSignatureType),
+            4
+          );
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             4,
-            TimeSignatureType.SIMPLE_4_4,
+            timeSignatureType,
             120,
             { pitchClass: PitchClass.C, octave: Octave._3 }
           );
-          setupLocalStorageScoreData(
-            randomMeasures,
-            TimeSignatureType.SIMPLE_4_4
-          );
+          setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
           persistedAppState = getPersistedAppState('04212033000102');
         });
@@ -450,26 +470,30 @@ describe('The persisted-state module', () => {
 
       describe('with a previous score setting state that does not match the share string', () => {
         let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+        let timeSignatureType: TimeSignatureType;
         let randomMeasures: Measure[];
 
         beforeEach(() => {
           noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
-            getNoteGroupTypeSelectionMap(3),
+            getNoteGroupTypeSelectionMap(),
+            true,
             NoteGroupType.HR,
             NoteGroupType.QR
           );
-          randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 3, 2);
+          timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+          randomMeasures = getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(timeSignatureType),
+            2
+          );
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             2,
-            TimeSignatureType.SIMPLE_3_4,
+            timeSignatureType,
             80,
             { pitchClass: PitchClass.F, octave: Octave._3 }
           );
-          setupLocalStorageScoreData(
-            randomMeasures,
-            TimeSignatureType.SIMPLE_3_4
-          );
+          setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
           persistedAppState = getPersistedAppState('14212033000102');
         });
@@ -489,7 +513,8 @@ describe('The persisted-state module', () => {
             persistedAppState.scoreSettings.noteGroupTypeSelectionMap
           ).toEqual(
             setNoteGroupTypeSelections(
-              getNoteGroupTypeSelectionMap(4),
+              getNoteGroupTypeSelectionMap(),
+              true,
               NoteGroupType.W,
               NoteGroupType.H,
               NoteGroupType.Q
@@ -528,6 +553,38 @@ describe('The persisted-state module', () => {
             NoteGroupType.Q
           );
         });
+
+        it('does not change persisted note group selections that are not valid for the shared time signature value', () => {
+          noteGroupTypeSelectionMap = setNoteGroupTypeSelections(
+            getNoteGroupTypeSelectionMap(),
+            true,
+            NoteGroupType.W,
+            NoteGroupType.CWD
+          );
+          timeSignatureType = TimeSignatureType.SIMPLE_4_4;
+          randomMeasures = getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(timeSignatureType),
+            2
+          );
+          setupLocalStorageScoreSettings(
+            noteGroupTypeSelectionMap,
+            2,
+            timeSignatureType,
+            80,
+            { pitchClass: PitchClass.F, octave: Octave._3 }
+          );
+          setupLocalStorageScoreData(randomMeasures, timeSignatureType);
+
+          persistedAppState = getPersistedAppState('14212033000102');
+
+          // Should not set the compound note group to false, even though it isn't in the share string
+          expect(
+            persistedAppState.scoreSettings.noteGroupTypeSelectionMap.get(
+              NoteGroupType.CWD
+            )
+          ).toEqual(true);
+        });
       });
     });
 
@@ -546,22 +603,25 @@ describe('The persisted-state module', () => {
 
       describe('with a previous state', () => {
         let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+        let timeSignatureType: TimeSignatureType;
         let randomMeasures: Measure[];
 
         beforeEach(() => {
-          noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
-          randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 2, 4);
+          noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+          timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+          randomMeasures = getRandomMeasures(
+            noteGroupTypeSelectionMap,
+            getTimeSignature(timeSignatureType),
+            4
+          );
           setupLocalStorageScoreSettings(
             noteGroupTypeSelectionMap,
             4,
-            TimeSignatureType.SIMPLE_3_4,
+            timeSignatureType,
             120,
             { pitchClass: PitchClass.C, octave: Octave._3 }
           );
-          setupLocalStorageScoreData(
-            randomMeasures,
-            TimeSignatureType.SIMPLE_3_4
-          );
+          setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
           persistedAppState = getPersistedAppState('foobar');
         });
@@ -622,22 +682,28 @@ describe('The persisted-state module', () => {
 
   describe('persistAppState() function', () => {
     let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+    let timeSignatureType: TimeSignatureType;
     let randomMeasures: Measure[];
 
     beforeEach(() => {
-      noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap(3);
-      randomMeasures = getRandomMeasures(noteGroupTypeSelectionMap, 3, 2);
+      noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+      timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+      randomMeasures = getRandomMeasures(
+        noteGroupTypeSelectionMap,
+        getTimeSignature(timeSignatureType),
+        2
+      );
 
       persistAppState({
         scoreSettings: {
           measureCount: 2,
-          timeSignatureType: TimeSignatureType.SIMPLE_3_4,
+          timeSignatureType,
           noteGroupTypeSelectionMap,
           tempo: 120,
           pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
         },
         scoreData: {
-          timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
+          timeSignature: getTimeSignature(timeSignatureType),
           measures: randomMeasures,
         },
       });
@@ -648,7 +714,7 @@ describe('The persisted-state module', () => {
         'rr.scoreSettings',
         JSON.stringify({
           measureCount: 2,
-          timeSignatureType: TimeSignatureType.SIMPLE_3_4,
+          timeSignatureType,
           noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
           tempo: 120,
           pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
@@ -660,7 +726,7 @@ describe('The persisted-state module', () => {
       expect(localStorage.setItem).toHaveBeenCalledWith(
         'rr.scoreData',
         JSON.stringify({
-          timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
+          timeSignature: getTimeSignature(timeSignatureType),
           measures: randomMeasures,
         })
       );
