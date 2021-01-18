@@ -1,3 +1,11 @@
+## What's New in Version 2.3.0
+
+Compound time signatures! At long last, 6/8, 9/8, and 12/8 time signatures have arrived! These are available in the 'Time Signature Settings' section of the score settings menu. When switching over to the new compound time signatures, the available notes under 'Note Selection' will feature a new set of note combinations suitable for compound time signatures. Like the simple time signatures, rhythms generated for compound time signatures will play back as expected. Compound time signatures are also included in the 'Share Settings' link as well.
+
+With this release, there are a limited number of possible note combinations for compound time signatures. More will be made available (patterns with 8th rests and 16th notes, for example) in future releases.
+
+In addition to compound time signature, this release also includes a security patch as well.
+
 ## What's New in Version 2.2.3?
 
 Security updates.
