@@ -4,31 +4,30 @@ import { buildBemClassName } from '../modules/util';
 import './HeaderNav.scss';
 import Player, { PlaybackStateChangeHandler } from './Player';
 import { Measure } from '../modules/vex';
-import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
-import { TimeSignature } from '../modules/time-signature';
+import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
 
 const buildClassName = buildBemClassName('c-rr-header-nav');
 
 export interface HeaderNavProps {
   measures: Measure[];
   playbackState: PlaybackState;
-  tempo: number;
-  pitch: Pitch;
-  timeSignature: TimeSignature;
+  metronomeOn: boolean;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
+  onMetronomeClickTrigger: NoteTriggerHandler;
   onRandomizeButtonClick: () => void;
+  onMetronomeButtonClick: () => void;
 }
 
 const HeaderNav = ({
   measures,
   playbackState,
-  tempo,
-  pitch,
-  timeSignature,
+  metronomeOn,
   onPlaybackStateChange,
   onNoteTrigger,
+  onMetronomeClickTrigger,
   onRandomizeButtonClick,
+  onMetronomeButtonClick,
 }: HeaderNavProps) => {
   return (
     <nav className={buildClassName()()}>
@@ -36,9 +35,13 @@ const HeaderNav = ({
         <li className={buildClassName('list-item')()}>
           <button
             type="button"
-            className={classnames('c-rr-button', 'c-rr-button--dark')}
+            className={classnames(
+              buildClassName('item-link')(),
+              'c-rr-button',
+              'c-rr-button--dark'
+            )}
             onClick={onRandomizeButtonClick}
-            disabled={playbackState === PlaybackState.PLAYING}
+            disabled={playbackState === PlaybackState.PLAYING || metronomeOn}
           >
             New Rhythm
           </button>
@@ -47,12 +50,26 @@ const HeaderNav = ({
           <Player
             measures={measures}
             playbackState={playbackState}
-            tempo={tempo}
-            pitch={pitch}
-            timeSignature={timeSignature}
+            metronomeOn={metronomeOn}
+            className={buildClassName('item-link')()}
             onPlaybackStateChange={onPlaybackStateChange}
             onNoteTrigger={onNoteTrigger}
+            onMetronomeClickTrigger={onMetronomeClickTrigger}
           />
+        </li>
+        <li className={buildClassName('list-item')()}>
+          <button
+            type="button"
+            className={classnames(
+              buildClassName('item-link')(),
+              'c-rr-button',
+              'c-rr-button--dark'
+            )}
+            onClick={onMetronomeButtonClick}
+            disabled={playbackState === PlaybackState.PLAYING}
+          >
+            {`${metronomeOn ? 'Stop' : 'Start'}`} Metronome
+          </button>
         </li>
       </ul>
     </nav>

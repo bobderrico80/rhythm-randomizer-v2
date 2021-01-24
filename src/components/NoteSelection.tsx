@@ -1,39 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import {
   CategorizedNoteGroup,
   categorizeNoteGroups,
-  NoteGroupType,
-  NoteGroupTypeSelectionMap,
   getNoteGroups,
   isValidNoteGroupForTimeSignature,
 } from '../modules/note';
-import NoteCheckboxGroup, {
-  NoteGroupMultiSelectChangeHandler,
-} from './NoteCheckboxGroup';
-import { TimeSignature } from '../modules/time-signature';
-
-export type NoteGroupChangeHandler = (
-  noteGroupType: NoteGroupType,
-  checked: boolean
-) => void;
-
-export interface NoteSelectionProps {
-  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
-  timeSignature: TimeSignature;
-  onNoteGroupChange: NoteGroupChangeHandler;
-  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
-}
+import NoteCheckboxGroup from './NoteCheckboxGroup';
+import { AppContext } from '../App';
 
 const buildClassName = buildBemClassName('c-rr-note-selection');
 
-const NoteSelection = ({
-  noteGroupTypeSelectionMap,
-  timeSignature,
-  onNoteGroupChange,
-  onNoteGroupMultiSelectChange,
-}: NoteSelectionProps) => {
+const NoteSelection = () => {
+  const { state } = useContext(AppContext);
+  const { timeSignature, noteGroupTypeSelectionMap } = state.scoreSettings;
+
   let noteGroups = getNoteGroups(...noteGroupTypeSelectionMap.keys());
 
   // Filter note groups that don't match the time signature
@@ -55,8 +37,6 @@ const NoteSelection = ({
             category={categorizedNoteGroup.category}
             noteGroups={categorizedNoteGroup.items}
             noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
-            onNoteGroupChange={onNoteGroupChange}
-            onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
             key={categorizedNoteGroup.category.type}
           />
         );

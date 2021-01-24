@@ -4,36 +4,19 @@ import IconButton from './IconButton';
 import backArrowIcon from '../svg/back-arrow.svg';
 import './SettingsMenu.scss';
 import SettingsForm from './SettingsForm';
-import { NoteGroupTypeSelectionMap } from '../modules/note';
-import { NoteGroupChangeHandler } from './NoteSelection';
-import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
-import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
+import { TimeSignature } from '../modules/time-signature';
 import SlideOut from './SlideOut';
 import ShareButton from './ShareButton';
-import { TempoChangeHandler } from './TempoControl';
-import { PitchChangeHandler } from './PitchControl';
-import { Pitch } from '../modules/tone';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 
 export interface SettingsMenuProps {
   settingsMenuOpen: boolean;
   openAccordion: string;
-  tempo: number;
-  pitch: Pitch;
-  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
-  selectedTimeSignature: TimeSignature;
   measureCountOptions: number[];
-  selectedMeasureCount: number;
   errorMessage: string;
   onSettingsMenuCloseClick: () => void;
-  onTempoChange: TempoChangeHandler;
-  onPitchChange: PitchChangeHandler;
-  onNoteGroupChange: NoteGroupChangeHandler;
-  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
-  onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
-  onMeasureCountChange: (measureCount: number) => void;
   onOpenAccordionChange: (openedAccordion: string) => void;
   onShareLinkClick: () => void;
 }
@@ -41,21 +24,10 @@ export interface SettingsMenuProps {
 const SettingsMenu = ({
   settingsMenuOpen,
   openAccordion,
-  tempo,
-  pitch,
-  noteGroupTypeSelectionMap,
   timeSignatures,
-  selectedTimeSignature,
   measureCountOptions,
-  selectedMeasureCount,
   errorMessage,
   onSettingsMenuCloseClick,
-  onTempoChange,
-  onPitchChange,
-  onNoteGroupChange,
-  onNoteGroupMultiSelectChange,
-  onTimeSignatureChange,
-  onMeasureCountChange,
   onOpenAccordionChange,
   onShareLinkClick,
 }: SettingsMenuProps) => {
@@ -99,20 +71,9 @@ const SettingsMenu = ({
         </div>
         <SettingsForm
           openAccordion={openAccordion}
-          tempo={tempo}
-          pitch={pitch}
-          noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
           timeSignatures={timeSignatures}
-          selectedTimeSignature={selectedTimeSignature}
           measureCountOptions={measureCountOptions}
-          selectedMeasureCount={selectedMeasureCount}
           errorMessage={errorMessage}
-          onTempoChange={onTempoChange}
-          onPitchChange={onPitchChange}
-          onNoteGroupChange={onNoteGroupChange}
-          onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
-          onTimeSignatureChange={onTimeSignatureChange}
-          onMeasureCountChange={onMeasureCountChange}
           onOpenAccordionChange={onOpenAccordionChange}
           onAccordionTransitionComplete={accordionTransitionHandlerRef.current}
         />

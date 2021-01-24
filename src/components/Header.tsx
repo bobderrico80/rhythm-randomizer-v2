@@ -8,22 +8,21 @@ import IconButton from './IconButton';
 import { FormFactor } from '../App';
 import HeaderNav from './HeaderNav';
 import { Measure } from '../modules/vex';
-import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
 import { PlaybackStateChangeHandler } from './Player';
-import { TimeSignature } from '../modules/time-signature';
 
 export interface HeaderProps {
   currentFormFactor: FormFactor;
   measures: Measure[];
   playbackState: PlaybackState;
-  tempo: number;
-  pitch: Pitch;
-  timeSignature: TimeSignature;
+  metronomeOn: boolean;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
+  onMetronomeClickTrigger: NoteTriggerHandler;
   onRandomizeButtonClick: () => void;
   onSettingsMenuButtonClick: () => void;
   onMainMenuButtonClick: () => void;
+  onMetronomeButtonClick: () => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-header');
@@ -32,26 +31,26 @@ const Header = ({
   currentFormFactor,
   measures,
   playbackState,
-  tempo,
-  pitch,
-  timeSignature,
+  metronomeOn,
   onPlaybackStateChange,
   onNoteTrigger,
+  onMetronomeClickTrigger,
   onRandomizeButtonClick,
   onSettingsMenuButtonClick,
   onMainMenuButtonClick,
+  onMetronomeButtonClick,
 }: HeaderProps) => {
   const renderHeaderNav = () => {
     return (
       <HeaderNav
         measures={measures}
         playbackState={playbackState}
-        tempo={tempo}
-        pitch={pitch}
-        timeSignature={timeSignature}
+        metronomeOn={metronomeOn}
         onPlaybackStateChange={onPlaybackStateChange}
         onNoteTrigger={onNoteTrigger}
+        onMetronomeClickTrigger={onMetronomeClickTrigger}
         onRandomizeButtonClick={onRandomizeButtonClick}
+        onMetronomeButtonClick={onMetronomeButtonClick}
       />
     );
   };

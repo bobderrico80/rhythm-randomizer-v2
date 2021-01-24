@@ -1,24 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import './MeasureCountSelection.scss';
 import Select from './Select';
+import { AppContext, MeasureCount } from '../App';
+import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 
 export interface MeasureCountSelectionProps {
   measureCountOptions: number[];
-  selectedMeasureCount: number;
-  onMeasureCountChange: (measureCount: number) => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-measure-count-selection');
 
 const MeasureCountSelection = ({
   measureCountOptions,
-  selectedMeasureCount,
-  onMeasureCountChange,
 }: MeasureCountSelectionProps) => {
+  const { state, dispatch } = useContext(AppContext);
+  const { measureCount } = state.scoreSettings;
+  const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
+    dispatch
+  );
+
   const handleMeasureCountChange = (measureCount: string) => {
-    onMeasureCountChange(parseInt(measureCount, 10));
+    dispatchUpdateScoreSettings({
+      measureCount: parseInt(measureCount, 10) as MeasureCount,
+    });
   };
 
   return (
@@ -29,7 +35,7 @@ const MeasureCountSelection = ({
         <Select
           id="measure-count"
           label="Total measures:"
-          value={selectedMeasureCount.toString()}
+          value={measureCount.toString()}
           onChange={handleMeasureCountChange}
           options={measureCountOptions.map((measureCountOption) => ({
             value: measureCountOption.toString(),

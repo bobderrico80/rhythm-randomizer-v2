@@ -1,25 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import classnames from 'classnames';
-import { NoteTriggerHandler, Pitch, PlaybackState } from '../modules/tone';
+import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
 import { Measure } from '../modules/vex';
 import {
   Transport,
   startPlayback,
   stopPlayback,
-  scheduleMeasures,
-  setTempo,
+  updateTempo,
 } from '../modules/tone';
 import { buildBemClassName } from '../modules/util';
-import { TimeSignature } from '../modules/time-signature';
+import { AppContext } from '../App';
 
 export interface PlayerProps {
   measures: Measure[];
   playbackState: PlaybackState;
-  tempo: number;
-  pitch: Pitch;
-  timeSignature: TimeSignature;
+  metronomeOn: boolean;
+  className?: string;
   onPlaybackStateChange: PlaybackStateChangeHandler;
   onNoteTrigger: NoteTriggerHandler;
+  onMetronomeClickTrigger: NoteTriggerHandler;
 }
 
 export type PlaybackStateChangeHandler = (playbackState: PlaybackState) => void;
@@ -29,46 +28,43 @@ const buildClassName = buildBemClassName('c-rr-player');
 const Player = ({
   measures,
   playbackState,
-  tempo,
-  pitch,
-  timeSignature,
+  metronomeOn,
+  className = '',
   onPlaybackStateChange,
   onNoteTrigger,
+  onMetronomeClickTrigger,
 }: PlayerProps) => {
-  // Set up transport event listeners
-  useEffect(() => {
-    const startHandler = () => {
-      onPlaybackStateChange(PlaybackState.PLAYING);
-    };
+  const { state } = useContext(AppContext);
 
-    const stopHandler = () => {
-      onPlaybackStateChange(PlaybackState.STOPPED);
-    };
+  const {
+    tempo,
+    pitch,
+    timeSignature,
+    metronomeSettings,
+  } = state.scoreSettings;
 
-    Transport.on('start', startHandler);
-    Transport.on('stop', stopHandler);
-
-    return () => {
-      Transport.off('start', startHandler);
-      Transport.off('stop', stopHandler);
-    };
-  }, [onPlaybackStateChange]);
-
-  // Schedule measures when they change
-  useEffect(() => {
-    if (playbackState === PlaybackState.STOPPED) {
-      scheduleMeasures(measures, pitch, timeSignature, onNoteTrigger);
-    }
-  }, [playbackState, measures, pitch, timeSignature, onNoteTrigger]);
+  const stopHandler = () => {
+    onPlaybackStateChange(PlaybackState.STOPPED);
+    Transport.off('stop', stopHandler);
+  };
 
   // Set tempo when it changes
   useEffect(() => {
-    setTempo(tempo);
+    updateTempo(tempo);
   }, [tempo]);
 
   const handlePlayToggle = () => {
     if (playbackState === PlaybackState.STOPPED) {
-      startPlayback();
+      startPlayback(
+        measures,
+        pitch,
+        timeSignature,
+        metronomeSettings,
+        onNoteTrigger,
+        onMetronomeClickTrigger
+      );
+      onPlaybackStateChange(PlaybackState.PLAYING);
+      Transport.on('stop', stopHandler);
     } else {
       stopPlayback();
     }
@@ -79,13 +75,17 @@ const Player = ({
       <button
         type="button"
         className={classnames(
+          className,
           'c-rr-button',
           'c-rr-button--dark',
           buildClassName('play-toggle')()
         )}
         onClick={handlePlayToggle}
+        disabled={metronomeOn}
       >
-        {playbackState === PlaybackState.PLAYING ? 'Stop' : 'Play'}
+        {playbackState === PlaybackState.PLAYING
+          ? 'Stop Playback'
+          : 'Start Playback'}
       </button>
     </div>
   );

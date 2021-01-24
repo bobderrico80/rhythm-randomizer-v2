@@ -1,16 +1,22 @@
 import { Map } from 'immutable';
-import { DEFAULT_PITCH, DEFAULT_TEMPO, ScoreSettings } from '../App';
+import {
+  DEFAULT_METRONOME_SETTINGS,
+  DEFAULT_PITCH,
+  DEFAULT_TEMPO,
+  MeasureCount,
+  ScoreSettings,
+} from '../App';
 import {
   getNoteGroup,
   getNoteGroupTypeSelectionMap,
   isValidNoteGroupForTimeSignature,
   NoteGroupTypeSelectionMap,
+  Pitch,
 } from './note';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
 import { decodeScoreSettingsShareString } from './share';
 import { getTimeSignature, TimeSignatureType } from './time-signature';
-import { Pitch } from './tone';
 import { tryOrNull } from './util';
 
 const logger = console;
@@ -49,7 +55,7 @@ const compareScoreSettings = (
     return false;
   }
 
-  if (scoreSettingsA.timeSignatureType !== scoreSettingsB.timeSignatureType) {
+  if (scoreSettingsA.timeSignature.type !== scoreSettingsB.timeSignature.type) {
     return false;
   }
 
@@ -66,6 +72,34 @@ const compareScoreSettings = (
   }
 
   if (scoreSettingsA.pitch.octave !== scoreSettingsB.pitch.octave) {
+    return false;
+  }
+
+  if (
+    scoreSettingsA.metronomeSettings.countOffMeasures !==
+    scoreSettingsB.metronomeSettings.countOffMeasures
+  ) {
+    return false;
+  }
+
+  if (
+    scoreSettingsA.metronomeSettings.active !==
+    scoreSettingsB.metronomeSettings.active
+  ) {
+    return false;
+  }
+
+  if (
+    scoreSettingsA.metronomeSettings.startOfMeasureClick !==
+    scoreSettingsB.metronomeSettings.startOfMeasureClick
+  ) {
+    return false;
+  }
+
+  if (
+    scoreSettingsA.metronomeSettings.subdivisionClick !==
+    scoreSettingsB.metronomeSettings.subdivisionClick
+  ) {
     return false;
   }
 
@@ -90,30 +124,31 @@ const setToLocalStorage = <T>(key: LocalStorageKey, value: T): void => {
 };
 
 const getFreshScoreData = (scoreSettings: ScoreSettings): ScoreData => {
-  const timeSignature = getTimeSignature(scoreSettings.timeSignatureType);
   return {
-    timeSignature,
+    timeSignature: scoreSettings.timeSignature,
     measures: getRandomMeasures(
       scoreSettings.noteGroupTypeSelectionMap,
-      timeSignature,
+      scoreSettings.timeSignature,
       scoreSettings.measureCount
     ),
   };
 };
 
 const getDefaultPersistedAppState = (): PersistedAppState => {
-  const measureCount = 2;
+  const measureCount: MeasureCount = 2;
   const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
   const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
   const tempo = DEFAULT_TEMPO;
   const pitch: Pitch = DEFAULT_PITCH;
+  const metronomeSettings = DEFAULT_METRONOME_SETTINGS;
 
   const scoreSettings = {
     measureCount,
-    timeSignatureType: timeSignature.type,
+    timeSignature,
     noteGroupTypeSelectionMap,
     tempo,
     pitch,
+    metronomeSettings,
   };
 
   return {
@@ -124,7 +159,7 @@ const getDefaultPersistedAppState = (): PersistedAppState => {
 
 const getPersistedScoreSettings = () =>
   tryOrNull<ScoreSettings | null>(() => {
-    const scoreSettings = getFromLocalStorage<ScoreSettings>(
+    const scoreSettings = getFromLocalStorage<any>(
       LocalStorageKey.SCORE_SETTINGS
     );
 
@@ -140,11 +175,23 @@ const getPersistedScoreSettings = () =>
       scoreSettings.pitch = DEFAULT_PITCH;
     }
 
+    if (!scoreSettings.metronomeSettings) {
+      scoreSettings.metronomeSettings = DEFAULT_METRONOME_SETTINGS;
+    }
+
     scoreSettings.noteGroupTypeSelectionMap = Map(
       scoreSettings.noteGroupTypeSelectionMap
     );
 
-    return scoreSettings;
+    // Convert legacy persisted score settings objects
+    if (scoreSettings.timeSignatureType) {
+      scoreSettings.timeSignature = getTimeSignature(
+        scoreSettings.timeSignatureType
+      );
+      delete scoreSettings.timeSignatureType;
+    }
+
+    return scoreSettings as ScoreSettings;
   }, logger.warn);
 
 const getPersistedScoreData = () =>
@@ -212,7 +259,7 @@ export const getPersistedAppState = (
           sharedScoreSettings &&
           isValidNoteGroupForTimeSignature(
             getNoteGroup(noteGroupType),
-            getTimeSignature(sharedScoreSettings.timeSignatureType)
+            sharedScoreSettings.timeSignature
           )
         ) {
           resolvedNoteGroupTypeSelectionMap = resolvedNoteGroupTypeSelectionMap.set(

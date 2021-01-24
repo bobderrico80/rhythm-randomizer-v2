@@ -115,3 +115,20 @@ export const categorizeItems = <
 
   return categorizedItems;
 };
+
+export const duplicate = <T>(
+  itemToDuplicate: T,
+  timesToDuplicate: number
+): T[] => {
+  if (timesToDuplicate < 1) {
+    throw new RangeError('`timesToDuplicate` must be greater than 0');
+  }
+
+  const items: T[] = [];
+
+  for (let i = 0; i < timesToDuplicate; i++) {
+    items.push(itemToDuplicate);
+  }
+
+  return items;
+};

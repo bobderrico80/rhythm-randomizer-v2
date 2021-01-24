@@ -1,30 +1,39 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classnames from 'classnames';
 import {
   categorizeTimeSignatures,
+  getTimeSignature,
   TimeSignature,
   TimeSignatureType,
 } from '../modules/time-signature';
 import { buildBemClassName } from '../modules/util';
 import './TimeSignatureSelection.scss';
+import { AppContext } from '../App';
+import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 
 export interface TimeSignatureSelectionProps {
   timeSignatures: TimeSignature[];
-  selectedTimeSignature: TimeSignature;
-  onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
 }
 
 const buildClassName = buildBemClassName('c-rr-time-signature-selection');
 
 const TimeSignatureSelection = ({
   timeSignatures,
-  selectedTimeSignature,
-  onTimeSignatureChange,
 }: TimeSignatureSelectionProps) => {
+  const { state, dispatch } = useContext(AppContext);
+  const { timeSignature } = state.scoreSettings;
+  const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
+    dispatch
+  );
+
   const handleTimeSignatureChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
-    onTimeSignatureChange(event.currentTarget.name as TimeSignatureType);
+    dispatchUpdateScoreSettings({
+      timeSignature: getTimeSignature(
+        event.currentTarget.name as TimeSignatureType
+      ),
+    });
   };
   const categorizedTimeSignatures = categorizeTimeSignatures(timeSignatures);
 
@@ -40,30 +49,28 @@ const TimeSignatureSelection = ({
           >
             <legend>{categorizedTimeSignature.category.type}</legend>
             <div className={buildClassName('label-container')()}>
-              {categorizedTimeSignature.items.map((timeSignature) => {
+              {categorizedTimeSignature.items.map((ts) => {
                 return (
                   <label
-                    htmlFor={timeSignature.type}
-                    key={timeSignature.type}
+                    htmlFor={ts.type}
+                    key={ts.type}
                     className={buildClassName('label')()}
                   >
                     <input
                       type="radio"
-                      id={timeSignature.type}
-                      name={timeSignature.type}
+                      id={ts.type}
+                      name={ts.type}
                       className={buildClassName('radio-button')()}
-                      checked={Boolean(
-                        timeSignature.type === selectedTimeSignature.type
-                      )}
+                      checked={Boolean(ts.type === timeSignature.type)}
                       onChange={handleTimeSignatureChange}
                     />
                     <img
-                      src={timeSignature.icon}
-                      alt={timeSignature.description}
-                      title={timeSignature.description}
+                      src={ts.icon}
+                      alt={ts.description}
+                      title={ts.description}
                       className={classnames(
                         buildClassName('icon')(),
-                        buildClassName('icon')(timeSignature.type)
+                        buildClassName('icon')(ts.type)
                       )}
                     />
                   </label>

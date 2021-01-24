@@ -1,40 +1,29 @@
 import React from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
-import TempoControl, { TempoChangeHandler } from './TempoControl';
+import TempoControl from './TempoControl';
 import './PlaybackSettings.scss';
-import PitchControl, { PitchChangeHandler } from './PitchControl';
-import { Pitch } from '../modules/tone';
-import { TimeSignature } from '../modules/time-signature';
-
-export interface PlaybackSettingsProps {
-  tempo: number;
-  pitch: Pitch;
-  timeSignature: TimeSignature;
-  onTempoChange: TempoChangeHandler;
-  onPitchChange: PitchChangeHandler;
-}
+import PitchControl from './PitchControl';
+import MetronomeControl from './MetronomeControl';
 
 const buildClassName = buildBemClassName('c-rr-playback-settings');
 
-const PlaybackSettings = ({
-  tempo,
-  pitch,
-  timeSignature,
-  onTempoChange,
-  onPitchChange,
-}: PlaybackSettingsProps) => {
+const PlaybackSettings = () => {
   return (
     <section
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
       <fieldset className={buildClassName('fieldset')()}>
-        <TempoControl
-          tempo={tempo}
-          timeSignature={timeSignature}
-          onTempoChange={onTempoChange}
-        />
-        <PitchControl pitch={pitch} onPitchChange={onPitchChange} />
+        <legend>Tempo Settings</legend>
+        <TempoControl />
+      </fieldset>
+      <fieldset className={buildClassName('fieldset')()}>
+        <legend>Pitch Settings</legend>
+        <PitchControl />
+      </fieldset>
+      <fieldset className={buildClassName('fieldset')()}>
+        <legend>Metronome Settings</legend>
+        <MetronomeControl />
       </fieldset>
     </section>
   );

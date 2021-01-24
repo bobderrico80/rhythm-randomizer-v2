@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer, createContext } from 'react';
 import throttle from 'lodash/throttle';
 import './App.scss';
 import {
-  NoteGroupType,
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
-  NoteGroupCategory,
-  getNoteGroup,
   NoteGroupTypeSelectionMap,
+  Octave,
+  Pitch,
+  PitchClass,
 } from './modules/note';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
@@ -15,11 +15,11 @@ import {
   getTimeSignature,
   TimeSignatureType,
   timeSignatures,
+  TimeSignature,
 } from './modules/time-signature';
 import Header from './components/Header';
 import SettingsMenu from './components/SettingsMenu';
 import { ScoreData } from './modules/score';
-import { MultiSelectStatusType } from './components/NoteCheckboxGroup';
 import MainMenu from './components/MainMenu';
 import { fromJS } from 'immutable';
 import {
@@ -30,37 +30,83 @@ import {
   encodeScoreSettingsShareString,
   ShareStringEncodingVersion,
 } from './modules/share';
-import { EventAction, EventCategory, sendEvent } from './modules/events';
-import { Octave, Pitch, PitchClass, PlaybackState } from './modules/tone';
+import {
+  EventAction,
+  EventCategory,
+  sendEvent,
+  sendMetronomeEvent,
+  sendPlaybackEvent,
+} from './modules/events';
+import { PlaybackState, startMetronome, stopMetronome } from './modules/tone';
+import { MetronomeSettings } from './modules/metronome';
+import {
+  State,
+  Action,
+  reducer,
+  createDispatchUpdateScoreSettings,
+} from './modules/reducer';
 
 export enum FormFactor {
   MOBILE,
   DESKTOP,
 }
 
+export type MeasureCount = 1 | 2 | 4 | 8;
 export interface ScoreSettings {
-  measureCount: number;
-  timeSignatureType: TimeSignatureType;
+  measureCount: MeasureCount;
+  timeSignature: TimeSignature;
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   tempo: number;
   pitch: Pitch;
+  metronomeSettings: MetronomeSettings;
 }
 
-const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._1;
+const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._2;
 
-export const MEASURE_COUNT_OPTIONS = [1, 2, 4, 8];
+export const MEASURE_COUNT_OPTIONS: MeasureCount[] = [1, 2, 4, 8];
 
+// Application defaults
+export const DEFAULT_MEASURE_COUNT = MEASURE_COUNT_OPTIONS[2];
+export const DEFAULT_NOTE_GROUP_TYPE_SELECTION_MAP = getNoteGroupTypeSelectionMap();
+export const DEFAULT_TIME_SIGNATURE = getTimeSignature(
+  TimeSignatureType.SIMPLE_4_4
+);
 export const DEFAULT_TEMPO = 80; // bpm
+
 export const DEFAULT_PITCH: Pitch = {
   pitchClass: PitchClass.F,
   octave: Octave._4,
 };
 
+export const DEFAULT_METRONOME_SETTINGS: MetronomeSettings = {
+  active: false,
+  countOffMeasures: 0,
+  startOfMeasureClick: true,
+  subdivisionClick: false,
+};
+
+export const DEFAULT_SCORE_SETTINGS: ScoreSettings = {
+  measureCount: DEFAULT_MEASURE_COUNT,
+  timeSignature: DEFAULT_TIME_SIGNATURE,
+  noteGroupTypeSelectionMap: DEFAULT_NOTE_GROUP_TYPE_SELECTION_MAP,
+  pitch: DEFAULT_PITCH,
+  tempo: DEFAULT_TEMPO,
+  metronomeSettings: DEFAULT_METRONOME_SETTINGS,
+};
+
 const THROTTLE_INTERVAL = 200; // ms
 const TRANSITION_TIME = 500; // ms
 const MOBILE_BREAKPOINT = 768; // px
-
+const NOTE_TRIGGER_DELAY = 100; // ms
 const SHARE_STRING_PARAM = 's';
+
+export const AppContext = createContext<{
+  state: State;
+  dispatch: React.Dispatch<Action>;
+}>({
+  state: { scoreSettings: DEFAULT_SCORE_SETTINGS },
+  dispatch: () => null,
+});
 
 const App = () => {
   // Menu/accordion states
@@ -74,16 +120,15 @@ const App = () => {
     'note-selection-accordion'
   );
 
-  // Score selection settings
-  const [measureCount, setMeasureCount] = useState(2);
-  const [selectedTimeSignature, setSelectedTimeSignature] = useState(
-    getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+  const [state, dispatch] = useReducer(reducer, {
+    scoreSettings: DEFAULT_SCORE_SETTINGS,
+  });
+
+  const { scoreSettings } = state;
+
+  const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
+    dispatch
   );
-  const [noteGroupTypeSelectionMap, setNoteGroupTypeSelectionMap] = useState(
-    getNoteGroupTypeSelectionMap()
-  );
-  const [tempo, setTempo] = useState(DEFAULT_TEMPO);
-  const [pitch, setPitch] = useState(DEFAULT_PITCH);
 
   // Share string state
   const [shareString, setShareString] = useState<string>('');
@@ -93,7 +138,7 @@ const App = () => {
   // Score state
   const [scoreData, setScoreData] = useState({
     measures: [],
-    timeSignature: selectedTimeSignature,
+    timeSignature: scoreSettings.timeSignature,
   } as ScoreData);
   const [transitioning, setTransitioning] = useState(false);
 
@@ -111,6 +156,9 @@ const App = () => {
   );
   const [playingNoteIndex, setPlayingNoteIndex] = useState<number | null>(null);
 
+  // Metronome states
+  const [metronomeOn, setMetronomeOn] = useState(false);
+
   // Retrieve persisted app state
   useEffect(() => {
     const shareString = new URLSearchParams(window.location.search).get(
@@ -126,13 +174,16 @@ const App = () => {
       sendEvent(EventCategory.SHARE_LINK, EventAction.USED, shareString);
     }
 
-    setMeasureCount(scoreSettings.measureCount);
-    setSelectedTimeSignature(getTimeSignature(scoreSettings.timeSignatureType));
-    setNoteGroupTypeSelectionMap(
-      fromJS(scoreSettings.noteGroupTypeSelectionMap)
-    );
-    setTempo(scoreSettings.tempo);
-    setPitch(scoreSettings.pitch);
+    dispatchUpdateScoreSettings({
+      measureCount: scoreSettings.measureCount,
+      timeSignature: scoreSettings.timeSignature,
+      noteGroupTypeSelectionMap: fromJS(
+        scoreSettings.noteGroupTypeSelectionMap
+      ),
+      tempo: scoreSettings.tempo,
+      pitch: scoreSettings.pitch,
+      metronomeSettings: scoreSettings.metronomeSettings,
+    });
     setScoreData(scoreData);
 
     if (errorMessage) {
@@ -140,27 +191,21 @@ const App = () => {
       setShareStringErrorMessage(errorMessage);
       window.history.replaceState({}, document.title, '/');
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist app state
   useEffect(() => {
-    const scoreSettings: ScoreSettings = {
-      measureCount,
-      timeSignatureType: selectedTimeSignature.type,
-      noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
-      tempo: tempo,
-      pitch: pitch,
+    const scoreSettingsToPersist: ScoreSettings = {
+      measureCount: scoreSettings.measureCount,
+      timeSignature: scoreSettings.timeSignature,
+      noteGroupTypeSelectionMap: scoreSettings.noteGroupTypeSelectionMap,
+      tempo: scoreSettings.tempo,
+      pitch: scoreSettings.pitch,
+      metronomeSettings: scoreSettings.metronomeSettings,
     };
 
-    persistAppState({ scoreSettings, scoreData });
-  }, [
-    measureCount,
-    selectedTimeSignature,
-    noteGroupTypeSelectionMap,
-    scoreData,
-    tempo,
-    pitch,
-  ]);
+    persistAppState({ scoreSettings: scoreSettingsToPersist, scoreData });
+  }, [scoreSettings, scoreData]);
 
   // Handle resizing score on window resize
   useEffect(() => {
@@ -181,8 +226,8 @@ const App = () => {
 
     if (
       getSelectedNoteGroupTypes(
-        noteGroupTypeSelectionMap,
-        selectedTimeSignature
+        scoreSettings.noteGroupTypeSelectionMap,
+        scoreSettings.timeSignature
       ).length === 0
     ) {
       setValidationErrorMessage('Please select at least one type of note');
@@ -190,22 +235,7 @@ const App = () => {
     }
 
     setValidationErrorMessage('');
-  }, [noteGroupTypeSelectionMap, selectedTimeSignature]);
-
-  // Handle reconfiguring selection map when time signature changes
-  useEffect(() => {
-    setNoteGroupTypeSelectionMap((oldMap) => {
-      let newMap = getNoteGroupTypeSelectionMap();
-
-      [...oldMap.entries()].forEach(([noteGroupType, checked]) => {
-        if (newMap.has(noteGroupType)) {
-          newMap = newMap.set(noteGroupType, checked);
-        }
-      });
-
-      return newMap;
-    });
-  }, [selectedTimeSignature]);
+  }, [scoreSettings]);
 
   // Update form factor value based on media query
   useEffect(() => {
@@ -227,45 +257,39 @@ const App = () => {
   useEffect(() => {
     const shareString = encodeScoreSettingsShareString(
       {
-        measureCount,
-        noteGroupTypeSelectionMap,
-        timeSignatureType: selectedTimeSignature.type,
-        tempo,
-        pitch,
+        measureCount: scoreSettings.measureCount,
+        noteGroupTypeSelectionMap: scoreSettings.noteGroupTypeSelectionMap,
+        timeSignature: scoreSettings.timeSignature,
+        tempo: scoreSettings.tempo,
+        pitch: scoreSettings.pitch,
+        metronomeSettings: scoreSettings.metronomeSettings,
       },
       CURRENT_SHARE_STRING_VERSION
     );
     setShareString(shareString);
-  }, [
-    measureCount,
-    noteGroupTypeSelectionMap,
-    selectedTimeSignature,
-    tempo,
-    pitch,
-  ]);
+  }, [scoreSettings]);
 
   const setNextMeasures = () => {
     try {
       const nextMeasures = getRandomMeasures(
-        noteGroupTypeSelectionMap,
-        selectedTimeSignature,
-        measureCount
+        scoreSettings.noteGroupTypeSelectionMap,
+        scoreSettings.timeSignature,
+        scoreSettings.measureCount
       );
       setScoreData({
         measures: nextMeasures,
-        timeSignature: selectedTimeSignature,
+        timeSignature: scoreSettings.timeSignature,
       });
     } catch (error) {
       setSettingsMenuOpen(true);
-      setScoreData({ measures: [], timeSignature: selectedTimeSignature });
+      setScoreData({
+        measures: [],
+        timeSignature: scoreSettings.timeSignature,
+      });
       setValidationErrorMessage(
         'The combination of notes selected is not always valid for the given time signature'
       );
     }
-  };
-
-  const setNextTimeSignature = (timeSignatureType: TimeSignatureType) => {
-    setSelectedTimeSignature(getTimeSignature(timeSignatureType));
   };
 
   const handleHeaderRandomizeButtonClick = () => {
@@ -311,47 +335,6 @@ const App = () => {
     setLastFocusElement(null);
   };
 
-  const handleNoteGroupChange = (
-    noteGroupType: NoteGroupType,
-    checked: boolean
-  ) => {
-    setNoteGroupTypeSelectionMap((previousNoteGroupTypeSelectionMap) => {
-      return previousNoteGroupTypeSelectionMap.set(noteGroupType, checked);
-    });
-  };
-
-  const handleTimeSignatureChange = (timeSignatureType: TimeSignatureType) => {
-    setNextTimeSignature(timeSignatureType);
-  };
-
-  const handleMeasureCountChange = (measureCount: number) => {
-    setMeasureCount(measureCount);
-  };
-
-  const handleNoteGroupMultiSelectChange = (
-    category: NoteGroupCategory,
-    multiSelectStatusType: MultiSelectStatusType
-  ) => {
-    setNoteGroupTypeSelectionMap((previousNoteGroupTypeSelectionMap) => {
-      let nextNoteGroupTypeSelectionMap = previousNoteGroupTypeSelectionMap;
-
-      previousNoteGroupTypeSelectionMap.forEach((_, noteGroupType) => {
-        const noteGroup = getNoteGroup(noteGroupType);
-
-        if (noteGroup.categoryType === category.type) {
-          const checked =
-            multiSelectStatusType === MultiSelectStatusType.SELECT_ALL;
-          nextNoteGroupTypeSelectionMap = nextNoteGroupTypeSelectionMap.set(
-            noteGroupType,
-            checked
-          );
-        }
-      });
-
-      return nextNoteGroupTypeSelectionMap;
-    });
-  };
-
   const handleSettingsOpenAccordionChange = (openedAccordion: string) => {
     setOpenSettingsAccordion(openedAccordion);
   };
@@ -378,75 +361,77 @@ const App = () => {
     }
 
     if (playbackState === PlaybackState.PLAYING) {
-      sendEvent(
-        EventCategory.PLAYBACK,
-        EventAction.STARTED,
-        `${tempo}:${pitch.pitchClass}${pitch.octave}`
-      );
+      sendPlaybackEvent(scoreSettings);
     }
   };
 
-  const handleTempoChange = (tempo: number) => {
-    setTempo(tempo);
-  };
-
   const handleNoteTrigger = (index: number | null) => {
-    setPlayingNoteIndex(index);
+    setTimeout(() => {
+      setPlayingNoteIndex(index);
+    }, NOTE_TRIGGER_DELAY);
   };
 
-  const handlePitchChange = (newPitch: Pitch) => {
-    setPitch(newPitch);
+  const handleMetronomeClickTrigger = () => {
+    // Handler for future use cases of visually representing metronome clicks
+  };
+
+  const handleMetronomeButtonClick = () => {
+    setMetronomeOn((currentMetronomeOn) => {
+      if (!currentMetronomeOn) {
+        startMetronome(
+          scoreSettings.timeSignature,
+          scoreSettings.metronomeSettings,
+          handleMetronomeClickTrigger
+        );
+        sendMetronomeEvent(scoreSettings.metronomeSettings);
+        return true;
+      }
+
+      stopMetronome();
+      return false;
+    });
   };
 
   return (
-    <div className="c-rr-app">
-      <SettingsMenu
-        settingsMenuOpen={settingsMenuOpen}
-        openAccordion={openSettingsAccordion}
-        tempo={tempo}
-        pitch={pitch}
-        noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
-        timeSignatures={timeSignatures}
-        selectedTimeSignature={selectedTimeSignature}
-        measureCountOptions={MEASURE_COUNT_OPTIONS}
-        selectedMeasureCount={measureCount}
-        onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
-        onTempoChange={handleTempoChange}
-        onPitchChange={handlePitchChange}
-        onNoteGroupChange={handleNoteGroupChange}
-        onNoteGroupMultiSelectChange={handleNoteGroupMultiSelectChange}
-        onTimeSignatureChange={handleTimeSignatureChange}
-        onMeasureCountChange={handleMeasureCountChange}
-        errorMessage={validationErrorMessage || shareStringErrorMessage}
-        onOpenAccordionChange={handleSettingsOpenAccordionChange}
-        onShareLinkClick={handleShareLinkClick}
-      />
-      <MainMenu
-        mainMenuOpen={mainMenuOpen}
-        onMainMenuCloseClick={handleMainMenuCloseClick}
-      />
-      <Header
-        currentFormFactor={formFactor}
-        measures={scoreData.measures}
-        playbackState={playbackState}
-        tempo={tempo}
-        pitch={pitch}
-        timeSignature={selectedTimeSignature}
-        onPlaybackStateChange={handlePlaybackStateChange}
-        onNoteTrigger={handleNoteTrigger}
-        onMainMenuButtonClick={handleMainMenuButtonClick}
-        onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
-        onRandomizeButtonClick={handleHeaderRandomizeButtonClick}
-      />
-      <Score
-        scoreData={scoreData}
-        innerWidth={innerWidth}
-        transitioning={transitioning}
-        currentFormFactor={formFactor}
-        playingNoteIndex={playingNoteIndex}
-        onScoreClick={handleScoreRandomizeButtonClick}
-      />
-    </div>
+    <AppContext.Provider value={{ state, dispatch }}>
+      <div className="c-rr-app">
+        <SettingsMenu
+          settingsMenuOpen={settingsMenuOpen}
+          openAccordion={openSettingsAccordion}
+          timeSignatures={timeSignatures}
+          measureCountOptions={MEASURE_COUNT_OPTIONS}
+          onSettingsMenuCloseClick={handleSettingsMenuCloseClick}
+          errorMessage={validationErrorMessage || shareStringErrorMessage}
+          onOpenAccordionChange={handleSettingsOpenAccordionChange}
+          onShareLinkClick={handleShareLinkClick}
+        />
+        <MainMenu
+          mainMenuOpen={mainMenuOpen}
+          onMainMenuCloseClick={handleMainMenuCloseClick}
+        />
+        <Header
+          currentFormFactor={formFactor}
+          measures={scoreData.measures}
+          playbackState={playbackState}
+          metronomeOn={metronomeOn}
+          onPlaybackStateChange={handlePlaybackStateChange}
+          onNoteTrigger={handleNoteTrigger}
+          onMetronomeClickTrigger={handleMetronomeClickTrigger}
+          onMainMenuButtonClick={handleMainMenuButtonClick}
+          onSettingsMenuButtonClick={handleSettingsMenuButtonClick}
+          onRandomizeButtonClick={handleHeaderRandomizeButtonClick}
+          onMetronomeButtonClick={handleMetronomeButtonClick}
+        />
+        <Score
+          scoreData={scoreData}
+          innerWidth={innerWidth}
+          transitioning={transitioning}
+          currentFormFactor={formFactor}
+          playingNoteIndex={playingNoteIndex}
+          onScoreClick={handleScoreRandomizeButtonClick}
+        />
+      </div>
+    </AppContext.Provider>
   );
 };
 
