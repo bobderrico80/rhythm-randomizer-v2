@@ -1,9 +1,17 @@
-import { DEFAULT_PITCH, DEFAULT_TEMPO } from '../App';
+import {
+  DEFAULT_METRONOME_SETTINGS,
+  DEFAULT_PITCH,
+  DEFAULT_TEMPO,
+} from '../App';
+import { MetronomeSettings } from './metronome';
 import {
   getNoteGroupTypeSelectionMap,
   NoteGroupType,
   NoteGroupTypeSelectionMap,
   setNoteGroupTypeSelections,
+  Octave,
+  Pitch,
+  PitchClass,
 } from './note';
 import {
   getPersistedAppState,
@@ -12,8 +20,11 @@ import {
 } from './persisted-state';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
-import { getTimeSignature, TimeSignatureType } from './time-signature';
-import { Octave, Pitch, PitchClass } from './tone';
+import {
+  getTimeSignature,
+  TimeSignature,
+  TimeSignatureType,
+} from './time-signature';
 import { Measure } from './vex';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,7 +63,8 @@ const setupLocalStorageScoreSettings = (
   measureCount: number,
   timeSignatureType: TimeSignatureType,
   tempo?: number,
-  pitch?: Pitch
+  pitch?: Pitch,
+  metronomeSettings?: MetronomeSettings
 ) => {
   localStorage.setItem(
     'rr.scoreSettings',
@@ -62,6 +74,7 @@ const setupLocalStorageScoreSettings = (
       noteGroupTypeSelectionMap,
       tempo,
       pitch,
+      metronomeSettings,
     })
   );
 };
@@ -112,7 +125,13 @@ describe('The persisted-state module', () => {
           4,
           timeSignatureType,
           120,
-          { pitchClass: PitchClass.Bb, octave: Octave._4 }
+          { pitchClass: PitchClass.Bb, octave: Octave._4 },
+          {
+            active: true,
+            subdivisionClick: false,
+            startOfMeasureClick: true,
+            countOffMeasures: 0,
+          }
         );
         setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
@@ -124,7 +143,7 @@ describe('The persisted-state module', () => {
       });
 
       it('returns expected time signature type', () => {
-        expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+        expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
           TimeSignatureType.SIMPLE_3_4
         );
       });
@@ -143,6 +162,15 @@ describe('The persisted-state module', () => {
         expect(persistedAppState.scoreSettings.pitch).toEqual({
           pitchClass: PitchClass.Bb,
           octave: Octave._4,
+        });
+      });
+
+      it('returns expected metronome settings', () => {
+        expect(persistedAppState.scoreSettings.metronomeSettings).toEqual({
+          active: true,
+          subdivisionClick: false,
+          startOfMeasureClick: true,
+          countOffMeasures: 0,
         });
       });
 
@@ -187,7 +215,7 @@ describe('The persisted-state module', () => {
       });
 
       it('returns expected time signature type', () => {
-        expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+        expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
           TimeSignatureType.SIMPLE_3_4
         );
       });
@@ -204,6 +232,77 @@ describe('The persisted-state module', () => {
 
       it('returns the default pitch', () => {
         expect(persistedAppState.scoreSettings.pitch).toEqual(DEFAULT_PITCH);
+      });
+
+      it('returns the expected score time signature', () => {
+        expect(persistedAppState.scoreData.timeSignature).toMatchObject(
+          filterIconProperty(getTimeSignature(TimeSignatureType.SIMPLE_3_4))
+        );
+      });
+
+      it('returns the expected measures', () => {
+        expect(persistedAppState.scoreData.measures).toMatchObject(
+          filterIconPropertyFromMeasures(randomMeasures)
+        );
+      });
+    });
+
+    describe('with previous persisted state that does not include metronome settings information', () => {
+      let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+      let randomMeasures: Measure[];
+      let timeSignatureType: TimeSignatureType;
+
+      beforeEach(() => {
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+        timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+        randomMeasures = getRandomMeasures(
+          noteGroupTypeSelectionMap,
+          getTimeSignature(timeSignatureType),
+          4
+        );
+        setupLocalStorageScoreSettings(
+          noteGroupTypeSelectionMap,
+          4,
+          timeSignatureType,
+          120,
+          { pitchClass: PitchClass.Bb, octave: Octave._4 }
+        );
+        setupLocalStorageScoreData(randomMeasures, timeSignatureType);
+
+        persistedAppState = getPersistedAppState();
+      });
+
+      it('returns expected measure count', () => {
+        expect(persistedAppState.scoreSettings.measureCount).toEqual(4);
+      });
+
+      it('returns expected time signature type', () => {
+        expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
+          TimeSignatureType.SIMPLE_3_4
+        );
+      });
+
+      it('returns the expected note group type selection map', () => {
+        expect(
+          persistedAppState.scoreSettings.noteGroupTypeSelectionMap
+        ).toEqual(noteGroupTypeSelectionMap);
+      });
+
+      it('returns expected tempo', () => {
+        expect(persistedAppState.scoreSettings.tempo).toEqual(120);
+      });
+
+      it('returns expected pitch', () => {
+        expect(persistedAppState.scoreSettings.pitch).toEqual({
+          pitchClass: PitchClass.Bb,
+          octave: Octave._4,
+        });
+      });
+
+      it('returns the default metronome settings', () => {
+        expect(persistedAppState.scoreSettings.metronomeSettings).toEqual(
+          DEFAULT_METRONOME_SETTINGS
+        );
       });
 
       it('returns the expected score time signature', () => {
@@ -285,7 +384,7 @@ describe('The persisted-state module', () => {
           });
 
           it('returns the default time signature type', () => {
-            expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+            expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
               TimeSignatureType.SIMPLE_4_4
             );
           });
@@ -305,6 +404,12 @@ describe('The persisted-state module', () => {
           it('returns the default pitch', () => {
             expect(persistedAppState.scoreSettings.pitch).toEqual(
               DEFAULT_PITCH
+            );
+          });
+
+          it('returns the default metronome settings', () => {
+            expect(persistedAppState.scoreSettings.metronomeSettings).toEqual(
+              DEFAULT_METRONOME_SETTINGS
             );
           });
 
@@ -338,7 +443,7 @@ describe('The persisted-state module', () => {
     describe('with a valid share string query parameter', () => {
       describe('without a previous state', () => {
         beforeEach(() => {
-          persistedAppState = getPersistedAppState('14212033000102');
+          persistedAppState = getPersistedAppState('2421203303000102');
         });
 
         it('returns the expected measure count from the share string', () => {
@@ -346,7 +451,7 @@ describe('The persisted-state module', () => {
         });
 
         it('returns the expected time signature', () => {
-          expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+          expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
             TimeSignatureType.SIMPLE_4_4
           );
         });
@@ -377,6 +482,15 @@ describe('The persisted-state module', () => {
           expect(persistedAppState.scoreSettings.pitch).toEqual({
             pitchClass: PitchClass.C,
             octave: Octave._3,
+          });
+        });
+
+        it('returns the expected metronome settings', () => {
+          expect(persistedAppState.scoreSettings.metronomeSettings).toEqual({
+            countOffMeasures: 0,
+            active: true,
+            subdivisionClick: false,
+            startOfMeasureClick: true,
           });
         });
 
@@ -424,7 +538,13 @@ describe('The persisted-state module', () => {
             4,
             timeSignatureType,
             120,
-            { pitchClass: PitchClass.C, octave: Octave._3 }
+            { pitchClass: PitchClass.C, octave: Octave._3 },
+            {
+              active: true,
+              subdivisionClick: false,
+              startOfMeasureClick: true,
+              countOffMeasures: 0,
+            }
           );
           setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
@@ -436,7 +556,7 @@ describe('The persisted-state module', () => {
         });
 
         it('uses the persisted time signature', () => {
-          expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+          expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
             TimeSignatureType.SIMPLE_4_4
           );
         });
@@ -455,6 +575,15 @@ describe('The persisted-state module', () => {
           expect(persistedAppState.scoreSettings.pitch).toEqual({
             pitchClass: PitchClass.C,
             octave: Octave._3,
+          });
+        });
+
+        it('uses the persisted metronome settings', () => {
+          expect(persistedAppState.scoreSettings.metronomeSettings).toEqual({
+            countOffMeasures: 0,
+            active: true,
+            subdivisionClick: false,
+            startOfMeasureClick: true,
           });
         });
 
@@ -491,11 +620,17 @@ describe('The persisted-state module', () => {
             2,
             timeSignatureType,
             80,
-            { pitchClass: PitchClass.F, octave: Octave._3 }
+            { pitchClass: PitchClass.F, octave: Octave._3 },
+            {
+              active: true,
+              subdivisionClick: false,
+              startOfMeasureClick: true,
+              countOffMeasures: 0,
+            }
           );
           setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
-          persistedAppState = getPersistedAppState('14212033000102');
+          persistedAppState = getPersistedAppState('2421203313000102');
         });
 
         it('uses the measure count from the share string', () => {
@@ -503,7 +638,7 @@ describe('The persisted-state module', () => {
         });
 
         it('uses the time signature from the share string', () => {
-          expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+          expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
             TimeSignatureType.SIMPLE_4_4
           );
         });
@@ -530,6 +665,15 @@ describe('The persisted-state module', () => {
           expect(persistedAppState.scoreSettings.pitch).toEqual({
             pitchClass: PitchClass.C,
             octave: Octave._3,
+          });
+        });
+
+        it('uses the metronome settings from the share string', () => {
+          expect(persistedAppState.scoreSettings.metronomeSettings).toEqual({
+            countOffMeasures: 1,
+            active: true,
+            subdivisionClick: false,
+            startOfMeasureClick: true,
           });
         });
 
@@ -619,7 +763,13 @@ describe('The persisted-state module', () => {
             4,
             timeSignatureType,
             120,
-            { pitchClass: PitchClass.C, octave: Octave._3 }
+            { pitchClass: PitchClass.C, octave: Octave._3 },
+            {
+              active: true,
+              subdivisionClick: false,
+              startOfMeasureClick: true,
+              countOffMeasures: 0,
+            }
           );
           setupLocalStorageScoreData(randomMeasures, timeSignatureType);
 
@@ -637,7 +787,7 @@ describe('The persisted-state module', () => {
         });
 
         it('returns the previously-saved time signature type', () => {
-          expect(persistedAppState.scoreSettings.timeSignatureType).toEqual(
+          expect(persistedAppState.scoreSettings.timeSignature.type).toEqual(
             TimeSignatureType.SIMPLE_3_4
           );
         });
@@ -656,6 +806,15 @@ describe('The persisted-state module', () => {
           expect(persistedAppState.scoreSettings.pitch).toEqual({
             pitchClass: PitchClass.C,
             octave: Octave._3,
+          });
+        });
+
+        it('return the previously-saved metronome settings', () => {
+          expect(persistedAppState.scoreSettings.metronomeSettings).toEqual({
+            countOffMeasures: 0,
+            active: true,
+            subdivisionClick: false,
+            startOfMeasureClick: true,
           });
         });
 
@@ -682,28 +841,29 @@ describe('The persisted-state module', () => {
 
   describe('persistAppState() function', () => {
     let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
-    let timeSignatureType: TimeSignatureType;
+    let timeSignature: TimeSignature;
     let randomMeasures: Measure[];
 
     beforeEach(() => {
       noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
-      timeSignatureType = TimeSignatureType.SIMPLE_3_4;
+      timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_3_4);
       randomMeasures = getRandomMeasures(
         noteGroupTypeSelectionMap,
-        getTimeSignature(timeSignatureType),
+        timeSignature,
         2
       );
 
       persistAppState({
         scoreSettings: {
           measureCount: 2,
-          timeSignatureType,
+          timeSignature,
           noteGroupTypeSelectionMap,
           tempo: 120,
           pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
+          metronomeSettings: DEFAULT_METRONOME_SETTINGS,
         },
         scoreData: {
-          timeSignature: getTimeSignature(timeSignatureType),
+          timeSignature,
           measures: randomMeasures,
         },
       });
@@ -714,10 +874,11 @@ describe('The persisted-state module', () => {
         'rr.scoreSettings',
         JSON.stringify({
           measureCount: 2,
-          timeSignatureType,
+          timeSignature,
           noteGroupTypeSelectionMap: noteGroupTypeSelectionMap,
           tempo: 120,
           pitch: { pitchClass: PitchClass.F, octave: Octave._3 },
+          metronomeSettings: DEFAULT_METRONOME_SETTINGS,
         })
       );
     });
@@ -726,7 +887,7 @@ describe('The persisted-state module', () => {
       expect(localStorage.setItem).toHaveBeenCalledWith(
         'rr.scoreData',
         JSON.stringify({
-          timeSignature: getTimeSignature(timeSignatureType),
+          timeSignature,
           measures: randomMeasures,
         })
       );

@@ -1,22 +1,19 @@
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  FormEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import './TempoControl.scss';
 import Icon from './Icon';
 import quarterNote from '../svg/notes/q.svg';
 import dottedQuarterNote from '../svg/notes/cqd.svg';
-import {
-  TimeSignature,
-  TimeSignatureComplexity,
-} from '../modules/time-signature';
-
-export interface TempoControlProps {
-  tempo: number;
-  timeSignature: TimeSignature;
-  onTempoChange: TempoChangeHandler;
-}
-
-export type TempoChangeHandler = (tempo: number) => void;
+import { TimeSignatureComplexity } from '../modules/time-signature';
+import { AppContext } from '../App';
+import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 
 const buildClassName = buildBemClassName('c-rr-tempo-control');
 
@@ -26,14 +23,17 @@ export const MAX_TEMPO = 300; // bpm
 const MOUSE_HOLD_DELAY = 500; // ms
 const HOLD_DELAY_INTERVAL = 10; // bpm
 
-const TempoControl = ({
-  tempo,
-  timeSignature,
-  onTempoChange,
-}: TempoControlProps) => {
+const TempoControl = () => {
+  const { state, dispatch } = useContext(AppContext);
+  const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
+    dispatch
+  );
+
+  const { timeSignature, tempo } = state.scoreSettings;
+
   const [displayedTempo, setDisplayedTempo] = useState('');
-  const [_, setIntervalId] = useState<number | null>(null);
-  const [__, setHolding] = useState(false);
+  const [, setIntervalId] = useState<number | null>(null);
+  const [, setHolding] = useState(false);
 
   const displayedTempoRef = useRef<string | null>(null);
   const isCompoundMeter =
@@ -51,16 +51,16 @@ const TempoControl = ({
     const nextTempo = tempo + tempoChange;
 
     if (nextTempo < MIN_TEMPO) {
-      onTempoChange(MIN_TEMPO);
+      dispatchUpdateScoreSettings({ tempo: MIN_TEMPO });
       return;
     }
 
     if (nextTempo > MAX_TEMPO) {
-      onTempoChange(MAX_TEMPO);
+      dispatchUpdateScoreSettings({ tempo: MAX_TEMPO });
       return;
     }
 
-    onTempoChange(nextTempo);
+    dispatchUpdateScoreSettings({ tempo: nextTempo });
   };
 
   // Handle long press to increment/decrement by tens
@@ -107,7 +107,9 @@ const TempoControl = ({
       // Update tempo with displayedTempoRef. Can't use displayedTempo state because it hasn't
       // updated yet here.
       if (displayedTempoRef.current) {
-        onTempoChange(parseInt(displayedTempoRef.current, 10));
+        dispatchUpdateScoreSettings({
+          tempo: parseInt(displayedTempoRef.current, 10),
+        });
         displayedTempoRef.current = null;
       }
 
@@ -164,7 +166,7 @@ const TempoControl = ({
     }
 
     setDisplayedTempo(nextValue.toString());
-    onTempoChange(nextValue);
+    dispatchUpdateScoreSettings({ tempo: nextValue });
   };
 
   return (

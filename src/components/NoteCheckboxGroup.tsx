@@ -1,4 +1,4 @@
-import React, { useEffect, useState, MouseEvent } from 'react';
+import React, { useEffect, useState, MouseEvent, useContext } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName, TypedItem, findItemOfType } from '../modules/util';
 import {
@@ -7,11 +7,13 @@ import {
   NoteGroupType,
   NoteGroupCategory,
 } from '../modules/note';
-import { NoteGroupChangeHandler } from './NoteSelection';
 import './NoteCheckboxGroup.scss';
 import IconButton from './IconButton';
 import selectAllIcon from '../svg/select-all.svg';
 import selectNoneIcon from '../svg/select-none.svg';
+import { AppContext } from '../App';
+import { ActionType } from '../modules/reducer';
+import Checkbox from './Checkbox';
 
 const buildClassName = buildBemClassName('c-rr-note-checkbox-group');
 
@@ -47,27 +49,18 @@ const getMultiSelectStatus = (
     multiSelectStatuses
   );
 };
-
-export type NoteGroupMultiSelectChangeHandler = (
-  category: NoteGroupCategory,
-  multiSelectStatusType: MultiSelectStatusType
-) => void;
-
 export interface NoteCheckboxGroupProps {
   category: NoteGroupCategory;
   noteGroups: NoteGroup[];
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
-  onNoteGroupChange: NoteGroupChangeHandler;
-  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
 }
 
 const NoteCheckboxGroup = ({
   category,
   noteGroups,
   noteGroupTypeSelectionMap,
-  onNoteGroupChange,
-  onNoteGroupMultiSelectChange,
 }: NoteCheckboxGroupProps) => {
+  const { dispatch } = useContext(AppContext);
   const [allChecked, setAllChecked] = useState(false);
 
   useEffect(() => {
@@ -78,21 +71,24 @@ const NoteCheckboxGroup = ({
     );
   }, [noteGroups, noteGroupTypeSelectionMap]);
 
-  const handleNoteGroupChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const noteGroupType = event.currentTarget.name as NoteGroupType;
-    const checked = event.currentTarget.checked;
-
-    onNoteGroupChange(noteGroupType, checked);
+  const handleNoteGroupChange = (checked: boolean, id: string) => {
+    const noteGroupType = id as NoteGroupType;
+    dispatch({
+      type: ActionType.SET_NOTE_GROUP_SELECTION,
+      noteGroupType,
+      value: checked,
+    });
   };
 
   const handleMultiSelectClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    onNoteGroupMultiSelectChange(
+    dispatch({
+      type: ActionType.SET_NOTE_GROUP_SELECTIONS_FOR_CATEGORY,
       category,
-      allChecked
+      multiSelectStatusType: allChecked
         ? MultiSelectStatusType.SELECT_NONE
-        : MultiSelectStatusType.SELECT_ALL
-    );
+        : MultiSelectStatusType.SELECT_ALL,
+    });
   };
 
   const multiSelectStatus = getMultiSelectStatus(
@@ -118,29 +114,27 @@ const NoteCheckboxGroup = ({
           {noteGroups.map((noteGroup) => {
             const checked = noteGroupTypeSelectionMap.get(noteGroup.type);
             return (
-              <label
-                htmlFor={noteGroup.type}
+              <Checkbox
                 key={noteGroup.type}
-                className={buildClassName('label')()}
-              >
-                <input
-                  type="checkbox"
-                  id={noteGroup.type}
-                  name={noteGroup.type}
-                  className={buildClassName('checkbox')()}
-                  checked={Boolean(checked)}
-                  onChange={handleNoteGroupChange}
-                />
-                <img
-                  src={noteGroup.icon}
-                  alt={noteGroup.description}
-                  title={noteGroup.description}
-                  className={classnames(
-                    buildClassName('icon')(),
-                    buildClassName('icon')(noteGroup.type)
-                  )}
-                />
-              </label>
+                id={noteGroup.type}
+                labelClassName={buildClassName('label')()}
+                className={buildClassName('checkbox')()}
+                checked={Boolean(checked)}
+                onChange={handleNoteGroupChange}
+                renderLabel={() => {
+                  return (
+                    <img
+                      src={noteGroup.icon}
+                      alt={noteGroup.description}
+                      title={noteGroup.description}
+                      className={classnames(
+                        buildClassName('icon')(),
+                        buildClassName('icon')(noteGroup.type)
+                      )}
+                    />
+                  );
+                }}
+              />
             );
           })}
         </div>

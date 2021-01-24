@@ -91,6 +91,32 @@ export enum NoteType {
   S = '16',
 }
 
+export enum PitchClass {
+  A = 'A',
+  Bb = 'Bb',
+  B = 'B',
+  C = 'C',
+  Db = 'Db',
+  D = 'D',
+  Eb = 'Eb',
+  E = 'E',
+  F = 'F',
+  Gb = 'Gb',
+  G = 'G',
+  Ab = 'Ab',
+}
+
+export enum Octave {
+  _0 = '0',
+  _1 = '1',
+  _2 = '2',
+  _3 = '3',
+  _4 = '4',
+  _5 = '5',
+  _6 = '6',
+  _7 = '7',
+}
+
 export interface Note {
   type: string;
   widthUnit: number;
@@ -120,6 +146,12 @@ export interface NoteGroupCategory extends Category<NoteGroupCategoryType> {}
 export interface PlaybackPattern {
   toneDuration: string;
   rest: boolean;
+  pitch?: Pitch;
+  velocity?: number;
+}
+export interface Pitch {
+  pitchClass: PitchClass;
+  octave: Octave;
 }
 
 export type NoteGroupTypeSelectionMap = Map<NoteGroupType, Boolean>;

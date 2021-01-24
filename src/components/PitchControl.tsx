@@ -1,15 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { buildBemClassName } from '../modules/util';
 import Select from './Select';
 import './PitchControl.scss';
-import { Pitch, PitchClass, Octave } from '../modules/tone';
-
-export type PitchChangeHandler = (pitch: Pitch) => void;
-
-export interface PitchControlProps {
-  pitch: Pitch;
-  onPitchChange: PitchChangeHandler;
-}
+import { PitchClass, Octave } from '../modules/note';
+import { AppContext } from '../App';
+import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 
 const pitchClassDisplayMap: { [key: string]: string } = {
   [PitchClass.A]: 'A',
@@ -39,18 +34,30 @@ const octaveDisplayMap: { [key: string]: string } = {
 
 const buildClassName = buildBemClassName('c-rr-pitch-control');
 
-const PitchControl = ({ pitch, onPitchChange }: PitchControlProps) => {
+const PitchControl = () => {
+  const { state, dispatch } = useContext(AppContext);
+
+  const { pitch } = state.scoreSettings;
+
+  const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
+    dispatch
+  );
+
   const handlePitchClassChange = (newPitch: string) => {
-    onPitchChange({
-      pitchClass: newPitch as PitchClass,
-      octave: pitch.octave,
+    dispatchUpdateScoreSettings({
+      pitch: {
+        pitchClass: newPitch as PitchClass,
+        octave: pitch.octave,
+      },
     });
   };
 
   const handleOctaveChange = (newOctave: string) => {
-    onPitchChange({
-      pitchClass: pitch.pitchClass,
-      octave: newOctave as Octave,
+    dispatchUpdateScoreSettings({
+      pitch: {
+        pitchClass: pitch.pitchClass,
+        octave: newOctave as Octave,
+      },
     });
   };
 

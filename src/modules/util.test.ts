@@ -6,6 +6,7 @@ import {
   CategorizableTypedItem,
   CategorizedItem,
   categorizeItems,
+  duplicate,
 } from './util';
 
 enum TestType {
@@ -249,6 +250,18 @@ describe('The util module', () => {
           },
         ]);
       });
+    });
+  });
+
+  describe('duplicate() function', () => {
+    it('returns an array containing the expected count of duplicated items', () => {
+      expect(duplicate('foo', 3)).toEqual(['foo', 'foo', 'foo']);
+    });
+
+    it('throws a RangeError if timesToDuplicate is less than 1', () => {
+      expect(() => {
+        duplicate('foo', 0);
+      }).toThrow(RangeError);
     });
   });
 });

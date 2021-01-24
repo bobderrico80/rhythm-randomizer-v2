@@ -1,34 +1,18 @@
 import React from 'react';
 import './SettingsForm.scss';
 import { buildBemClassName } from '../modules/util';
-import NoteSelection, { NoteGroupChangeHandler } from './NoteSelection';
-import { NoteGroupTypeSelectionMap } from '../modules/note';
+import NoteSelection from './NoteSelection';
 import TimeSignatureSelection from './TimeSignatureSelection';
-import { TimeSignature, TimeSignatureType } from '../modules/time-signature';
+import { TimeSignature } from '../modules/time-signature';
 import MeasureCountSelection from './MeasureCountSelection';
-import { NoteGroupMultiSelectChangeHandler } from './NoteCheckboxGroup';
 import Accordion from './Accordion';
 import PlaybackSettings from './PlaybackSettings';
-import { TempoChangeHandler } from './TempoControl';
-import { PitchChangeHandler } from './PitchControl';
-import { Pitch } from '../modules/tone';
 
 export interface SettingsFormProps {
   openAccordion: string;
-  tempo: number;
-  pitch: Pitch;
-  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
   timeSignatures: TimeSignature[];
-  selectedTimeSignature: TimeSignature;
   measureCountOptions: number[];
-  selectedMeasureCount: number;
   errorMessage: string;
-  onTempoChange: TempoChangeHandler;
-  onPitchChange: PitchChangeHandler;
-  onNoteGroupChange: NoteGroupChangeHandler;
-  onNoteGroupMultiSelectChange: NoteGroupMultiSelectChangeHandler;
-  onTimeSignatureChange: (newTimeSignature: TimeSignatureType) => void;
-  onMeasureCountChange: (measureCount: number) => void;
   onOpenAccordionChange: (accordionOpened: string) => void;
   onAccordionTransitionComplete: (open: boolean, id: string) => void;
 }
@@ -37,20 +21,9 @@ const buildClassName = buildBemClassName('c-rr-settings-form');
 
 const SettingsForm = ({
   openAccordion,
-  tempo,
-  pitch,
-  noteGroupTypeSelectionMap,
   timeSignatures,
-  selectedTimeSignature,
   measureCountOptions,
-  selectedMeasureCount,
   errorMessage,
-  onTempoChange,
-  onPitchChange,
-  onNoteGroupChange,
-  onNoteGroupMultiSelectChange,
-  onTimeSignatureChange,
-  onMeasureCountChange,
   onOpenAccordionChange,
   onAccordionTransitionComplete,
 }: SettingsFormProps) => {
@@ -72,15 +45,7 @@ const SettingsForm = ({
         onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Playback Settings'}
         renderPaneContents={() => {
-          return (
-            <PlaybackSettings
-              tempo={tempo}
-              pitch={pitch}
-              timeSignature={selectedTimeSignature}
-              onTempoChange={onTempoChange}
-              onPitchChange={onPitchChange}
-            />
-          );
+          return <PlaybackSettings />;
         }}
       />
       <Accordion
@@ -91,11 +56,7 @@ const SettingsForm = ({
         renderButtonContents={() => 'Measure Count Selection'}
         renderPaneContents={() => {
           return (
-            <MeasureCountSelection
-              measureCountOptions={measureCountOptions}
-              selectedMeasureCount={selectedMeasureCount}
-              onMeasureCountChange={onMeasureCountChange}
-            />
+            <MeasureCountSelection measureCountOptions={measureCountOptions} />
           );
         }}
       />
@@ -106,13 +67,7 @@ const SettingsForm = ({
         onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Time Signature Selection'}
         renderPaneContents={() => {
-          return (
-            <TimeSignatureSelection
-              timeSignatures={timeSignatures}
-              selectedTimeSignature={selectedTimeSignature}
-              onTimeSignatureChange={onTimeSignatureChange}
-            />
-          );
+          return <TimeSignatureSelection timeSignatures={timeSignatures} />;
         }}
       />
       <Accordion
@@ -122,14 +77,7 @@ const SettingsForm = ({
         onTransitionComplete={onAccordionTransitionComplete}
         renderButtonContents={() => 'Note Selection'}
         renderPaneContents={() => {
-          return (
-            <NoteSelection
-              noteGroupTypeSelectionMap={noteGroupTypeSelectionMap}
-              timeSignature={selectedTimeSignature}
-              onNoteGroupChange={onNoteGroupChange}
-              onNoteGroupMultiSelectChange={onNoteGroupMultiSelectChange}
-            />
-          );
+          return <NoteSelection />;
         }}
       />
     </form>
