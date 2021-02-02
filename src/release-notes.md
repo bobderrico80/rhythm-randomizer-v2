@@ -1,4 +1,18 @@
-## What's New in Version 2.3.0
+## What's New in Version 2.4.0?
+
+Metronome functionality! Two configurable metronome modes are now available on The Rhythm Randomizer:
+
+### Playback Metronome
+
+The Playback Settings area of the Settings Menu now includes a Metronome Settings area. Checking in 'Play metronome during playback' will cause a metronome to play during the rhythm playback. There are additional settings here for controlling the metronome, including settings to play a special click at the start of the measure and/or subdivisions, and an optional 1- or 2-measure count-off click before playback.
+
+These new metronome settings are included in Share Links, allowing users to post links that include playback with the metronome on or off, etc.
+
+### Standalone Metronome
+
+The header navigation area now contains a 'Start/Stop Metronome' button. Clicking this button will start (or stop) a continuous metronome, which will respect the current tempo, time signature, and metronome settings. This mode is useful for reading and practicing the rhythm prior to playback, or for just using as a general-purpose metronome!
+
+## What's New in Version 2.3.0?
 
 Compound time signatures! At long last, 6/8, 9/8, and 12/8 time signatures have arrived! These are available in the 'Time Signature Settings' section of the score settings menu. When switching over to the new compound time signatures, the available notes under 'Note Selection' will feature a new set of note combinations suitable for compound time signatures. Like the simple time signatures, rhythms generated for compound time signatures will play back as expected. Compound time signatures are also included in the 'Share Settings' link as well.
 
