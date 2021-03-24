@@ -10,6 +10,8 @@ import {
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
 import { TimeSignature } from './time-signature';
+import { sortBy } from 'lodash';
+import { duplicate } from './util';
 
 const logger = console;
 
@@ -94,8 +96,17 @@ const getRandomMeasure = (
 export const getRandomMeasures = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   timeSignature: TimeSignature,
-  measureCount: number
+  measureCount: number,
+  testMode = false
 ): Measure[] => {
+  if (testMode) {
+    return getTestRandomMeasures(
+      noteGroupTypeSelectionMap,
+      timeSignature,
+      measureCount
+    );
+  }
+
   let measures: Measure[] = [];
 
   for (let i = 0; i < measureCount; i++) {
@@ -103,4 +114,45 @@ export const getRandomMeasures = (
   }
 
   return measures;
+};
+
+let testRandomMeasureIndex = 0;
+
+export const getTestRandomMeasures = (
+  noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
+  timeSignature: TimeSignature,
+  measureCount: number
+): Measure[] => {
+  const selectedNoteGroups = sortBy(
+    getNoteGroups(
+      ...getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)
+    ),
+    (noteGroup) => noteGroup.index
+  );
+
+  const measures: Measure[] = [];
+
+  for (let index = 0; index < measureCount; index++) {
+    const noteGroup =
+      selectedNoteGroups[
+        (index + testRandomMeasureIndex) % selectedNoteGroups.length
+      ];
+    const timesToDuplicate = timeSignature.beatsPerMeasure / noteGroup.duration;
+
+    if (!Number.isInteger(timesToDuplicate)) {
+      throw new InvalidNoteSelectionError();
+    }
+
+    const measureOfNoteGroups = duplicate(noteGroup, timesToDuplicate);
+
+    measures.push({ noteGroups: measureOfNoteGroups });
+  }
+
+  testRandomMeasureIndex++;
+
+  return measures;
+};
+
+export const resetTestRandomMeasureIndex = () => {
+  testRandomMeasureIndex = 0;
 };

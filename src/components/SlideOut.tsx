@@ -10,6 +10,7 @@ const buildClassName = buildBemClassName('c-rr-slide-out');
 
 export interface SlideOutProps {
   open: boolean;
+  label: string;
   className?: string;
   openClassName?: string;
   closedClassName?: string;
@@ -30,6 +31,7 @@ export interface SlideOutProps {
 
 const SlideOut = ({
   open,
+  label,
   className = '',
   openClassName = '',
   closedClassName = '',
@@ -159,7 +161,7 @@ const SlideOut = ({
         [openClassName]: open,
         [closedClassName]: !open,
       })}
-      aria-hidden={!open}
+      data-testid="slide-out"
     >
       <div
         ref={paneRef}
@@ -169,6 +171,11 @@ const SlideOut = ({
           [openPaneClassName]: open,
           [closedPaneClassName]: !open,
         })}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!open}
+        aria-label={label}
+        data-testid="slide-out__pane"
       >
         {renderPane(open, onCloseClick)}
       </div>
@@ -180,6 +187,7 @@ const SlideOut = ({
           [closedOverlayClassName]: !open,
         })}
         onClick={onCloseClick}
+        data-testid="slide-out__overlay"
       />
     </div>
   );

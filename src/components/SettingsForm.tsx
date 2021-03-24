@@ -40,6 +40,7 @@ const SettingsForm = ({
       )}
       <Accordion
         id="playback-settings-accordion"
+        paneLabel="Playback Settings"
         isOpen={openAccordion === 'playback-settings-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
@@ -50,6 +51,7 @@ const SettingsForm = ({
       />
       <Accordion
         id="measure-count-selection-accordion"
+        paneLabel="Measure Count Selection"
         isOpen={openAccordion === 'measure-count-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
@@ -62,6 +64,7 @@ const SettingsForm = ({
       />
       <Accordion
         id="time-signature-selection-accordion"
+        paneLabel="Time Signature Selection"
         isOpen={openAccordion === 'time-signature-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
@@ -72,6 +75,7 @@ const SettingsForm = ({
       />
       <Accordion
         id="note-selection-accordion"
+        paneLabel="Note Selection"
         isOpen={openAccordion === 'note-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}

@@ -61,6 +61,10 @@ export interface ScoreSettings {
   metronomeSettings: MetronomeSettings;
 }
 
+export interface AppProps {
+  testMode?: boolean;
+}
+
 const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._2;
 
 export const MEASURE_COUNT_OPTIONS: MeasureCount[] = [1, 2, 4, 8];
@@ -108,7 +112,7 @@ export const AppContext = createContext<{
   dispatch: () => null,
 });
 
-const App = () => {
+const App = ({ testMode = false }: AppProps) => {
   // Menu/accordion states
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [
@@ -166,7 +170,8 @@ const App = () => {
     );
 
     const { scoreSettings, scoreData, errorMessage } = getPersistedAppState(
-      shareString as string | undefined
+      shareString as string | undefined,
+      testMode
     );
 
     // Only track that a share string was used if it is valid
@@ -274,7 +279,8 @@ const App = () => {
       const nextMeasures = getRandomMeasures(
         scoreSettings.noteGroupTypeSelectionMap,
         scoreSettings.timeSignature,
-        scoreSettings.measureCount
+        scoreSettings.measureCount,
+        testMode
       );
       setScoreData({
         measures: nextMeasures,

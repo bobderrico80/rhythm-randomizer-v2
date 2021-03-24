@@ -13,7 +13,6 @@ export enum PlaybackState {
   PLAYING,
   STOPPED,
 }
-
 export type NoteTriggerHandler = (index: number | null) => void;
 
 const NOTE_SPACING = 0.75; // %

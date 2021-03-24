@@ -7,6 +7,7 @@ import './Accordion.scss';
 export interface AccordionProps {
   renderButtonContents: (open: boolean) => JSX.Element | string | null;
   renderPaneContents: (handleClose: () => void) => JSX.Element | string | null;
+  paneLabel: string;
   id: string;
   isOpen?: boolean;
   buttonClassName?: string;
@@ -27,6 +28,7 @@ const Accordion = ({
   renderPaneContents,
   id,
   isOpen,
+  paneLabel,
   buttonClassName = '',
   containerClassName = '',
   openContainerClassName = '',
@@ -137,6 +139,7 @@ const Accordion = ({
 
   return (
     <div
+      data-testid="accordion__container"
       className={classnames(buildClassName()(), containerClassName, {
         [openContainerClassName]: open,
         [closedContainerClassName]: !open,
@@ -145,8 +148,10 @@ const Accordion = ({
       })}
     >
       <button
+        id={`${id}-trigger`}
         className={classnames(buildClassName('button')(), buttonClassName)}
         aria-expanded={open}
+        aria-controls={id}
         type="button"
         onClick={handleToggleClick}
       >
@@ -162,6 +167,7 @@ const Accordion = ({
         {renderButtonContents(open)}
       </button>
       <div
+        data-testid="accordion__pane"
         className={classnames(buildClassName('pane')(), paneClassName, {
           [openPaneClassName]: open,
           [closedPaneClassName]: !open,
@@ -169,7 +175,10 @@ const Accordion = ({
           [buildClassName('pane')('closed')]: !open,
         })}
         aria-hidden={!open}
+        role="region"
+        aria-label={paneLabel}
         ref={paneNode}
+        id={id}
       >
         {renderPaneContents(closePane)}
       </div>

@@ -176,7 +176,7 @@ const TempoControl = () => {
         <div className={buildClassName('mm-marking')()}>
           <Icon
             svg={mmMarkingSvg}
-            alt={`${isCompoundMeter ? 'dotted ' : ''} quarter note`}
+            alt={`${isCompoundMeter ? 'dotted ' : ''}quarter note`}
             className={buildClassName('mm-marking-icon')()}
           />
           {' = '}
@@ -190,6 +190,7 @@ const TempoControl = () => {
               buildClassName('button')(),
               buildClassName('button')('decrease')
             )}
+            aria-label="decrease tempo"
             onClick={handleButtonClick}
             onMouseDown={handleButtonMouseDown}
           >
@@ -212,6 +213,7 @@ const TempoControl = () => {
               buildClassName('button')(),
               buildClassName('button')('increase')
             )}
+            aria-label="increase tempo"
             onClick={handleButtonClick}
             onMouseDown={handleButtonMouseDown}
           >

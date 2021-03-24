@@ -42,13 +42,20 @@ const TimeSignatureSelection = ({
       className={classnames('c-rr-settings-form__section', buildClassName()())}
     >
       {categorizedTimeSignatures.map((categorizedTimeSignature) => {
+        // TODO: Refactor for a more accessible radio group component
         return (
           <fieldset
             key={categorizedTimeSignature.category.type}
             className={buildClassName('fieldset')()}
           >
-            <legend>{categorizedTimeSignature.category.type}</legend>
-            <div className={buildClassName('label-container')()}>
+            <legend id={categorizedTimeSignature.category.type}>
+              {categorizedTimeSignature.category.type}
+            </legend>
+            <div
+              role="radiogroup"
+              aria-labelledby={categorizedTimeSignature.category.type}
+              className={buildClassName('label-container')()}
+            >
               {categorizedTimeSignature.items.map((ts) => {
                 return (
                   <label
@@ -58,6 +65,7 @@ const TimeSignatureSelection = ({
                   >
                     <input
                       type="radio"
+                      data-testid={ts.type}
                       id={ts.type}
                       name={ts.type}
                       className={buildClassName('radio-button')()}

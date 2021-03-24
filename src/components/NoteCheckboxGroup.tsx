@@ -31,12 +31,12 @@ interface MultiSelectStatus extends TypedItem<MultiSelectStatusType> {
 const multiSelectStatuses: MultiSelectStatus[] = [
   {
     type: MultiSelectStatusType.SELECT_ALL,
-    description: 'Select all in group',
+    description: 'Select all',
     icon: selectAllIcon,
   },
   {
     type: MultiSelectStatusType.SELECT_NONE,
-    description: 'Select none in group',
+    description: 'Deselect all',
     icon: selectNoneIcon,
   },
 ];
@@ -103,7 +103,7 @@ const NoteCheckboxGroup = ({
       <div className={buildClassName('container')()}>
         <div className={buildClassName('multi-select-container')()}>
           <IconButton
-            alt={multiSelectStatus.description}
+            alt={`${multiSelectStatus.description} ${category.type}`}
             svg={multiSelectStatus.icon}
             id={multiSelectStatus.type}
             onClick={handleMultiSelectClick}

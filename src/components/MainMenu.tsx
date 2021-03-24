@@ -29,6 +29,7 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
       }
     })();
   }, []);
+
   const renderMainMenuPane = (open: boolean, onCloseClick: () => void) => {
     return (
       <section>
@@ -36,9 +37,9 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
           <IconButton
             className={buildClassName('close-button')()}
             svg={backArrowIcon}
-            alt="Close Settings Menu"
+            alt="Close Main Menu"
             onClick={onCloseClick}
-            id="settings-menu-close"
+            id="main-menu-close"
           />
         </div>
         <section className={buildClassName('content')()}>
@@ -77,6 +78,7 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
   return (
     <SlideOut
       open={mainMenuOpen}
+      label="Main Menu"
       onCloseClick={onMainMenuCloseClick}
       renderPane={renderMainMenuPane}
       paneClassName={buildClassName('pane')()}

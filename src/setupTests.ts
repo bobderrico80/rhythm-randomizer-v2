@@ -4,3 +4,15 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
 import 'jest-localstorage-mock';
+import jestFetchMock from 'jest-fetch-mock';
+
+jestFetchMock.enableMocks();
+
+window.Element.prototype.scrollTo = jest.fn();
+
+window.matchMedia = jest.fn().mockImplementation(() => {
+  return {
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+  };
+});
