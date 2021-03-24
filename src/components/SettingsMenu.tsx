@@ -84,6 +84,7 @@ const SettingsMenu = ({
   return (
     <SlideOut
       open={settingsMenuOpen}
+      label="Settings Menu"
       onCloseClick={onSettingsMenuCloseClick}
       renderPane={renderSettingsMenuPane}
       paneClassName={buildClassName('pane')()}

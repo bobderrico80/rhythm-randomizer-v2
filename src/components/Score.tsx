@@ -7,7 +7,7 @@ import { buildBemClassName } from '../modules/util';
 import { FormFactor } from '../App';
 
 // All measurements below in px, unless otherwise specified
-const scoreDimensionConfig: ScoreDimensionConfig = {
+export const scoreDimensionConfig: ScoreDimensionConfig = {
   paddingLeft: 50,
   paddingRight: 50,
   paddingTop: 40,
@@ -103,10 +103,12 @@ const Score = ({
         [buildClassName()('transitioning')]: transitioning,
       })}
       onClick={onScoreClick}
-      aria-label="New Rhythm"
+      aria-hidden="true"
       title="Click for New Rhythm"
+      data-testid="score__button"
     >
       <span
+        data-testid="score"
         className={buildClassName('container')()}
         id="score"
         ref={containerRef}

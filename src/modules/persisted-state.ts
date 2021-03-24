@@ -123,18 +123,22 @@ const setToLocalStorage = <T>(key: LocalStorageKey, value: T): void => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-const getFreshScoreData = (scoreSettings: ScoreSettings): ScoreData => {
+const getFreshScoreData = (
+  scoreSettings: ScoreSettings,
+  testMode?: boolean
+): ScoreData => {
   return {
     timeSignature: scoreSettings.timeSignature,
     measures: getRandomMeasures(
       scoreSettings.noteGroupTypeSelectionMap,
       scoreSettings.timeSignature,
-      scoreSettings.measureCount
+      scoreSettings.measureCount,
+      testMode
     ),
   };
 };
 
-const getDefaultPersistedAppState = (): PersistedAppState => {
+const getDefaultPersistedAppState = (testMode?: boolean): PersistedAppState => {
   const measureCount: MeasureCount = 2;
   const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
   const noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
@@ -153,7 +157,7 @@ const getDefaultPersistedAppState = (): PersistedAppState => {
 
   return {
     scoreSettings,
-    scoreData: getFreshScoreData(scoreSettings),
+    scoreData: getFreshScoreData(scoreSettings, testMode),
   };
 };
 
@@ -221,7 +225,8 @@ const getSharedScoreSettings = (shareString: string) =>
   }, logger.warn);
 
 export const getPersistedAppState = (
-  shareString?: string
+  shareString?: string,
+  testMode?: boolean
 ): PersistedAppState => {
   const persistedScoreSettings = getPersistedScoreSettings();
   const persistedScoreData = getPersistedScoreData();
@@ -287,7 +292,7 @@ export const getPersistedAppState = (
     // Otherwise, return the share string settings and a fresh score based from it
     return {
       scoreSettings: sharedScoreSettings,
-      scoreData: getFreshScoreData(sharedScoreSettings),
+      scoreData: getFreshScoreData(sharedScoreSettings, testMode),
     };
   }
 
@@ -312,7 +317,7 @@ export const getPersistedAppState = (
   }
 
   // Could not derive an app state, return default settings and a fresh score
-  const persistedAppState = getDefaultPersistedAppState();
+  const persistedAppState = getDefaultPersistedAppState(testMode);
 
   // Add an error message if we captured one
   if (shareDecodeErrorOcurred) {

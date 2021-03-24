@@ -8,7 +8,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 ReactDOM.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      <App
+        testMode={Boolean(
+          new URLSearchParams(window.location.search).get('testMode')
+        )}
+      />
     </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById('root')

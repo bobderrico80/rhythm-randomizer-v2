@@ -67,7 +67,7 @@ const MetronomeControl = () => {
         value={countOffMeasures.toString()}
         onChange={handleCountOffMeasuresChange}
         options={[
-          { value: '0', display: 'Off ' },
+          { value: '0', display: 'Off' },
           { value: '1', display: '1 Measure' },
           { value: '2', display: '2 Measures' },
         ]}
