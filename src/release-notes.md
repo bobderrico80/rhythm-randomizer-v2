@@ -1,3 +1,8 @@
+## What's New in Version 2.4.1?
+
+- Accessibility improvements
+- Security updates
+
 ## What's New in Version 2.4.0?
 
 Metronome functionality! Two configurable metronome modes are now available on The Rhythm Randomizer:
