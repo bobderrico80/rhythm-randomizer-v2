@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import caretRightIcon from '../svg/caret-right.svg';
 import './Accordion.scss';
+import { useTranslation } from 'react-i18next';
 
 export interface AccordionProps {
   renderButtonContents: (open: boolean) => JSX.Element | string | null;
@@ -39,6 +40,10 @@ const Accordion = ({
   onToggleClick,
   onTransitionComplete,
 }: AccordionProps) => {
+  const { t } = useTranslation();
+  const COLLAPSE_TEXT = t('collapse');
+  const EXPAND_TEXT = t('expand');
+
   const [open, setOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [neverOpened, setNeverOpened] = useState(true);
@@ -157,12 +162,12 @@ const Accordion = ({
       >
         <img
           src={caretRightIcon}
-          alt={open ? 'Collapse' : 'Expand'}
+          alt={open ? COLLAPSE_TEXT : EXPAND_TEXT}
           className={classnames(buildClassName('button-caret')(), {
             [buildClassName('button-caret')('open')]: open,
             [buildClassName('button-caret')('closed')]: !open,
           })}
-          title={open ? 'Collapse' : 'Expand'}
+          title={open ? COLLAPSE_TEXT : EXPAND_TEXT}
         />
         {renderButtonContents(open)}
       </button>

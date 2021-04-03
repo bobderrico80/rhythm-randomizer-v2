@@ -7,6 +7,7 @@ import { TimeSignature } from '../modules/time-signature';
 import MeasureCountSelection from './MeasureCountSelection';
 import Accordion from './Accordion';
 import PlaybackSettings from './PlaybackSettings';
+import { useTranslation } from 'react-i18next';
 
 export interface SettingsFormProps {
   openAccordion: string;
@@ -27,6 +28,8 @@ const SettingsForm = ({
   onOpenAccordionChange,
   onAccordionTransitionComplete,
 }: SettingsFormProps) => {
+  const { t } = useTranslation();
+
   const handleAccordionToggleClick = (id: string, currentlyOpen: boolean) => {
     if (currentlyOpen) {
       onOpenAccordionChange(id);
@@ -40,22 +43,22 @@ const SettingsForm = ({
       )}
       <Accordion
         id="playback-settings-accordion"
-        paneLabel="Playback Settings"
+        paneLabel={t('playbackSettings')}
         isOpen={openAccordion === 'playback-settings-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
-        renderButtonContents={() => 'Playback Settings'}
+        renderButtonContents={() => t('playbackSettings')}
         renderPaneContents={() => {
           return <PlaybackSettings />;
         }}
       />
       <Accordion
         id="measure-count-selection-accordion"
-        paneLabel="Measure Count Selection"
+        paneLabel={t('measureCountSelection')}
         isOpen={openAccordion === 'measure-count-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
-        renderButtonContents={() => 'Measure Count Selection'}
+        renderButtonContents={() => t('measureCountSelection')}
         renderPaneContents={() => {
           return (
             <MeasureCountSelection measureCountOptions={measureCountOptions} />
@@ -64,22 +67,22 @@ const SettingsForm = ({
       />
       <Accordion
         id="time-signature-selection-accordion"
-        paneLabel="Time Signature Selection"
+        paneLabel={t('timeSignatureSelection')}
         isOpen={openAccordion === 'time-signature-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
-        renderButtonContents={() => 'Time Signature Selection'}
+        renderButtonContents={() => t('timeSignatureSelection')}
         renderPaneContents={() => {
           return <TimeSignatureSelection timeSignatures={timeSignatures} />;
         }}
       />
       <Accordion
         id="note-selection-accordion"
-        paneLabel="Note Selection"
+        paneLabel={t('noteSelection')}
         isOpen={openAccordion === 'note-selection-accordion'}
         onToggleClick={handleAccordionToggleClick}
         onTransitionComplete={onAccordionTransitionComplete}
-        renderButtonContents={() => 'Note Selection'}
+        renderButtonContents={() => t('noteSelection')}
         renderPaneContents={() => {
           return <NoteSelection />;
         }}

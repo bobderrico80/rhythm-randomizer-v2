@@ -5,6 +5,7 @@ import { createScore } from '../modules/vex';
 import { ScoreData, ScoreDimensionConfig } from '../modules/score';
 import { buildBemClassName } from '../modules/util';
 import { FormFactor } from '../App';
+import { useTranslation } from 'react-i18next';
 
 // All measurements below in px, unless otherwise specified
 export const scoreDimensionConfig: ScoreDimensionConfig = {
@@ -39,6 +40,7 @@ const Score = ({
   playingNoteIndex,
   onScoreClick,
 }: ScoreProps) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const noteHeadsRef = useRef<NodeListOf<HTMLElement> | null>(null);
 
@@ -104,7 +106,7 @@ const Score = ({
       })}
       onClick={onScoreClick}
       aria-hidden="true"
-      title="Click for New Rhythm"
+      title={t('clickForNewRhythm')}
       data-testid="score__button"
     >
       <span

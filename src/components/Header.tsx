@@ -10,6 +10,7 @@ import HeaderNav from './HeaderNav';
 import { Measure } from '../modules/vex';
 import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
 import { PlaybackStateChangeHandler } from './Player';
+import { useTranslation } from 'react-i18next';
 
 export interface HeaderProps {
   currentFormFactor: FormFactor;
@@ -40,6 +41,8 @@ const Header = ({
   onMainMenuButtonClick,
   onMetronomeButtonClick,
 }: HeaderProps) => {
+  const { t } = useTranslation();
+
   const renderHeaderNav = () => {
     return (
       <HeaderNav
@@ -68,10 +71,12 @@ const Header = ({
             buildClassName('menu-button')('settings')
           )}
           svg={settingsMenuIcon}
-          alt="Open Settings Menu"
+          alt={t('openSettingsMenu')}
           onClick={onSettingsMenuButtonClick}
         />
-        <h1 className={buildClassName('title')()}>The Rhythm Randomizer</h1>
+        <h1 className={buildClassName('title')()}>
+          {t('theRhythmRandomizer')}
+        </h1>
         {currentFormFactor === FormFactor.DESKTOP && renderHeaderNav()}
         <div className={buildClassName()('right')}>
           <IconButton
@@ -80,7 +85,7 @@ const Header = ({
               buildClassName('menu-button')('main')
             )}
             svg={mainMenuIcon}
-            alt="Open Main Menu"
+            alt={t('openMainMenu')}
             onClick={onMainMenuButtonClick}
           />
         </div>

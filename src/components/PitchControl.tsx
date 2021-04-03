@@ -5,36 +5,38 @@ import './PitchControl.scss';
 import { PitchClass, Octave } from '../modules/note';
 import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
+import { useTranslation } from 'react-i18next';
 
 const pitchClassDisplayMap: { [key: string]: string } = {
-  [PitchClass.A]: 'A',
-  [PitchClass.Bb]: 'A♯/B♭',
-  [PitchClass.B]: 'B',
-  [PitchClass.C]: 'C',
-  [PitchClass.Db]: 'C♯/D♭',
-  [PitchClass.D]: 'D',
-  [PitchClass.Eb]: 'D♯/E♭',
-  [PitchClass.E]: 'E',
-  [PitchClass.F]: 'F',
-  [PitchClass.Gb]: 'F♯/G♭',
-  [PitchClass.G]: 'G',
-  [PitchClass.Ab]: 'G♯/A♭',
+  [PitchClass.A]: 'pitchClassA',
+  [PitchClass.Bb]: 'pitchClassBb',
+  [PitchClass.B]: 'pitchClassB',
+  [PitchClass.C]: 'pitchClassC',
+  [PitchClass.Db]: 'pitchClassDb',
+  [PitchClass.D]: 'pitchClassD',
+  [PitchClass.Eb]: 'pitchClassEb',
+  [PitchClass.E]: 'pitchClassE',
+  [PitchClass.F]: 'pitchClassF',
+  [PitchClass.Gb]: 'pitchClassGb',
+  [PitchClass.G]: 'pitchClassG',
+  [PitchClass.Ab]: 'pitchClassAb',
 };
 
 const octaveDisplayMap: { [key: string]: string } = {
-  [Octave._0]: '0',
-  [Octave._1]: '1',
-  [Octave._2]: '2',
-  [Octave._3]: '3',
-  [Octave._4]: '4',
-  [Octave._5]: '5',
-  [Octave._6]: '6',
-  [Octave._7]: '7',
+  [Octave._0]: 'octave0',
+  [Octave._1]: 'octave1',
+  [Octave._2]: 'octave2',
+  [Octave._3]: 'octave3',
+  [Octave._4]: 'octave4',
+  [Octave._5]: 'octave5',
+  [Octave._6]: 'octave6',
+  [Octave._7]: 'octave7',
 };
 
 const buildClassName = buildBemClassName('c-rr-pitch-control');
 
 const PitchControl = () => {
+  const { t } = useTranslation();
   const { state, dispatch } = useContext(AppContext);
 
   const { pitch } = state.scoreSettings;
@@ -65,21 +67,21 @@ const PitchControl = () => {
     <div className={buildClassName()()}>
       <Select
         id="pitch-class"
-        label="Pitch:"
+        label={`${t('pitch')}:`}
         value={pitch.pitchClass}
         onChange={handlePitchClassChange}
         options={Object.entries(
           pitchClassDisplayMap
-        ).map(([value, display]) => ({ value, display }))}
+        ).map(([value, display]) => ({ value, display: t(display) }))}
       />
       <Select
         id="octave"
-        label="Octave:"
+        label={`${t('octave')}:`}
         value={pitch.octave}
         onChange={handleOctaveChange}
         options={Object.entries(octaveDisplayMap).map(([value, display]) => ({
           value,
-          display,
+          display: t(display),
         }))}
       />
     </div>

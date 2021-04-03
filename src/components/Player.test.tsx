@@ -50,7 +50,7 @@ describe('The <Player /> component', () => {
     });
 
     it('renders a "Start Playback" button', () => {
-      expect(screen.getByRole('button')).toHaveTextContent('Start Playback');
+      expect(screen.getByRole('button')).toHaveTextContent('startPlayback');
     });
 
     it('renders the button in an enabled state', () => {
@@ -114,7 +114,7 @@ describe('The <Player /> component', () => {
     });
 
     it('renders a "Stop Playback" button', () => {
-      expect(screen.getByRole('button')).toHaveTextContent('Stop Playback');
+      expect(screen.getByRole('button')).toHaveTextContent('stopPlayback');
     });
 
     it('renders the button in an enabled state', () => {

@@ -7,6 +7,7 @@ import backArrowIcon from '../svg/back-arrow.svg';
 import './MainMenu.scss';
 import releaseNotesPath from '../release-notes.md';
 import { version } from '../../package.json';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-main-menu');
 
@@ -17,6 +18,7 @@ export interface MainMenuProps {
 
 const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
   const [releaseNotesSource, setReleaseNotesSource] = useState('');
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -37,30 +39,32 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
           <IconButton
             className={buildClassName('close-button')()}
             svg={backArrowIcon}
-            alt="Close Main Menu"
+            alt={t('closeMainMenu')}
             onClick={onCloseClick}
             id="main-menu-close"
           />
         </div>
         <section className={buildClassName('content')()}>
-          <ReactMarkdown source={releaseNotesSource} linkTarget="_blank" />
+          <section lang="en">
+            <ReactMarkdown source={releaseNotesSource} linkTarget="_blank" />
+          </section>
           <footer className={buildClassName('footer')()}>
             <p>
-              Copyright &copy; {new Date().getFullYear()} Bob D'Errico. All
-              Rights Reserved.
+              {t('copyrightBefore')} &copy; {new Date().getFullYear()}{' '}
+              {t('copyrightAfter')}
             </p>
             <p>
-              Version: {version} |{' '}
+              {t('version')}: {version} |{' '}
               <a
                 href="https://fb.me/TheRhythmRandomizer"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Connect on Facebook
+                {t('connectOnFacebook')}
               </a>
             </p>
             <p>
-              Prefer the old version? Visit{' '}
+              {t('preferOldVersion')}{' '}
               <a
                 href="http://v1.rhythmrandomizer.com"
                 target="_blank"
@@ -78,7 +82,7 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
   return (
     <SlideOut
       open={mainMenuOpen}
-      label="Main Menu"
+      label={t('mainMenu')}
       onCloseClick={onMainMenuCloseClick}
       renderPane={renderMainMenuPane}
       paneClassName={buildClassName('pane')()}

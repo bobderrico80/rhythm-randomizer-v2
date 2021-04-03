@@ -33,19 +33,19 @@ describe('The <SettingsForm /> component', () => {
     });
 
     it('calls `onOpenAccordionChange` when another accordion is opened', () => {
-      userEvent.click(screen.getByText('Playback Settings'));
+      userEvent.click(screen.getByText('playbackSettings'));
       expect(openAccordionChangeHandler).toHaveBeenCalledWith(
         'playback-settings-accordion'
       );
     });
 
     it('does not call `onOpenAccordionChange` if the currently open accordion trigger is clicked', () => {
-      userEvent.click(screen.getByText('Note Selection'));
+      userEvent.click(screen.getByText('noteSelection'));
       expect(openAccordionChangeHandler).not.toHaveBeenCalled();
     });
 
     it('calls `onAccordionTransitionComplete` after an accordion opens', async () => {
-      userEvent.click(screen.getByText('Playback Settings'));
+      userEvent.click(screen.getByText('playbackSettings'));
       waitFor(() => {
         expect(accordionTransitionCompleteHandler).toHaveBeenCalledWith(
           true,

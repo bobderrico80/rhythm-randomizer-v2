@@ -14,6 +14,7 @@ import selectNoneIcon from '../svg/select-none.svg';
 import { AppContext } from '../App';
 import { ActionType } from '../modules/reducer';
 import Checkbox from './Checkbox';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-note-checkbox-group');
 
@@ -31,12 +32,12 @@ interface MultiSelectStatus extends TypedItem<MultiSelectStatusType> {
 const multiSelectStatuses: MultiSelectStatus[] = [
   {
     type: MultiSelectStatusType.SELECT_ALL,
-    description: 'Select all',
+    description: 'selectAll',
     icon: selectAllIcon,
   },
   {
     type: MultiSelectStatusType.SELECT_NONE,
-    description: 'Deselect all',
+    description: 'deselectAll',
     icon: selectNoneIcon,
   },
 ];
@@ -60,6 +61,7 @@ const NoteCheckboxGroup = ({
   noteGroups,
   noteGroupTypeSelectionMap,
 }: NoteCheckboxGroupProps) => {
+  const { t } = useTranslation();
   const { dispatch } = useContext(AppContext);
   const [allChecked, setAllChecked] = useState(false);
 
@@ -99,11 +101,11 @@ const NoteCheckboxGroup = ({
 
   return (
     <fieldset className={buildClassName()()}>
-      <legend className={buildClassName('legend')()}>{category.type}</legend>
+      <legend className={buildClassName('legend')()}>{t(category.type)}</legend>
       <div className={buildClassName('container')()}>
         <div className={buildClassName('multi-select-container')()}>
           <IconButton
-            alt={`${multiSelectStatus.description} ${category.type}`}
+            alt={`${t(multiSelectStatus.description)} ${t(category.type)}`}
             svg={multiSelectStatus.icon}
             id={multiSelectStatus.type}
             onClick={handleMultiSelectClick}
@@ -125,8 +127,8 @@ const NoteCheckboxGroup = ({
                   return (
                     <img
                       src={noteGroup.icon}
-                      alt={noteGroup.description}
-                      title={noteGroup.description}
+                      alt={t(noteGroup.description)}
+                      title={t(noteGroup.description)}
                       className={classnames(
                         buildClassName('icon')(),
                         buildClassName('icon')(noteGroup.type)

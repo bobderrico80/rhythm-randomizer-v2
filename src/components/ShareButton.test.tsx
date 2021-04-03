@@ -20,13 +20,13 @@ describe('The <ShareButton /> component', () => {
   });
 
   it('renders the expected button text', () => {
-    expect(screen.getByRole('button')).toHaveTextContent('Share Settings');
+    expect(screen.getByRole('button')).toHaveTextContent('shareSettings');
   });
 
   it('renders the expected button hover text', () => {
     expect(screen.getByRole('button')).toHaveAttribute(
       'title',
-      'Click to copy share link to clipboard'
+      'clickToCopyShareLinkToClipboard'
     );
   });
 
@@ -37,15 +37,12 @@ describe('The <ShareButton /> component', () => {
 
     it('changes the button text', () => {
       expect(screen.getByRole('button')).toHaveTextContent(
-        'Share link copied to clipboard!'
+        'shareLinkCopiedToClipboard'
       );
     });
 
     it('changes the button hover text', () => {
-      expect(screen.getByRole('button')).toHaveAttribute(
-        'title',
-        'Link Copied!'
-      );
+      expect(screen.getByRole('button')).toHaveAttribute('title', 'linkCopied');
     });
 
     it('disables the button', () => {
@@ -61,14 +58,14 @@ describe('The <ShareButton /> component', () => {
 
       it('changes the button back to its original text', async () => {
         expect(await screen.findByRole('button')).toHaveTextContent(
-          'Share Settings'
+          'shareSettings'
         );
       });
 
       it('changes the button hover text back to its original text', async () => {
         expect(screen.getByRole('button')).toHaveAttribute(
           'title',
-          'Click to copy share link to clipboard'
+          'clickToCopyShareLinkToClipboard'
         );
       });
 

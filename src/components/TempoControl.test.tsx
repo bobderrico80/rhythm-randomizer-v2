@@ -45,7 +45,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('renders an MM marking icon for simple meters', () => {
-      expect(screen.getByAltText('quarter note')).toBeInTheDocument();
+      expect(screen.getByAltText('quarterNote')).toBeInTheDocument();
     });
 
     it('renders the expected tempo value from the state in the input', async () => {
@@ -107,7 +107,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('increases the tempo by one when the increase tempo button is clicked', async () => {
-      userEvent.click(screen.getByLabelText('increase tempo'));
+      userEvent.click(screen.getByLabelText('increaseTempo'));
       await waitFor(() => {
         expect(dispatch).toHaveBeenCalledWith({
           type: ActionType.UPDATE_SCORE_SETTINGS,
@@ -119,7 +119,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('decreases the tempo by one when the decrease tempo button is clicked', async () => {
-      userEvent.click(screen.getByLabelText('decrease tempo'));
+      userEvent.click(screen.getByLabelText('decreaseTempo'));
       await waitFor(() => {
         expect(dispatch).toHaveBeenCalledWith({
           type: ActionType.UPDATE_SCORE_SETTINGS,
@@ -133,7 +133,7 @@ describe('The <TempoControl /> component', () => {
     it('does not allow tempo to be increased beyond max with the button', async () => {
       userEvent.clear(input);
       userEvent.type(input, '300');
-      userEvent.click(screen.getByLabelText('increase tempo'));
+      userEvent.click(screen.getByLabelText('increaseTempo'));
       await waitFor(() => {
         expect(dispatch).toHaveBeenCalledWith({
           type: ActionType.UPDATE_SCORE_SETTINGS,
@@ -147,7 +147,7 @@ describe('The <TempoControl /> component', () => {
     it('does not allow tempo to be decreased beyond min with the button', async () => {
       userEvent.clear(input);
       userEvent.type(input, '40');
-      userEvent.click(screen.getByLabelText('decrease tempo'));
+      userEvent.click(screen.getByLabelText('decreaseTempo'));
       await waitFor(() => {
         expect(dispatch).toHaveBeenCalledWith({
           type: ActionType.UPDATE_SCORE_SETTINGS,
@@ -159,7 +159,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('increases the tempo by 10 every half second when the increase tempo button is clicked, dispatching an action only when the mouse is released', async () => {
-      const button = screen.getByLabelText('increase tempo');
+      const button = screen.getByLabelText('increaseTempo');
       fireEvent.mouseDown(button);
 
       act(() => {
@@ -189,7 +189,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('decreases the tempo by 10 every half second when the decrease tempo button is clicked, dispatching an action only when the mouse is released', async () => {
-      const button = screen.getByLabelText('decrease tempo');
+      const button = screen.getByLabelText('decreaseTempo');
       fireEvent.mouseDown(button);
 
       act(() => {
@@ -219,7 +219,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('does not allow the tempo to be increased beyond the max when holding the mouse button', async () => {
-      const button = screen.getByLabelText('increase tempo');
+      const button = screen.getByLabelText('increaseTempo');
       fireEvent.mouseDown(button);
 
       // Hold for a while to try to get beyond the max
@@ -242,7 +242,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('does not allow the tempo to be decreased beyond the min when holding the mouse button', async () => {
-      const button = screen.getByLabelText('decrease tempo');
+      const button = screen.getByLabelText('decreaseTempo');
       fireEvent.mouseDown(button);
 
       // Hold for a while to try to get beyond the min
@@ -282,7 +282,7 @@ describe('The <TempoControl /> component', () => {
     });
 
     it('renders an MM marking icon for compound meters', () => {
-      expect(screen.getByAltText('dotted quarter note')).toBeInTheDocument();
+      expect(screen.getByAltText('dottedQuarterNote')).toBeInTheDocument();
     });
   });
 });

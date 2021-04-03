@@ -35,18 +35,18 @@ describe('The <Header /> component', () => {
 
     it('renders the expected heading', () => {
       expect(screen.getByRole('heading')).toHaveTextContent(
-        'The Rhythm Randomizer'
+        'theRhythmRandomizer'
       );
     });
 
     it('calls the settings menu handler when the settings menu button is clicked', () => {
-      const button = screen.getByAltText('Open Settings Menu');
+      const button = screen.getByAltText('openSettingsMenu');
       userEvent.click(button);
       expect(settingsMenuClickHandler).toHaveBeenCalled();
     });
 
     it('calls the main menu handler when the main menu button is clicked', () => {
-      const button = screen.getByAltText('Open Main Menu');
+      const button = screen.getByAltText('openMainMenu');
       userEvent.click(button);
       expect(mainMenuClickHandler).toHaveBeenCalled();
     });
