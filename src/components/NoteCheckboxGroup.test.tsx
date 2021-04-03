@@ -56,24 +56,22 @@ describe('The <NoteCheckboxGroup /> component', () => {
 
     it('renders a checkbox for each note group, with the expected note groups selected', () => {
       expect(
-        screen.getByRole('checkbox', { name: 'a whole note' })
+        screen.getByRole('checkbox', { name: 'aWholeNote' })
       ).toBeChecked();
+      expect(screen.getByRole('checkbox', { name: 'aHalfNote' })).toBeChecked();
       expect(
-        screen.getByRole('checkbox', { name: 'a half note' })
-      ).toBeChecked();
-      expect(
-        screen.getByRole('checkbox', { name: 'a quarter note' })
+        screen.getByRole('checkbox', { name: 'aQuarterNote' })
       ).not.toBeChecked();
     });
 
     it('renders a "select all" button', () => {
       expect(
-        screen.getByRole('button', { name: 'Select all Basic Notes' })
+        screen.getByRole('button', { name: 'selectAll basicNotes' })
       ).toBeInTheDocument();
     });
 
     it('dispatches a SET_NOTE_GROUP_SELECTION action when a note group is changed', () => {
-      userEvent.click(screen.getByRole('checkbox', { name: 'a whole note' }));
+      userEvent.click(screen.getByRole('checkbox', { name: 'aWholeNote' }));
       expect(dispatch).toHaveBeenCalledWith({
         type: ActionType.SET_NOTE_GROUP_SELECTION,
         noteGroupType: NoteGroupType.W,
@@ -83,7 +81,7 @@ describe('The <NoteCheckboxGroup /> component', () => {
 
     it('dispatches a SET_NOTE_GROUP_SELECTIONS_FOR_CATEGORY action when the "Select All" button is clicked', () => {
       userEvent.click(
-        screen.getByRole('button', { name: 'Select all Basic Notes' })
+        screen.getByRole('button', { name: 'selectAll basicNotes' })
       );
       expect(dispatch).toHaveBeenCalledWith({
         type: ActionType.SET_NOTE_GROUP_SELECTIONS_FOR_CATEGORY,
@@ -129,13 +127,13 @@ describe('The <NoteCheckboxGroup /> component', () => {
 
     it('renders a "select none" button', () => {
       expect(
-        screen.getByRole('button', { name: 'Deselect all Basic Notes' })
+        screen.getByRole('button', { name: 'deselectAll basicNotes' })
       ).toBeInTheDocument();
     });
 
     it('dispatches a SET_NOTE_GROUP_SELECTIONS_FOR_CATEGORY action when the "Select None" button is clicked', () => {
       userEvent.click(
-        screen.getByRole('button', { name: 'Deselect all Basic Notes' })
+        screen.getByRole('button', { name: 'deselectAll basicNotes' })
       );
       expect(dispatch).toHaveBeenCalledWith({
         type: ActionType.SET_NOTE_GROUP_SELECTIONS_FOR_CATEGORY,

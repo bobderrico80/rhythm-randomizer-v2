@@ -37,19 +37,19 @@ describe('The <SettingsMenu /> component', () => {
     });
 
     it('calls `onSettingsMenuCloseClick` when the close button is clicked', () => {
-      userEvent.click(screen.getByAltText('Close Settings Menu'));
+      userEvent.click(screen.getByAltText('closeSettingsMenu'));
       expect(settingsCloseClickHandler).toHaveBeenCalled();
     });
 
     it('calls `onOpenAccordionChange` when another accordion is opened', () => {
-      userEvent.click(screen.getByText('Playback Settings'));
+      userEvent.click(screen.getByText('playbackSettings'));
       expect(openAccordionChangeHandler).toHaveBeenCalledWith(
         'playback-settings-accordion'
       );
     });
 
     it('calls `onShareLinkClick` when the Share button is clicked', () => {
-      userEvent.click(screen.getByText('Share Settings'));
+      userEvent.click(screen.getByText('shareSettings'));
       expect(shareLinkClickHandler).toHaveBeenCalled();
     });
   });

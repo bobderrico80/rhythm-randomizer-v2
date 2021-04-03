@@ -45,6 +45,7 @@ import {
   reducer,
   createDispatchUpdateScoreSettings,
 } from './modules/reducer';
+import { useTranslation } from 'react-i18next';
 
 export enum FormFactor {
   MOBILE,
@@ -113,6 +114,8 @@ export const AppContext = createContext<{
 });
 
 const App = ({ testMode = false }: AppProps) => {
+  const { t } = useTranslation();
+
   // Menu/accordion states
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [
@@ -235,12 +238,12 @@ const App = ({ testMode = false }: AppProps) => {
         scoreSettings.timeSignature
       ).length === 0
     ) {
-      setValidationErrorMessage('Please select at least one type of note');
+      setValidationErrorMessage(t('pleaseSelectAtLeastOneTypeOfNote'));
       return;
     }
 
     setValidationErrorMessage('');
-  }, [scoreSettings]);
+  }, [scoreSettings, t]);
 
   // Update form factor value based on media query
   useEffect(() => {
@@ -292,9 +295,7 @@ const App = ({ testMode = false }: AppProps) => {
         measures: [],
         timeSignature: scoreSettings.timeSignature,
       });
-      setValidationErrorMessage(
-        'The combination of notes selected is not always valid for the given time signature'
-      );
+      setValidationErrorMessage(t('theCombinationOfNotesSelectedIsNotValid'));
     }
   };
 

@@ -28,19 +28,19 @@ describe('The <MetronomeControl /> component', () => {
 
   it('renders the expected active checkbox value', () => {
     expect(
-      screen.getByRole('checkbox', { name: 'Play metronome during playback' })
+      screen.getByRole('checkbox', { name: 'playMetronomeDuringPlayback' })
     ).not.toBeChecked();
   });
 
   it('renders the expected start-of-measure click checkbox value', () => {
     expect(
-      screen.getByRole('checkbox', { name: 'Start-of-measure click' })
+      screen.getByRole('checkbox', { name: 'startOfMeasureClick' })
     ).toBeChecked();
   });
 
   it('renders the expected subdivision click checkbox value', () => {
     expect(
-      screen.getByRole('checkbox', { name: 'Subdivision click' })
+      screen.getByRole('checkbox', { name: 'subdivisionClick' })
     ).not.toBeChecked();
   });
 
@@ -55,14 +55,14 @@ describe('The <MetronomeControl /> component', () => {
     });
 
     expect(options).toEqual([
-      { value: '0', label: 'Off' },
-      { value: '1', label: '1 Measure' },
-      { value: '2', label: '2 Measures' },
+      { value: '0', label: 'off' },
+      { value: '1', label: 'oneMeasure' },
+      { value: '2', label: 'twoMeasures' },
     ]);
   });
 
   it('dispatches the expected action when the active checkbox is clicked', () => {
-    userEvent.click(screen.getByLabelText('Play metronome during playback'));
+    userEvent.click(screen.getByLabelText('playMetronomeDuringPlayback'));
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {
@@ -75,7 +75,7 @@ describe('The <MetronomeControl /> component', () => {
   });
 
   it('dispatches the expected action when the start-of-measure checkbox is clicked', () => {
-    userEvent.click(screen.getByLabelText('Start-of-measure click'));
+    userEvent.click(screen.getByLabelText('startOfMeasureClick'));
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {
@@ -88,7 +88,7 @@ describe('The <MetronomeControl /> component', () => {
   });
 
   it('dispatches the expected action when the subdivision click checkbox is clicked', () => {
-    userEvent.click(screen.getByLabelText('Subdivision click'));
+    userEvent.click(screen.getByLabelText('subdivisionClick'));
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {
@@ -101,7 +101,7 @@ describe('The <MetronomeControl /> component', () => {
   });
 
   it('dispatches the expected action when the count-off click dropdown is changed', () => {
-    userEvent.selectOptions(screen.getByLabelText('Count-off click:'), '2');
+    userEvent.selectOptions(screen.getByLabelText('countOffClick'), '2');
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {

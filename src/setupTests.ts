@@ -16,3 +16,14 @@ window.matchMedia = jest.fn().mockImplementation(() => {
     removeListener: jest.fn(),
   };
 });
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => {
+    return {
+      t: (string: string) => string,
+      i18n: {
+        changeLanguage: () => Promise.resolve({}),
+      },
+    };
+  },
+}));

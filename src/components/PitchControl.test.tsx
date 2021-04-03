@@ -24,16 +24,16 @@ describe('The <PitchControl /> component', () => {
   });
 
   it('renders a <select /> with the expected 12 pitch class values', () => {
-    const select = screen.getByLabelText('Pitch:') as HTMLSelectElement;
+    const select = screen.getByLabelText('pitch:') as HTMLSelectElement;
     expect(select.options).toHaveLength(12);
   });
 
   it('renders the selected pitch option value from the context', () => {
-    expect(screen.getByLabelText('Pitch:')).toHaveValue('F');
+    expect(screen.getByLabelText('pitch:')).toHaveValue('F');
   });
 
   it('dispatches UPDATE_SCORE_SETTINGS with expected value when the pitch is changed', () => {
-    userEvent.selectOptions(screen.getByLabelText('Pitch:'), 'G');
+    userEvent.selectOptions(screen.getByLabelText('pitch:'), 'G');
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {
@@ -46,16 +46,16 @@ describe('The <PitchControl /> component', () => {
   });
 
   it('renders a <select /> with the expected 8 octave values', () => {
-    const select = screen.getByLabelText('Octave:') as HTMLSelectElement;
+    const select = screen.getByLabelText('octave:') as HTMLSelectElement;
     expect(select.options).toHaveLength(8);
   });
 
   it('renders the selected octave option value from the context', () => {
-    expect(screen.getByLabelText('Octave:')).toHaveValue('4');
+    expect(screen.getByLabelText('octave:')).toHaveValue('4');
   });
 
   it('dispatches UPDATE_SCORE_SETTINGS with expected value when the octave is changed', () => {
-    userEvent.selectOptions(screen.getByLabelText('Octave:'), '5');
+    userEvent.selectOptions(screen.getByLabelText('octave:'), '5');
     expect(dispatch).toHaveBeenCalledWith({
       type: ActionType.UPDATE_SCORE_SETTINGS,
       scoreSettingsToUpdate: {

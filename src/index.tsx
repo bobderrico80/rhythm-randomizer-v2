@@ -4,15 +4,18 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import ErrorBoundary from './components/ErrorBoundary';
+import { LanguageLoader } from './components/LanguageLoader';
 
 ReactDOM.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App
-        testMode={Boolean(
-          new URLSearchParams(window.location.search).get('testMode')
-        )}
-      />
+      <LanguageLoader>
+        <App
+          testMode={Boolean(
+            new URLSearchParams(window.location.search).get('testMode')
+          )}
+        />
+      </LanguageLoader>
     </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById('root')

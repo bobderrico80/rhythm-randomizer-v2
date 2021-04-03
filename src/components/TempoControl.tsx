@@ -14,6 +14,7 @@ import dottedQuarterNote from '../svg/notes/cqd.svg';
 import { TimeSignatureComplexity } from '../modules/time-signature';
 import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-tempo-control');
 
@@ -24,6 +25,8 @@ const MOUSE_HOLD_DELAY = 500; // ms
 const HOLD_DELAY_INTERVAL = 10; // bpm
 
 const TempoControl = () => {
+  const { t } = useTranslation();
+
   const { state, dispatch } = useContext(AppContext);
   const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
     dispatch
@@ -172,14 +175,14 @@ const TempoControl = () => {
   return (
     <div className={buildClassName()()}>
       <label htmlFor="tempo" className={buildClassName('label')()}>
-        <div className={buildClassName('label-text')()}>Tempo:</div>
+        <div className={buildClassName('label-text')()}>{`${t('tempo')}:`}</div>
         <div className={buildClassName('mm-marking')()}>
           <Icon
             svg={mmMarkingSvg}
-            alt={`${isCompoundMeter ? 'dotted ' : ''}quarter note`}
+            alt={t(isCompoundMeter ? 'dottedQuarterNote' : 'quarterNote')}
             className={buildClassName('mm-marking-icon')()}
-          />
-          {' = '}
+          />{' '}
+          {t('equals')}{' '}
         </div>
         <div className={buildClassName('container')()}>
           <button
@@ -190,11 +193,11 @@ const TempoControl = () => {
               buildClassName('button')(),
               buildClassName('button')('decrease')
             )}
-            aria-label="decrease tempo"
+            aria-label={t('decreaseTempo')}
             onClick={handleButtonClick}
             onMouseDown={handleButtonMouseDown}
           >
-            -
+            {t('decreaseTempoMinus')}
           </button>
           <input
             id="tempo"
@@ -213,11 +216,11 @@ const TempoControl = () => {
               buildClassName('button')(),
               buildClassName('button')('increase')
             )}
-            aria-label="increase tempo"
+            aria-label={t('increaseTempo')}
             onClick={handleButtonClick}
             onMouseDown={handleButtonMouseDown}
           >
-            +
+            {t('increaseTempoPlus')}
           </button>
         </div>
       </label>

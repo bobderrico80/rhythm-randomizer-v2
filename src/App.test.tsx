@@ -67,14 +67,14 @@ describe('The <App /> component', () => {
 
         beforeEach(() => {
           openButton = screen.getByRole('button', {
-            name: 'Open Main Menu',
+            name: 'openMainMenu',
           }) as HTMLButtonElement;
           userEvent.click(openButton);
         });
 
         it('opens the main menu when the main menu button is clicked', () => {
           expect(
-            screen.getByRole('dialog', { name: 'Main Menu' })
+            screen.getByRole('dialog', { name: 'mainMenu' })
           ).toBeInTheDocument();
         });
 
@@ -87,12 +87,12 @@ describe('The <App /> component', () => {
 
         describe('when closing the main menu', () => {
           beforeEach(() => {
-            clickByRole('button', 'Close Main Menu');
+            clickByRole('button', 'closeMainMenu');
           });
 
           it('closes the main menu when the close button is clicked', () => {
             expect(
-              screen.queryByRole('dialog', { name: 'Main Menu' })
+              screen.queryByRole('dialog', { name: 'mainMenu' })
             ).not.toBeInTheDocument();
           });
 
@@ -107,38 +107,38 @@ describe('The <App /> component', () => {
 
         beforeEach(() => {
           openButton = screen.getByRole('button', {
-            name: 'Open Settings Menu',
+            name: 'openSettingsMenu',
           }) as HTMLButtonElement;
           userEvent.click(openButton);
         });
 
         it('opens the settings menu when the settings menu button is clicked', () => {
           expect(
-            screen.getByRole('dialog', { name: 'Settings Menu' })
+            screen.getByRole('dialog', { name: 'settingsMenu' })
           ).toBeInTheDocument();
         });
 
         describe('accordion behavior', () => {
           it('opens the note selection accordion by default', () => {
             expect(
-              screen.getByRole('region', { name: 'Note Selection' })
+              screen.getByRole('region', { name: 'noteSelection' })
             ).toBeInTheDocument();
           });
 
           describe('when opening another accordion', () => {
             beforeEach(() => {
-              clickByRole('button', 'Expand Playback Settings');
+              clickByRole('button', 'expand playbackSettings');
             });
 
             it('opens the expected accordion', () => {
               expect(
-                screen.getByRole('region', { name: 'Playback Settings' })
+                screen.getByRole('region', { name: 'playbackSettings' })
               ).toBeInTheDocument();
             });
 
             it('closes the previous accordion', () => {
               expect(
-                screen.queryByRole('region', { name: 'Note Selection' })
+                screen.queryByRole('region', { name: 'noteSelection' })
               ).not.toBeInTheDocument();
             });
           });
@@ -146,7 +146,7 @@ describe('The <App /> component', () => {
 
         describe('when clicking the Share Link', () => {
           beforeEach(() => {
-            clickByRole('button', 'Click to copy share link to clipboard');
+            clickByRole('button', 'clickToCopyShareLinkToClipboard');
           });
 
           it('copies the Share Settings Link to the clipboard', () => {
@@ -166,12 +166,12 @@ describe('The <App /> component', () => {
 
         describe('when closing the settings menu', () => {
           beforeEach(() => {
-            clickByRole('button', 'Close Settings Menu');
+            clickByRole('button', 'closeSettingsMenu');
           });
 
           it('closes the settings menu when the close button is clicked', () => {
             expect(
-              screen.queryByRole('dialog', { name: 'Settings Menu' })
+              screen.queryByRole('dialog', { name: 'settingsMenu' })
             ).not.toBeInTheDocument();
           });
 
@@ -201,7 +201,7 @@ describe('The <App /> component', () => {
 
       describe('when clicking the "New Rhythm" button', () => {
         beforeEach(() => {
-          clickByRole('button', 'New Rhythm');
+          clickByRole('button', 'newRhythm');
 
           act(() => {
             jest.advanceTimersByTime(500);
@@ -277,16 +277,16 @@ describe('The <App /> component', () => {
 
       describe('after making score setting changes', () => {
         beforeEach(() => {
-          clickByRole('button', 'Open Settings Menu');
-          clickByRole('button', 'Expand Time Signature Selection');
-          clickByRole('radio', '3/4 time signature');
-          clickByRole('button', 'Expand Note Selection');
-          clickByRole('button', 'Deselect all Basic Notes');
-          clickByRole('button', 'Deselect all Basic Rests');
-          clickByRole('button', 'Deselect all Simple Beamed Notes');
-          clickByRole('checkbox', 'a dotted half note');
-          clickByRole('button', 'Close Settings Menu');
-          clickByRole('button', 'New Rhythm');
+          clickByRole('button', 'openSettingsMenu');
+          clickByRole('button', 'expand timeSignatureSelection');
+          clickByRole('radio', '34TimeSignature');
+          clickByRole('button', 'expand noteSelection');
+          clickByRole('button', 'deselectAll basicNotes');
+          clickByRole('button', 'deselectAll basicRests');
+          clickByRole('button', 'deselectAll simpleBeamedNotes');
+          clickByRole('checkbox', 'aDottedHalfNote');
+          clickByRole('button', 'closeSettingsMenu');
+          clickByRole('button', 'newRhythm');
         });
 
         it('renders a new score with the new note selections', async () => {

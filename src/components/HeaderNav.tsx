@@ -5,6 +5,7 @@ import './HeaderNav.scss';
 import Player, { PlaybackStateChangeHandler } from './Player';
 import { Measure } from '../modules/vex';
 import { NoteTriggerHandler, PlaybackState } from '../modules/tone';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-header-nav');
 
@@ -29,6 +30,8 @@ const HeaderNav = ({
   onRandomizeButtonClick,
   onMetronomeButtonClick,
 }: HeaderNavProps) => {
+  const { t } = useTranslation();
+
   return (
     <nav className={buildClassName()()}>
       <ul className={buildClassName('list')()}>
@@ -43,7 +46,7 @@ const HeaderNav = ({
             onClick={onRandomizeButtonClick}
             disabled={playbackState === PlaybackState.PLAYING || metronomeOn}
           >
-            New Rhythm
+            {t('newRhythm')}
           </button>
         </li>
         <li className={buildClassName('list-item')()}>
@@ -68,7 +71,7 @@ const HeaderNav = ({
             onClick={onMetronomeButtonClick}
             disabled={playbackState === PlaybackState.PLAYING}
           >
-            {`${metronomeOn ? 'Stop' : 'Start'}`} Metronome
+            {metronomeOn ? t('stopMetronome') : t('startMetronome')}
           </button>
         </li>
       </ul>

@@ -7,6 +7,7 @@ import SettingsForm from './SettingsForm';
 import { TimeSignature } from '../modules/time-signature';
 import SlideOut from './SlideOut';
 import ShareButton from './ShareButton';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-settings-menu');
 
@@ -31,6 +32,8 @@ const SettingsMenu = ({
   onOpenAccordionChange,
   onShareLinkClick,
 }: SettingsMenuProps) => {
+  const { t } = useTranslation();
+
   const [lastOpenedAccordion, setLastOpenedAccordion] = useState('');
 
   const accordionTransitionHandlerRef = useRef<
@@ -63,7 +66,7 @@ const SettingsMenu = ({
           <IconButton
             className={buildClassName('close-button')()}
             svg={backArrowIcon}
-            alt="Close Settings Menu"
+            alt={t('closeSettingsMenu')}
             onClick={onCloseClick}
             id="settings-menu-close"
           />
@@ -84,7 +87,7 @@ const SettingsMenu = ({
   return (
     <SlideOut
       open={settingsMenuOpen}
-      label="Settings Menu"
+      label={t('settingsMenu')}
       onCloseClick={onSettingsMenuCloseClick}
       renderPane={renderSettingsMenuPane}
       paneClassName={buildClassName('pane')()}

@@ -11,7 +11,7 @@ describe('The time-signature module', () => {
         type: TimeSignatureType.SIMPLE_4_4,
         complexity: TimeSignatureComplexity.SIMPLE,
         beatsPerMeasure: 4,
-        description: '4/4 time signature',
+        description: '44TimeSignature',
       });
     });
   });

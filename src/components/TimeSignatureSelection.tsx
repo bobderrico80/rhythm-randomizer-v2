@@ -10,6 +10,7 @@ import { buildBemClassName } from '../modules/util';
 import './TimeSignatureSelection.scss';
 import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
+import { useTranslation } from 'react-i18next';
 
 export interface TimeSignatureSelectionProps {
   timeSignatures: TimeSignature[];
@@ -20,6 +21,8 @@ const buildClassName = buildBemClassName('c-rr-time-signature-selection');
 const TimeSignatureSelection = ({
   timeSignatures,
 }: TimeSignatureSelectionProps) => {
+  const { t } = useTranslation();
+
   const { state, dispatch } = useContext(AppContext);
   const { timeSignature } = state.scoreSettings;
   const dispatchUpdateScoreSettings = createDispatchUpdateScoreSettings(
@@ -49,11 +52,11 @@ const TimeSignatureSelection = ({
             className={buildClassName('fieldset')()}
           >
             <legend id={categorizedTimeSignature.category.type}>
-              {categorizedTimeSignature.category.type}
+              {t(categorizedTimeSignature.category.type)}
             </legend>
             <div
               role="radiogroup"
-              aria-labelledby={categorizedTimeSignature.category.type}
+              aria-labelledby={t(categorizedTimeSignature.category.type)}
               className={buildClassName('label-container')()}
             >
               {categorizedTimeSignature.items.map((ts) => {
@@ -74,8 +77,8 @@ const TimeSignatureSelection = ({
                     />
                     <img
                       src={ts.icon}
-                      alt={ts.description}
-                      title={ts.description}
+                      alt={t(ts.description)}
+                      title={t(ts.description)}
                       className={classnames(
                         buildClassName('icon')(),
                         buildClassName('icon')(ts.type)

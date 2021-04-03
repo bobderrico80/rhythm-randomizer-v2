@@ -10,6 +10,7 @@ import {
 } from '../modules/tone';
 import { buildBemClassName } from '../modules/util';
 import { AppContext } from '../App';
+import { useTranslation } from 'react-i18next';
 
 export interface PlayerProps {
   measures: Measure[];
@@ -34,6 +35,7 @@ const Player = ({
   onNoteTrigger,
   onMetronomeClickTrigger,
 }: PlayerProps) => {
+  const { t } = useTranslation();
   const { state } = useContext(AppContext);
 
   const {
@@ -84,8 +86,8 @@ const Player = ({
         disabled={metronomeOn}
       >
         {playbackState === PlaybackState.PLAYING
-          ? 'Stop Playback'
-          : 'Start Playback'}
+          ? t('stopPlayback')
+          : t('startPlayback')}
       </button>
     </div>
   );

@@ -4,10 +4,12 @@ import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 import Checkbox from './Checkbox';
 import Select from './Select';
+import { useTranslation } from 'react-i18next';
 
 const buildClassName = buildBemClassName('c-rr-metronome-control');
 
 const MetronomeControl = () => {
+  const { t } = useTranslation();
   const { state, dispatch } = useContext(AppContext);
 
   const { metronomeSettings } = state.scoreSettings;
@@ -47,29 +49,29 @@ const MetronomeControl = () => {
         id="active"
         checked={active}
         onChange={handleCheckboxChange}
-        renderLabel={() => <>Play metronome during playback</>}
+        renderLabel={() => <>{t('playMetronomeDuringPlayback')}</>}
       />
       <Checkbox
         id="startOfMeasureClick"
         checked={startOfMeasureClick}
         onChange={handleCheckboxChange}
-        renderLabel={() => <>Start-of-measure click</>}
+        renderLabel={() => <>{t('startOfMeasureClick')}</>}
       />
       <Checkbox
         id="subdivisionClick"
         checked={subdivisionClick}
         onChange={handleCheckboxChange}
-        renderLabel={() => <>Subdivision click</>}
+        renderLabel={() => <>{t('subdivisionClick')}</>}
       />
       <Select
         id="countOffMeasures"
-        label="Count-off click:"
+        label={t('countOffClick')}
         value={countOffMeasures.toString()}
         onChange={handleCountOffMeasuresChange}
         options={[
-          { value: '0', display: 'Off' },
-          { value: '1', display: '1 Measure' },
-          { value: '2', display: '2 Measures' },
+          { value: '0', display: t('off') },
+          { value: '1', display: t('oneMeasure') },
+          { value: '2', display: t('twoMeasures') },
         ]}
       />
     </div>

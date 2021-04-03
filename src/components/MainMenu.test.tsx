@@ -33,11 +33,11 @@ describe('The <MainMenu /> component', () => {
 
     it('renders the status footer info', () => {
       const footer = screen.getByRole('contentinfo');
-      expect(footer).toHaveTextContent('All Rights Reserved');
+      expect(footer).toHaveTextContent('copyrightBefore');
     });
 
     it('calls the `onMainMenuCloseClick` handler when the close button is clicked', () => {
-      userEvent.click(screen.getByAltText('Close Main Menu'));
+      userEvent.click(screen.getByAltText('closeMainMenu'));
       expect(mainMenuCloseClickHandler).toHaveBeenCalled();
     });
   });

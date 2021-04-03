@@ -50,7 +50,7 @@ describe('The <Accordion /> component', () => {
     });
 
     it('renders the collapsed button caret', () => {
-      expect(screen.getByAltText('Expand')).toBeDefined();
+      expect(screen.getByAltText('expand')).toBeDefined();
     });
 
     it('opens the pane when the button is clicked', async () => {
@@ -103,7 +103,7 @@ describe('The <Accordion /> component', () => {
     });
 
     it('renders the expanded button caret', () => {
-      expect(screen.getByAltText('Collapse')).toBeDefined();
+      expect(screen.getByAltText('collapse')).toBeDefined();
     });
 
     it('closes the pane when the button is clicked', () => {

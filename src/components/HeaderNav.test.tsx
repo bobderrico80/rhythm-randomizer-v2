@@ -32,10 +32,10 @@ describe('The <HeaderNav /> component', () => {
         />
       );
       randomizeButton = screen.getByRole('button', {
-        name: 'New Rhythm',
+        name: 'newRhythm',
       }) as HTMLButtonElement;
       metronomeButton = screen.getByRole('button', {
-        name: 'Start Metronome',
+        name: 'startMetronome',
       }) as HTMLButtonElement;
     });
 
@@ -73,10 +73,10 @@ describe('The <HeaderNav /> component', () => {
         />
       );
       randomizeButton = screen.getByRole('button', {
-        name: 'New Rhythm',
+        name: 'newRhythm',
       }) as HTMLButtonElement;
       metronomeButton = screen.getByRole('button', {
-        name: 'Start Metronome',
+        name: 'startMetronome',
       }) as HTMLButtonElement;
     });
 
@@ -104,10 +104,10 @@ describe('The <HeaderNav /> component', () => {
         />
       );
       randomizeButton = screen.getByRole('button', {
-        name: 'New Rhythm',
+        name: 'newRhythm',
       }) as HTMLButtonElement;
       metronomeButton = screen.getByRole('button', {
-        name: 'Stop Metronome',
+        name: 'stopMetronome',
       }) as HTMLButtonElement;
     });
 

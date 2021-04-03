@@ -23,13 +23,13 @@ describe('The <PlaybackSettings /> component', () => {
 
   it('renders a fieldset for each playback setting control', () => {
     expect(
-      screen.getByRole('group', { name: 'Tempo Settings' })
+      screen.getByRole('group', { name: 'tempoSettings' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('group', { name: 'Pitch Settings' })
+      screen.getByRole('group', { name: 'pitchSettings' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('group', { name: 'Metronome Settings' })
+      screen.getByRole('group', { name: 'metronomeSettings' })
     ).toBeInTheDocument();
   });
 });

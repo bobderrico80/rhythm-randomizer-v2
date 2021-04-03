@@ -26,7 +26,7 @@ describe('The note module', () => {
         categoryType: NoteGroupCategoryType.BASIC_NOTES,
         type: NoteGroupType.W,
         notes: [{ type: NoteType.W, dotted: false, widthUnit: 13 }],
-        description: 'a whole note',
+        description: 'aWholeNote',
         duration: 4,
       });
     });
@@ -39,7 +39,7 @@ describe('The note module', () => {
           categoryType: NoteGroupCategoryType.BASIC_NOTES,
           type: NoteGroupType.W,
           notes: [{ type: NoteType.W, dotted: false, widthUnit: 13 }],
-          description: 'a whole note',
+          description: 'aWholeNote',
           duration: 4,
         },
         {
@@ -48,7 +48,7 @@ describe('The note module', () => {
           notes: [
             { type: NoteType.W, rest: true, dotted: false, widthUnit: 13 },
           ],
-          description: 'a whole rest',
+          description: 'aWholeRest',
           duration: 4,
         },
       ]);

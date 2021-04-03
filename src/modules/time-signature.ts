@@ -7,8 +7,8 @@ import {
 } from './util';
 
 export enum TimeSignatureCategoryType {
-  SIMPLE = 'Simple Meter',
-  COMPOUND = 'Compound Meter',
+  SIMPLE = 'simpleMeter',
+  COMPOUND = 'compoundMeter',
 }
 
 export enum TimeSignatureComplexity {
@@ -48,7 +48,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     categoryType: TimeSignatureCategoryType.SIMPLE,
     beatsPerMeasure: 2,
-    description: '2/4 time signature',
+    description: '24TimeSignature',
     icon: require('../svg/time-signatures/ts-2-4.svg').default,
     sortOrder: 0,
     index: 0,
@@ -58,7 +58,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     categoryType: TimeSignatureCategoryType.SIMPLE,
     beatsPerMeasure: 3,
-    description: '3/4 time signature',
+    description: '34TimeSignature',
     icon: require('../svg/time-signatures/ts-3-4.svg').default,
     sortOrder: 1,
     index: 1,
@@ -68,7 +68,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.SIMPLE,
     categoryType: TimeSignatureCategoryType.SIMPLE,
     beatsPerMeasure: 4,
-    description: '4/4 time signature',
+    description: '44TimeSignature',
     icon: require('../svg/time-signatures/ts-4-4.svg').default,
     sortOrder: 2,
     index: 2,
@@ -78,7 +78,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.COMPOUND,
     categoryType: TimeSignatureCategoryType.COMPOUND,
     beatsPerMeasure: 2,
-    description: '6/8 time signature',
+    description: '68TimeSignature',
     icon: require('../svg/time-signatures/ts-6-8.svg').default,
     sortOrder: 3,
     index: 3,
@@ -88,7 +88,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.COMPOUND,
     categoryType: TimeSignatureCategoryType.COMPOUND,
     beatsPerMeasure: 3,
-    description: '9/8 time signature',
+    description: '98TimeSignature',
     icon: require('../svg/time-signatures/ts-9-8.svg').default,
     sortOrder: 4,
     index: 4,
@@ -98,7 +98,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.COMPOUND,
     categoryType: TimeSignatureCategoryType.COMPOUND,
     beatsPerMeasure: 4,
-    description: '12/8 time signature',
+    description: '128TimeSignature',
     icon: require('../svg/time-signatures/ts-12-8.svg').default,
     sortOrder: 5,
     index: 5,
