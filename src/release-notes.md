@@ -1,3 +1,9 @@
+## What's New in Version 2.5.0?
+
+In addition to some small security updates, this version lays the groundwork to support multiple languages in The Rhythm Randomizer! In the footer of the main menu, you'll now see a language indicator. As support for alternate languages is added, those languages will appear as links in the footer, allowing you to easily switch between languages. In addition, your default language will be automatically detected, and the display will update to that language, if supported.
+
+If you are using The Rhythm Randomizer and would like to contribute translations for another language, please reach out on the [Facebook Page](https://www.facebook.com/TheRhythmRandomizer/) to find out how you can help!
+
 ## What's New in Version 2.4.1?
 
 - Accessibility improvements
