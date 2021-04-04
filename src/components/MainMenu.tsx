@@ -8,6 +8,7 @@ import './MainMenu.scss';
 import releaseNotesPath from '../release-notes.md';
 import { version } from '../../package.json';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const buildClassName = buildBemClassName('c-rr-main-menu');
 
@@ -63,6 +64,7 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
                 {t('connectOnFacebook')}
               </a>
             </p>
+            <LanguageSwitcher supportedLanguageCodes={['en']} />
             <p>
               {t('preferOldVersion')}{' '}
               <a

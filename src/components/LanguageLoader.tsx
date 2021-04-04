@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
+import i18next from 'i18next';
 import { init } from '../i18n';
 import Loading from './Loading';
 
@@ -13,6 +14,7 @@ export const LanguageLoader = ({ children }: LanguageLoaderProps) => {
     (async () => {
       await init();
       setLanguageLoaded(true);
+      document.documentElement.setAttribute('lang', i18next.language);
     })();
   }, []);
 

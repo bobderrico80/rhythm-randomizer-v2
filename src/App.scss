@@ -32,4 +32,12 @@
   &__error {
     max-width: 800px;
   }
+
+  a {
+    color: $link;
+
+    &:visited {
+      color: $link-visited;
+    }
+  }
 }
