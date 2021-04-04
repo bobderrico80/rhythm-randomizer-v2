@@ -64,7 +64,7 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
                 {t('connectOnFacebook')}
               </a>
             </p>
-            <LanguageSwitcher supportedLanguageCodes={['en']} />
+            <LanguageSwitcher supportedLanguageCodes={['en', 'de']} />
             <p>
               {t('preferOldVersion')}{' '}
               <a
