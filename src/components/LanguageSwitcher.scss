@@ -1,0 +1,11 @@
+@import '../styles/variables.scss';
+
+.c-rr-language-switcher {
+  &__link {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: $link;
+    padding: 0;
+  }
+}

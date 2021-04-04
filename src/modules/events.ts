@@ -9,6 +9,7 @@ export enum EventCategory {
   SETTINGS_MENU = 'settingsMenu',
   PLAYBACK = 'playback',
   METRONOME = 'metronome',
+  LANGUAGE = 'language',
 }
 
 export enum EventAction {
@@ -18,6 +19,7 @@ export enum EventAction {
   OPENED = 'opened',
   CLOSED = 'closed',
   STARTED = 'started',
+  CHANGED = 'changed',
 }
 
 export const sendEvent = (

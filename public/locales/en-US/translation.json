@@ -162,6 +162,12 @@
   "connectOnFacebook": "Connect on Facebook",
   "preferOldVersion": "Prefer the old version? Visit",
 
+  "currentLanguage": "Current language",
+  "translateTo": "Translate to",
+
+  "en": "English",
+  "de": "German",
+
   "expand": "Expand",
   "collapse": "Collapse"
 }
