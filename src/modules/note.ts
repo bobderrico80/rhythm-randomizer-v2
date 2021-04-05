@@ -125,6 +125,14 @@ export interface Note {
   dotted: boolean;
 }
 
+export interface GeneratedNoteGroup {
+  type: NoteGroupType;
+  notes: Note[];
+  duration: number;
+  tuplet?: boolean;
+  beam?: boolean;
+}
+
 export interface NoteGroup
   extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType> {
   notes: Note[];
@@ -778,7 +786,7 @@ export const getNoteGroups = (...types: NoteGroupType[]): NoteGroup[] => {
   return types.map(getNoteGroup);
 };
 
-export const getTotalDuration = (noteGroups: NoteGroup[]): number => {
+export const getTotalDuration = (noteGroups: GeneratedNoteGroup[]): number => {
   return noteGroups.reduce((sum, noteGroup) => {
     return sum + noteGroup.duration;
   }, 0);
@@ -833,7 +841,7 @@ export const getSelectedNoteGroupTypes = (
  * @return {PlaybackPattern[]}
  */
 export const getPlaybackPatternsForNoteGroup = (
-  noteGroup: NoteGroup,
+  noteGroup: GeneratedNoteGroup,
   timeSignature: TimeSignature
 ): PlaybackPattern[] => {
   return noteGroup.notes.map((note) => {

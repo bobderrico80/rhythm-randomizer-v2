@@ -1,6 +1,6 @@
 import Vex from 'vexflow';
 import { Measure, System } from './vex';
-import { Note, NoteType, NoteGroup } from './note';
+import { Note, NoteType, GeneratedNoteGroup } from './note';
 import { TimeSignature } from './time-signature';
 
 export interface ScoreDimensions {
@@ -223,7 +223,7 @@ export const getMeasureConfiguration = (
   return measureConfiguration;
 };
 
-const getNoteGroupWidthUnits = (noteGroup: NoteGroup): number => {
+const getNoteGroupWidthUnits = (noteGroup: GeneratedNoteGroup): number => {
   return noteGroup.notes.reduce((sum, noteGroup) => {
     return (sum += noteGroup.widthUnit);
   }, 0);
