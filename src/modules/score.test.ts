@@ -11,7 +11,12 @@ import {
   ScoreDimensionConfig,
 } from './score';
 import { Measure, System } from './vex';
-import { Note, getNoteGroup, NoteGroupType, getNoteGroups } from './note';
+import {
+  Note,
+  NoteGroupType,
+  getGeneratedNoteGroup,
+  getGeneratedNoteGroups,
+} from './note';
 import {
   getTimeSignature,
   TimeSignatureType,
@@ -235,7 +240,7 @@ describe('The score module', () => {
     describe('with non-dotted notes with standard behavior', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getNoteGroup(NoteGroupType.Q).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.Q).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -276,7 +281,7 @@ describe('The score module', () => {
     describe('with dotted notes', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getNoteGroup(NoteGroupType.HD).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.HD).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -293,7 +298,7 @@ describe('The score module', () => {
     describe('with whole rests in a non-first measure', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getNoteGroup(NoteGroupType.WR).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.WR).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -310,7 +315,7 @@ describe('The score module', () => {
     describe('with whole rests in the first measure', () => {
       beforeEach(() => {
         inFirstMeasure = true;
-        note = getNoteGroup(NoteGroupType.WR).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.WR).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -478,10 +483,10 @@ describe('The score module', () => {
       beforeEach(() => {
         system = {
           measures: [
-            { noteGroups: [getNoteGroup(NoteGroupType.W)] },
-            { noteGroups: [getNoteGroup(NoteGroupType.WR)] },
-            { noteGroups: [getNoteGroup(NoteGroupType.W)] },
-            { noteGroups: [getNoteGroup(NoteGroupType.WR)] },
+            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
+            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.WR)] },
+            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
+            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.WR)] },
           ],
         };
         measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
@@ -502,10 +507,15 @@ describe('The score module', () => {
       beforeEach(() => {
         system = {
           measures: [
-            { noteGroups: [getNoteGroup(NoteGroupType.W)] },
-            { noteGroups: getNoteGroups(NoteGroupType.H, NoteGroupType.H) },
+            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
             {
-              noteGroups: getNoteGroups(
+              noteGroups: getGeneratedNoteGroups(
+                NoteGroupType.H,
+                NoteGroupType.H
+              ),
+            },
+            {
+              noteGroups: getGeneratedNoteGroups(
                 NoteGroupType.Q,
                 NoteGroupType.Q,
                 NoteGroupType.Q,
@@ -513,7 +523,7 @@ describe('The score module', () => {
               ),
             },
             {
-              noteGroups: getNoteGroups(
+              noteGroups: getGeneratedNoteGroups(
                 NoteGroupType.EE,
                 NoteGroupType.EE,
                 NoteGroupType.EE,

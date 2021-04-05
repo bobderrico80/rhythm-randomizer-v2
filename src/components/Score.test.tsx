@@ -2,7 +2,7 @@ import { render, RenderResult, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { FormFactor } from '../App';
-import { getNoteGroups, NoteGroupType } from '../modules/note';
+import { getGeneratedNoteGroups, NoteGroupType } from '../modules/note';
 import { getTimeSignature, TimeSignatureType } from '../modules/time-signature';
 import * as vex from '../modules/vex';
 import Score, { scoreDimensionConfig } from './Score';
@@ -12,7 +12,9 @@ describe('The <Score /> component', () => {
   let createScoreSpy: jest.SpyInstance;
 
   const scoreData = {
-    measures: [{ noteGroups: getNoteGroups(NoteGroupType.H, NoteGroupType.H) }],
+    measures: [
+      { noteGroups: getGeneratedNoteGroups(NoteGroupType.H, NoteGroupType.H) },
+    ],
     timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
   };
 
