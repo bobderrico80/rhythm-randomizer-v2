@@ -6,7 +6,7 @@ import {
   getNoteGroup,
   NoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
-  GeneratedNoteGroup,
+  generateNoteGroup,
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
@@ -76,19 +76,7 @@ const getRandomMeasure = (
       continue;
     }
 
-    const generatedNoteGroup: GeneratedNoteGroup = {
-      type: nextPossibleNoteGroup.type,
-      notes: nextPossibleNoteGroup.notes,
-      duration: nextPossibleNoteGroup.duration,
-    };
-
-    if (nextPossibleNoteGroup.beam) {
-      generatedNoteGroup.beam = true;
-    }
-
-    if (nextPossibleNoteGroup.tuplet) {
-      generatedNoteGroup.tuplet = true;
-    }
+    const generatedNoteGroup = generateNoteGroup(nextPossibleNoteGroup);
 
     randomMeasure.noteGroups.push(generatedNoteGroup);
     totalDuration = getTotalDuration(randomMeasure.noteGroups);
@@ -154,11 +142,13 @@ export const getTestRandomMeasures = (
       ];
     const timesToDuplicate = timeSignature.beatsPerMeasure / noteGroup.duration;
 
+    const generatedNoteGroup = generateNoteGroup(noteGroup);
+
     if (!Number.isInteger(timesToDuplicate)) {
       throw new InvalidNoteSelectionError();
     }
 
-    const measureOfNoteGroups = duplicate(noteGroup, timesToDuplicate);
+    const measureOfNoteGroups = duplicate(generatedNoteGroup, timesToDuplicate);
 
     measures.push({ noteGroups: measureOfNoteGroups });
   }

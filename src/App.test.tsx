@@ -5,7 +5,7 @@ import App from './App';
 import * as random from './modules/random';
 import * as vex from './modules/vex';
 import * as events from './modules/events';
-import { getNoteGroups, NoteGroupType } from './modules/note';
+import { getGeneratedNoteGroups, NoteGroupType } from './modules/note';
 import { getTimeSignature, TimeSignatureType } from './modules/time-signature';
 import { scoreDimensionConfig } from './components/Score';
 
@@ -189,8 +189,13 @@ describe('The <App /> component', () => {
           {
             timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
             measures: [
-              { noteGroups: getNoteGroups(NoteGroupType.W) },
-              { noteGroups: getNoteGroups(NoteGroupType.H, NoteGroupType.H) },
+              { noteGroups: getGeneratedNoteGroups(NoteGroupType.W) },
+              {
+                noteGroups: getGeneratedNoteGroups(
+                  NoteGroupType.H,
+                  NoteGroupType.H
+                ),
+              },
             ],
           },
           expect.any(Number),
@@ -217,10 +222,13 @@ describe('The <App /> component', () => {
                 timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
                 measures: [
                   {
-                    noteGroups: getNoteGroups(NoteGroupType.H, NoteGroupType.H),
+                    noteGroups: getGeneratedNoteGroups(
+                      NoteGroupType.H,
+                      NoteGroupType.H
+                    ),
                   },
                   {
-                    noteGroups: getNoteGroups(
+                    noteGroups: getGeneratedNoteGroups(
                       NoteGroupType.Q,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
@@ -255,10 +263,13 @@ describe('The <App /> component', () => {
                 timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
                 measures: [
                   {
-                    noteGroups: getNoteGroups(NoteGroupType.H, NoteGroupType.H),
+                    noteGroups: getGeneratedNoteGroups(
+                      NoteGroupType.H,
+                      NoteGroupType.H
+                    ),
                   },
                   {
-                    noteGroups: getNoteGroups(
+                    noteGroups: getGeneratedNoteGroups(
                       NoteGroupType.Q,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
@@ -298,10 +309,10 @@ describe('The <App /> component', () => {
                 timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
                 measures: [
                   {
-                    noteGroups: getNoteGroups(NoteGroupType.HD),
+                    noteGroups: getGeneratedNoteGroups(NoteGroupType.HD),
                   },
                   {
-                    noteGroups: getNoteGroups(NoteGroupType.HD),
+                    noteGroups: getGeneratedNoteGroups(NoteGroupType.HD),
                   },
                 ],
               },

@@ -133,9 +133,8 @@ export interface GeneratedNoteGroup {
   beam?: boolean;
 }
 
-export interface NoteGroup
+interface BaseNoteGroup
   extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType> {
-  notes: Note[];
   beam?: boolean;
   tuplet?: boolean;
   description: string;
@@ -145,6 +144,18 @@ export interface NoteGroup
   index: number;
   timeSignatureComplexity: TimeSignatureComplexity;
 }
+
+interface StaticNoteGroup extends BaseNoteGroup {
+  notes: Note[];
+  noteTemplate?: never;
+}
+
+interface DynamicNoteGroup extends BaseNoteGroup {
+  notes?: never;
+  noteTemplate: Note[][];
+}
+
+export type NoteGroup = StaticNoteGroup | DynamicNoteGroup;
 
 export interface CategorizedNoteGroup
   extends CategorizedItem<NoteGroupCategory, NoteGroup> {}
@@ -180,7 +191,7 @@ const notePlaybackUnitMap = {
   [NoteType.S]: '16',
 };
 
-const createNote = (
+export const createNote = (
   type: NoteType,
   rest: boolean = false,
   dotted: boolean = false
@@ -784,6 +795,48 @@ export const getNoteGroupCategory = (
 
 export const getNoteGroups = (...types: NoteGroupType[]): NoteGroup[] => {
   return types.map(getNoteGroup);
+};
+
+export const generateNoteGroup = (noteGroup: NoteGroup): GeneratedNoteGroup => {
+  let generatedNoteGroup: GeneratedNoteGroup;
+
+  if (noteGroup.notes) {
+    generatedNoteGroup = {
+      type: noteGroup.type,
+      duration: noteGroup.duration,
+      notes: noteGroup.notes,
+    };
+  } else {
+    // TODO: randomize subgroup stuff (also test mode)
+    generatedNoteGroup = {
+      type: noteGroup.type,
+      duration: noteGroup.duration,
+      notes: [],
+    };
+  }
+
+  if (noteGroup.beam) {
+    generatedNoteGroup.beam = true;
+  }
+
+  if (noteGroup.tuplet) {
+    generatedNoteGroup.tuplet = true;
+  }
+
+  return generatedNoteGroup;
+};
+
+export const getGeneratedNoteGroup = (
+  type: NoteGroupType
+): GeneratedNoteGroup => {
+  const noteGroup = getNoteGroup(type);
+  return generateNoteGroup(noteGroup);
+};
+
+export const getGeneratedNoteGroups = (
+  ...types: NoteGroupType[]
+): GeneratedNoteGroup[] => {
+  return types.map((noteGroupType) => getGeneratedNoteGroup(noteGroupType));
 };
 
 export const getTotalDuration = (noteGroups: GeneratedNoteGroup[]): number => {
