@@ -6,6 +6,7 @@ import {
   getNoteGroup,
   NoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
+  GeneratedNoteGroup,
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
@@ -75,7 +76,21 @@ const getRandomMeasure = (
       continue;
     }
 
-    randomMeasure.noteGroups.push(nextPossibleNoteGroup);
+    const generatedNoteGroup: GeneratedNoteGroup = {
+      type: nextPossibleNoteGroup.type,
+      notes: nextPossibleNoteGroup.notes,
+      duration: nextPossibleNoteGroup.duration,
+    };
+
+    if (nextPossibleNoteGroup.beam) {
+      generatedNoteGroup.beam = true;
+    }
+
+    if (nextPossibleNoteGroup.tuplet) {
+      generatedNoteGroup.tuplet = true;
+    }
+
+    randomMeasure.noteGroups.push(generatedNoteGroup);
     totalDuration = getTotalDuration(randomMeasure.noteGroups);
 
     const remainingDurationToFill = durationPerMeasure - totalDuration;

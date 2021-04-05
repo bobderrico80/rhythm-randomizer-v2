@@ -1,5 +1,5 @@
 import Vex from 'vexflow';
-import { NoteGroup } from './note';
+import { GeneratedNoteGroup } from './note';
 import { TimeSignature } from './time-signature';
 import {
   getScoreDimensions,
@@ -15,7 +15,7 @@ import {
 const VF = Vex.Flow;
 
 export interface Measure {
-  noteGroups: NoteGroup[];
+  noteGroups: GeneratedNoteGroup[];
 }
 
 export interface System {
@@ -52,7 +52,7 @@ const getContext = (
 };
 
 const createNotes = (
-  noteGroups: NoteGroup[],
+  noteGroups: GeneratedNoteGroup[],
   stave: Vex.Flow.Stave,
   measureConfiguration: MeasureConfiguration,
   toRender: ToRender,
@@ -70,7 +70,7 @@ const createNotes = (
       const staveNote = new VF.StaveNote({
         clef: noteConfiguration.clef,
         keys: noteConfiguration.keys,
-        duration: noteConfiguration.duration + (note.rest ? 'r': ''),
+        duration: noteConfiguration.duration + (note.rest ? 'r' : ''),
         stem_direction: noteConfiguration.stemDirection,
         auto_stem: noteConfiguration.autoStem,
       });
