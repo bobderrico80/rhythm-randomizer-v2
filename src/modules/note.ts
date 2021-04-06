@@ -1,4 +1,5 @@
 import { Map } from 'immutable';
+import { Randomizable, randomizeNoteSubGroups } from './random';
 import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import {
   findItemOfType,
@@ -133,26 +134,31 @@ export interface GeneratedNoteGroup {
   beam?: boolean;
 }
 
+export interface NoteSubGroup extends Randomizable {
+  notes: Note[];
+}
+
 interface BaseNoteGroup
-  extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType> {
+  extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType>,
+    Randomizable {
   beam?: boolean;
   tuplet?: boolean;
   description: string;
-  duration: number;
   icon: string;
   defaultSelectionValue: boolean;
   index: number;
   timeSignatureComplexity: TimeSignatureComplexity;
 }
 
-interface StaticNoteGroup extends BaseNoteGroup {
+export interface StaticNoteGroup extends BaseNoteGroup {
   notes: Note[];
   noteTemplate?: never;
 }
 
-interface DynamicNoteGroup extends BaseNoteGroup {
+export interface DynamicNoteGroup extends BaseNoteGroup {
   notes?: never;
-  noteTemplate: Note[][];
+  noteTemplate: NoteSubGroup[];
+  subGroupTargetDuration: number;
 }
 
 export type NoteGroup = StaticNoteGroup | DynamicNoteGroup;
@@ -797,7 +803,10 @@ export const getNoteGroups = (...types: NoteGroupType[]): NoteGroup[] => {
   return types.map(getNoteGroup);
 };
 
-export const generateNoteGroup = (noteGroup: NoteGroup): GeneratedNoteGroup => {
+export const generateNoteGroup = (
+  noteGroup: NoteGroup,
+  testMode: boolean = false
+): GeneratedNoteGroup => {
   let generatedNoteGroup: GeneratedNoteGroup;
 
   if (noteGroup.notes) {
@@ -807,11 +816,12 @@ export const generateNoteGroup = (noteGroup: NoteGroup): GeneratedNoteGroup => {
       notes: noteGroup.notes,
     };
   } else {
-    // TODO: randomize subgroup stuff (also test mode)
+    const randomizedNotes = randomizeNoteSubGroups(noteGroup, testMode);
+
     generatedNoteGroup = {
       type: noteGroup.type,
       duration: noteGroup.duration,
-      notes: [],
+      notes: randomizedNotes,
     };
   }
 
@@ -824,6 +834,13 @@ export const generateNoteGroup = (noteGroup: NoteGroup): GeneratedNoteGroup => {
   }
 
   return generatedNoteGroup;
+};
+
+export const generateNoteGroups = (
+  noteGroups: NoteGroup[],
+  testMode: boolean = false
+): GeneratedNoteGroup[] => {
+  return noteGroups.map((noteGroup) => generateNoteGroup(noteGroup, testMode));
 };
 
 export const getGeneratedNoteGroup = (

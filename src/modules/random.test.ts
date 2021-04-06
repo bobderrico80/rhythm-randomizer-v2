@@ -1,14 +1,28 @@
-import { getRandomMeasures } from './random';
+import {
+  getRandomItems,
+  getRandomMeasures,
+  Randomizable,
+  randomizeNoteSubGroups,
+} from './random';
 import {
   NoteGroupType,
   getTotalDuration,
   getNoteGroupTypeSelectionMap,
   resetNoteGroupTypeSelectionMap,
   NoteGroupTypeSelectionMap,
+  createNote,
+  DynamicNoteGroup,
+  NoteGroupCategoryType,
+  NoteType,
 } from './note';
 import { InvalidNoteSelectionError } from './error';
 import { Measure } from './vex';
-import { getTimeSignature, TimeSignatureType } from './time-signature';
+import {
+  getTimeSignature,
+  TimeSignatureComplexity,
+  TimeSignatureType,
+} from './time-signature';
+import { duplicate } from './util';
 
 const setNoteGroupTypeSelections = (
   noteGroupTypes: NoteGroupType[],
@@ -24,6 +38,10 @@ const setNoteGroupTypeSelections = (
   return noteGroupTypeSelectionMap;
 };
 
+interface TestItem extends Randomizable {
+  name: string;
+}
+
 describe('The random module', () => {
   let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
 
@@ -31,6 +49,30 @@ describe('The random module', () => {
     noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
       getNoteGroupTypeSelectionMap()
     );
+  });
+
+  describe('getRandomItems() function', () => {
+    const items: TestItem[] = [
+      { name: 'foo', duration: 2 },
+      { name: 'bar', duration: 4 },
+    ];
+
+    it('contains items that add up to the target duration', () => {
+      const randomItems = getRandomItems(items, 4);
+      expect(randomItems.reduce((t, i) => t + i.duration, 0)).toEqual(4);
+    });
+
+    it('throws an error if any one of the items has a duration larger than the target duration', () => {
+      expect(() => {
+        getRandomItems(items, 3);
+      }).toThrowError();
+    });
+
+    it('throws an error in scenarios that are impossible to fill', () => {
+      expect(() => {
+        getRandomItems([{ name: 'foo', duration: 3 }], 4);
+      }).toThrowError();
+    });
   });
 
   describe('getRandomMeasures() function', () => {
@@ -136,6 +178,31 @@ describe('The random module', () => {
             4
           );
         }).toThrow(InvalidNoteSelectionError);
+      });
+    });
+  });
+
+  describe('randomizeNoteSubGroups() function', () => {
+    const dynamicNoteGroup: DynamicNoteGroup = {
+      type: 'test' as NoteGroupType,
+      categoryType: 'test' as NoteGroupCategoryType,
+      sortOrder: 0,
+      duration: 1,
+      description: 'test dynamic note group',
+      icon: 'test.svg',
+      defaultSelectionValue: false,
+      index: 0,
+      timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+      noteTemplate: [
+        { duration: 1, notes: [createNote(NoteType.E)] },
+        { duration: 1, notes: duplicate(createNote(NoteType.S), 2) },
+      ],
+      subGroupTargetDuration: 2,
+    };
+
+    it('returns a random array of notes selected from the note template', () => {
+      randomizeNoteSubGroups(dynamicNoteGroup).forEach((note) => {
+        expect([NoteType.E, NoteType.S]).toContain(note.type);
       });
     });
   });

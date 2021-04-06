@@ -1,12 +1,13 @@
 import {
-  NoteGroupType,
   NoteGroup,
-  getTotalDuration,
   getNoteGroups,
-  getNoteGroup,
   NoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
   generateNoteGroup,
+  generateNoteGroups,
+  NoteSubGroup,
+  DynamicNoteGroup,
+  Note,
 } from './note';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
@@ -18,12 +19,63 @@ const logger = console;
 
 const MAX_LOOP_COUNT = 1000;
 
-const getRandomNoteDefinition = (
-  possibleNoteGroupTypes: NoteGroupType[]
-): NoteGroup => {
-  const randomIndex = Math.floor(Math.random() * possibleNoteGroupTypes.length);
-  const randomNoteGroupType = possibleNoteGroupTypes[randomIndex];
-  return getNoteGroup(randomNoteGroupType);
+export interface Randomizable {
+  duration: number;
+}
+
+export const getRandomItems = <T extends Randomizable>(
+  possibleItems: T[],
+  targetDuration: number
+): T[] => {
+  const uniqueDurations = [
+    ...new Set(possibleItems.map((item) => item.duration)),
+  ];
+
+  // If any duration is larger than the target duration, throw an error
+  if (uniqueDurations.some((d) => d > targetDuration)) {
+    throw new Error();
+  }
+
+  const randomItems: T[] = [];
+
+  let totalDuration = 0;
+  let loopCount = 0;
+
+  while (totalDuration < targetDuration) {
+    const randomIndex = Math.floor(Math.random() * possibleItems.length);
+    const nextPossibleItem = possibleItems[randomIndex];
+
+    if (nextPossibleItem.duration + totalDuration > targetDuration) {
+      // Detect infinite loops, incase it becomes impossible to reach the target with the possible
+      // items
+      if (loopCount > MAX_LOOP_COUNT) {
+        logger.warn('Infinite loop detected!');
+        throw new Error();
+      }
+
+      loopCount++;
+      continue;
+    }
+
+    randomItems.push(nextPossibleItem);
+    totalDuration = randomItems.reduce(
+      (total, item) => total + item.duration,
+      0
+    );
+
+    const remainingDurationToFill = targetDuration - totalDuration;
+
+    if (
+      remainingDurationToFill !== 0 &&
+      !uniqueDurations.some((d) => d <= remainingDurationToFill)
+    ) {
+      throw new Error();
+    }
+
+    loopCount = 0;
+  }
+
+  return randomItems;
 };
 
 const getRandomMeasure = (
@@ -40,58 +92,20 @@ const getRandomMeasure = (
   }
 
   const possibleNoteGroups = getNoteGroups(...selectedNoteGroupTypes);
-  const uniqueDurations = [
-    ...new Set(possibleNoteGroups.map((ng) => ng.duration)),
-  ];
 
-  const durationPerMeasure = timeSignature.beatsPerMeasure;
-
-  // If any duration is larger than the measure, not valid
-  if (uniqueDurations.some((d) => d > durationPerMeasure)) {
+  let randomNoteGroups: NoteGroup[];
+  try {
+    randomNoteGroups = getRandomItems(
+      possibleNoteGroups,
+      timeSignature.beatsPerMeasure
+    );
+  } catch (error) {
     throw new InvalidNoteSelectionError();
   }
 
   let randomMeasure: Measure = {
-    noteGroups: [],
+    noteGroups: generateNoteGroups(randomNoteGroups),
   };
-
-  let totalDuration: number = 0;
-
-  let loopCount = 0;
-
-  while (totalDuration < durationPerMeasure) {
-    const nextPossibleNoteGroup = getRandomNoteDefinition(
-      selectedNoteGroupTypes
-    );
-
-    if (nextPossibleNoteGroup.duration + totalDuration > durationPerMeasure) {
-      // Detect infinite loops, incase there's a possible edge case the other logic in this
-      // function cannot handle
-      if (loopCount > MAX_LOOP_COUNT) {
-        logger.warn('Infinite loop detected!');
-        throw new InvalidNoteSelectionError();
-      }
-
-      loopCount++;
-      continue;
-    }
-
-    const generatedNoteGroup = generateNoteGroup(nextPossibleNoteGroup);
-
-    randomMeasure.noteGroups.push(generatedNoteGroup);
-    totalDuration = getTotalDuration(randomMeasure.noteGroups);
-
-    const remainingDurationToFill = durationPerMeasure - totalDuration;
-
-    if (
-      remainingDurationToFill !== 0 &&
-      !uniqueDurations.some((d) => d <= remainingDurationToFill)
-    ) {
-      throw new InvalidNoteSelectionError();
-    }
-
-    loopCount = 0;
-  }
 
   return randomMeasure;
 };
@@ -142,7 +156,7 @@ export const getTestRandomMeasures = (
       ];
     const timesToDuplicate = timeSignature.beatsPerMeasure / noteGroup.duration;
 
-    const generatedNoteGroup = generateNoteGroup(noteGroup);
+    const generatedNoteGroup = generateNoteGroup(noteGroup, true);
 
     if (!Number.isInteger(timesToDuplicate)) {
       throw new InvalidNoteSelectionError();
@@ -156,6 +170,30 @@ export const getTestRandomMeasures = (
   testRandomMeasureIndex++;
 
   return measures;
+};
+
+export const randomizeNoteSubGroups = (
+  dynamicNoteGroup: DynamicNoteGroup,
+  testMode: boolean = false
+): Note[] => {
+  let randomizedSubGroups: NoteSubGroup[];
+
+  if (testMode) {
+    // In test mode, just use the first subgroup
+    randomizedSubGroups = getRandomItems(
+      [dynamicNoteGroup.noteTemplate[0]],
+      dynamicNoteGroup.subGroupTargetDuration
+    );
+  } else {
+    randomizedSubGroups = getRandomItems(
+      dynamicNoteGroup.noteTemplate,
+      dynamicNoteGroup.subGroupTargetDuration
+    );
+  }
+
+  return randomizedSubGroups.reduce((previousNotes, subGroup) => {
+    return [...previousNotes, ...subGroup.notes];
+  }, [] as Note[]);
 };
 
 export const resetTestRandomMeasureIndex = () => {
