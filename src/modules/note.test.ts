@@ -16,10 +16,14 @@ import {
   getGeneratedNoteGroup,
   generateNoteGroup,
   createNote,
+  generateNoteGroups,
+  DynamicNoteGroup,
+  GeneratedNoteGroup,
 } from './note';
 import {
   getTimeSignature,
   TimeSignature,
+  TimeSignatureComplexity,
   TimeSignatureType,
 } from './time-signature';
 import { duplicate } from './util';
@@ -380,7 +384,57 @@ describe('The note module', () => {
       });
     });
 
-    // TODO: Add tests for dynamic note groups
+    describe('with dynamic note groups', () => {
+      const dynamicNoteGroup: DynamicNoteGroup = {
+        type: 'test' as NoteGroupType,
+        categoryType: 'test' as NoteGroupCategoryType,
+        sortOrder: 0,
+        duration: 1,
+        description: 'test dynamic note group',
+        icon: 'test.svg',
+        defaultSelectionValue: false,
+        index: 0,
+        timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+        noteTemplate: [
+          { duration: 1, notes: [createNote(NoteType.E)] },
+          { duration: 1, notes: duplicate(createNote(NoteType.S), 2) },
+        ],
+        subGroupTargetDuration: 2,
+      };
+
+      let generatedNoteGroup: GeneratedNoteGroup;
+
+      beforeEach(() => {
+        generatedNoteGroup = generateNoteGroup(dynamicNoteGroup);
+      });
+
+      it('contains notes that are found in the note template', () => {
+        generatedNoteGroup.notes.forEach((note) => {
+          expect([NoteType.E, NoteType.S]).toContain(note.type);
+        });
+      });
+    });
+  });
+
+  describe('generateNoteGroups() function', () => {
+    it('maps the required properties as expected', () => {
+      expect(
+        generateNoteGroups(getNoteGroups(NoteGroupType.Q, NoteGroupType.TEEE))
+      ).toEqual([
+        {
+          type: NoteGroupType.Q,
+          duration: 1,
+          notes: [createNote(NoteType.Q)],
+        },
+        {
+          type: NoteGroupType.TEEE,
+          duration: 1,
+          notes: duplicate(createNote(NoteType.E), 3),
+          tuplet: true,
+          beam: true,
+        },
+      ]);
+    });
   });
 
   describe('getGeneratedNoteGroup() function', () => {
@@ -395,8 +449,6 @@ describe('The note module', () => {
         });
       });
     });
-
-    // TODO: Add tests for dynamic note groups
   });
 
   describe('getGeneratedNoteGroups() function', () => {
@@ -420,8 +472,6 @@ describe('The note module', () => {
         ]);
       });
     });
-
-    // TODO: Add tests for dynamic note groups
   });
 
   describe('createNote() function', () => {
