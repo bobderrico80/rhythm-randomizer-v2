@@ -10,8 +10,10 @@ import {
   getNoteGroup,
   getNoteGroupTypeSelectionMap,
   isValidNoteGroupForTimeSignature,
+  NoteGroupType,
   NoteGroupTypeSelectionMap,
   Pitch,
+  resetNoteGroupTypeSelectionMap,
 } from './note';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
@@ -183,9 +185,20 @@ const getPersistedScoreSettings = () =>
       scoreSettings.metronomeSettings = DEFAULT_METRONOME_SETTINGS;
     }
 
-    scoreSettings.noteGroupTypeSelectionMap = Map(
+    // Handle ensuring new note group selections are added an old persisted map
+    const persistedNoteGroupTypeSelectionMap: NoteGroupTypeSelectionMap = Map(
       scoreSettings.noteGroupTypeSelectionMap
     );
+    let newNoteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap();
+
+    persistedNoteGroupTypeSelectionMap.forEach((checked, noteGroupType) => {
+      newNoteGroupTypeSelectionMap = newNoteGroupTypeSelectionMap.set(
+        noteGroupType,
+        checked
+      );
+    });
+
+    scoreSettings.noteGroupTypeSelectionMap = newNoteGroupTypeSelectionMap;
 
     // Convert legacy persisted score settings objects
     if (scoreSettings.timeSignatureType) {
