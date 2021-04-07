@@ -1,3 +1,13 @@
+## What's New in Version 2.6.0?
+
+German language support!
+
+Thank you very much to Rhythm Randomizer users Sebastian Dorok and Michael Fromm Fromm for providing the German language translations!
+
+The app should automatically detect the correct language to use based on locale. Alternatively, the language can be switched by selecting the 'German' link at the bottom of the main menu panel.
+
+If you would like to help translate The Rhythm Randomizer into another language, please reach out on the [Facebook Page](https://www.facebook.com/TheRhythmRandomizer/) to find out how you can help!
+
 ## What's New in Version 2.5.0?
 
 In addition to some small security updates, this version lays the groundwork to support multiple languages in The Rhythm Randomizer! In the footer of the main menu, you'll now see a language indicator. As support for alternate languages is added, those languages will appear as links in the footer, allowing you to easily switch between languages. In addition, your default language will be automatically detected, and the display will update to that language, if supported.
