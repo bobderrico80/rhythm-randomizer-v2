@@ -2,7 +2,7 @@
 
 German language support!
 
-Thank you very much to Rhythm Randomizer users Sebastian Dorok and Michael Fromm Fromm for providing the German language translations!
+Thank you very much to Rhythm Randomizer users Sebastian Dorok and Michael Fromm for providing the German language translations!
 
 The app should automatically detect the correct language to use based on locale. Alternatively, the language can be switched by selecting the 'German' link at the bottom of the main menu panel.
 
