@@ -22,6 +22,7 @@ export enum NoteGroupCategoryType {
   EIGHTH_REST_COMBINATIONS = '8thRestCombinations',
   SYNCOPATED_COMBINATIONS = 'syncopatedCombinations',
   COMPOUND_EIGHTH_NOTE_COMBINATIONS = 'compound8thNoteCombinations',
+  COMPOUND_COMPLEX_COMBINATIONS = 'compoundComplexCombinations',
 }
 
 export enum NoteGroupType {
@@ -81,6 +82,14 @@ export enum NoteGroupType {
   CEQ = 'ceq',
   CEEE = 'ceee',
   CTEE = 'ctee',
+
+  // Compound meter complex combinations (X = has note subgroup randomization)
+  CXQQREER = 'cxqqreer',
+  CXEER = 'cxeer',
+  CXESS = 'cxess',
+  CXQQRSS = 'cxqqrss',
+  CXEERSS = 'cxeerss',
+  CXEERSSR = 'cxeerssr',
 }
 
 export enum NoteType {
@@ -131,7 +140,7 @@ export interface GeneratedNoteGroup {
   notes: Note[];
   duration: number;
   tuplet?: boolean;
-  beam?: boolean;
+  beam?: boolean | string;
 }
 
 export interface NoteSubGroup extends Randomizable {
@@ -141,7 +150,7 @@ export interface NoteSubGroup extends Randomizable {
 interface BaseNoteGroup
   extends CategorizableTypedItem<NoteGroupType, NoteGroupCategoryType>,
     Randomizable {
-  beam?: boolean;
+  beam?: boolean | string | ((notes: Note[]) => boolean | string);
   tuplet?: boolean;
   description: string;
   icon: string;
@@ -159,6 +168,7 @@ export interface DynamicNoteGroup extends BaseNoteGroup {
   notes?: never;
   noteTemplate: NoteSubGroup[];
   subGroupTargetDuration: number;
+  includePredicate?: (subGroupsSoFar: NoteSubGroup[]) => boolean;
 }
 
 export type NoteGroup = StaticNoteGroup | DynamicNoteGroup;
@@ -263,7 +273,46 @@ export const noteGroupCategories: NoteGroupCategory[] = [
     type: NoteGroupCategoryType.SYNCOPATED_COMBINATIONS,
     sortOrder: 10,
   },
+  {
+    type: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    sortOrder: 11,
+  },
 ];
+
+// TODO: include predicates... find a better place for these?
+const allRests = (subGroupsSoFar: NoteSubGroup[]) => {
+  return subGroupsSoFar.every((subGroup) =>
+    subGroup.notes.every((note) => note.rest)
+  );
+};
+
+const allNotes = (subGroupsSoFar: NoteSubGroup[]) => {
+  return subGroupsSoFar.every((subGroup) =>
+    subGroup.notes.every((note) => !note.rest)
+  );
+};
+
+const allOfType = (subGroupsSoFar: NoteSubGroup[], noteType: NoteType) => {
+  return subGroupsSoFar.every((subGroup) =>
+    subGroup.notes.every((note) => note.type === noteType)
+  );
+};
+
+const anyOfType = (
+  subGroupsSoFar: NoteSubGroup[],
+  noteType: NoteType,
+  rest?: boolean
+) => {
+  return subGroupsSoFar.some((subGroup) =>
+    subGroup.notes.some((note) => {
+      if (rest) {
+        return note.type === noteType && note.rest;
+      }
+
+      return note.type === noteType;
+    })
+  );
+};
 
 // Alias to make defining note groups less verbose
 const c = createNote;
@@ -733,6 +782,264 @@ export const noteGroups: NoteGroup[] = [
     sortOrder: 34,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXQQREER,
+    noteTemplate: [
+      { duration: 2, notes: [c(NoteType.Q)] },
+      { duration: 2, notes: [c(NoteType.Q, true)] },
+      { duration: 1, notes: [c(NoteType.E)] },
+      { duration: 1, notes: [c(NoteType.E, true)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Exclude three 8th notes/rests. This will detect if we are about to build a group of
+      // three 8th notes/rests and discard.
+      if (
+        subGroupsSoFar.length === 2 &&
+        allOfType(subGroupsSoFar, NoteType.E)
+      ) {
+        return false;
+      }
+
+      // Discard all rests
+      if (subGroupsSoFar.length === 2 && allRests(subGroupsSoFar)) {
+        return false;
+      }
+
+      return true;
+    },
+    description: 'combinationsOfQuarterNotesQuarterRests8thNotesAnd8thRests',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 35,
+    sortOrder: 35,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXEER,
+    noteTemplate: [
+      { duration: 1, notes: [c(NoteType.E)] },
+      { duration: 1, notes: [c(NoteType.E, true)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Exclude patterns starting with two 8th rests
+      if (subGroupsSoFar.length === 2 && allRests(subGroupsSoFar)) {
+        return false;
+      }
+
+      // Exclude patterns ending with two 8th rests
+      if (subGroupsSoFar.length === 3 && allRests(subGroupsSoFar.slice(1))) {
+        return false;
+      }
+
+      if (subGroupsSoFar.length === 3 && allRests(subGroupsSoFar)) {
+        // Exclude all rests
+        return false;
+      }
+
+      // Exclude all notes
+      if (subGroupsSoFar.length === 3 && allNotes(subGroupsSoFar)) {
+        return false;
+      }
+
+      return true;
+    },
+    description: 'combinationsOf8thNotesAnd8thRests',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 36,
+    sortOrder: 36,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+    beam: (notes) => {
+      // Don't apply beam if first and third notes are rests
+      if (notes[0].rest && notes[2].rest) {
+        return false;
+      }
+
+      // Don't include the rest in the beam with two adjacent 8th notes
+      if (notes[0].rest && !notes[1].rest && !notes[2].rest) {
+        return '1-2';
+      }
+
+      if (!notes[0].rest && !notes[1].rest && notes[2].rest) {
+        return '0-1';
+      }
+
+      return true;
+    },
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXESS,
+    noteTemplate: [
+      { duration: 1, notes: [c(NoteType.E)] },
+      { duration: 1, notes: [c(NoteType.S), c(NoteType.S)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Exclude patterns with all 8th notes
+      if (
+        subGroupsSoFar.length === 3 &&
+        allOfType(subGroupsSoFar, NoteType.E)
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    description: 'combinationsOf8thNotesAnd16thNotes',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 37,
+    sortOrder: 37,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+    beam: true,
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXQQRSS,
+    noteTemplate: [
+      { duration: 2, notes: [c(NoteType.Q)] },
+      { duration: 2, notes: [c(NoteType.Q, true)] },
+      { duration: 1, notes: [c(NoteType.S), c(NoteType.S)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Exclude patterns with all 16th notes. If we have all 16th notes after the second subgroup,
+      // we will end up having all 16h notes, so discard this selection
+      if (
+        subGroupsSoFar.length === 2 &&
+        allOfType(subGroupsSoFar, NoteType.S)
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    description: 'combinationsOfQuarterNotesQuarterRestsAnd16thNotes',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 38,
+    sortOrder: 38,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+    beam: (notes) => {
+      if (notes[0].type === NoteType.Q) {
+        return '1-2';
+      }
+
+      return '0-1';
+    },
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXEERSS,
+    noteTemplate: [
+      { duration: 1, notes: [c(NoteType.E)] },
+      { duration: 1, notes: [c(NoteType.E, true)] },
+      { duration: 1, notes: [c(NoteType.S), c(NoteType.S)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Will want to exclude any patterns already represented by other patterns, this includes:
+      // - patterns with just 8th and/or 16th notes without rests
+      // - two 8th rest + 16th note patterns (represented by quarter rest + 2 16th notes)
+
+      if (subGroupsSoFar.length === 2) {
+        // If we have two 8th notes/rests, any more would cause an excluded pattern
+        if (allOfType(subGroupsSoFar, NoteType.E)) {
+          return false;
+        }
+
+        if (allRests(subGroupsSoFar)) {
+          return false;
+        }
+      }
+
+      if (subGroupsSoFar.length === 3) {
+        // Exclude all 8th notes/rest only patterns
+        if (allOfType(subGroupsSoFar, NoteType.E)) {
+          return false;
+        }
+
+        // Exclude patterns that are just notes
+        if (allNotes(subGroupsSoFar)) {
+          return false;
+        }
+
+        // Exclude two rests at the end
+        if (allRests(subGroupsSoFar.slice(1))) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+    description: 'combinations8thNotes8thRestsAndTwo16thNotes',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 39,
+    sortOrder: 39,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+    beam: (notes) => {
+      const notesLength = notes.length;
+      const firstNote = notes[0];
+      const lastNote = notes[notesLength - 1];
+
+      if (!firstNote.rest && !lastNote.rest) {
+        return true;
+      }
+
+      if (firstNote.rest && lastNote.rest) {
+        return '1-2';
+      }
+
+      if (firstNote.rest && !lastNote.rest) {
+        return `1-${notesLength - 1}`;
+      }
+
+      return `0-${notesLength - 2}`;
+    },
+  },
+  {
+    categoryType: NoteGroupCategoryType.COMPOUND_COMPLEX_COMBINATIONS,
+    type: NoteGroupType.CXEERSSR,
+    noteTemplate: [
+      { duration: 1, notes: [c(NoteType.E)] },
+      { duration: 1, notes: [c(NoteType.E, true)] },
+      { duration: 1, notes: [c(NoteType.S), c(NoteType.S)] },
+      { duration: 1, notes: [c(NoteType.S), c(NoteType.S, true)] },
+      { duration: 1, notes: [c(NoteType.S, true), c(NoteType.S)] },
+    ],
+    subGroupTargetDuration: 3,
+    includePredicate: (subGroupsSoFar) => {
+      // Only include patterns that have a 16th rest, as all other combinations are covered by
+      // other note groups
+      if (
+        subGroupsSoFar.length === 3 &&
+        !anyOfType(subGroupsSoFar, NoteType.S, true)
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    description: 'combinations8thNotes8thRests16thNotesAnd16thRests',
+    duration: 1,
+    icon: '',
+    defaultSelectionValue: false,
+    index: 40,
+    sortOrder: 40,
+    timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
+    beam: true,
+  },
 ];
 
 export const categorizeNoteGroups = (
@@ -826,7 +1133,11 @@ export const generateNoteGroup = (
   }
 
   if (noteGroup.beam) {
-    generatedNoteGroup.beam = true;
+    if (typeof noteGroup.beam === 'function') {
+      generatedNoteGroup.beam = noteGroup.beam(generatedNoteGroup.notes);
+    } else {
+      generatedNoteGroup.beam = true;
+    }
   }
 
   if (noteGroup.tuplet) {

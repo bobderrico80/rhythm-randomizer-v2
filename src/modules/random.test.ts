@@ -62,6 +62,16 @@ describe('The random module', () => {
       expect(randomItems.reduce((t, i) => t + i.duration, 0)).toEqual(4);
     });
 
+    it('only includes item combinations that meet the include predicate, if provided', () => {
+      const randomItems = getRandomItems(items, 4, (itemsSoFar) => {
+        return itemsSoFar.every((item) => item.name === 'foo');
+      });
+      expect(randomItems).toEqual([
+        { name: 'foo', duration: 2 },
+        { name: 'foo', duration: 2 },
+      ]);
+    });
+
     it('throws an error if any one of the items has a duration larger than the target duration', () => {
       expect(() => {
         getRandomItems(items, 3);
@@ -203,6 +213,21 @@ describe('The random module', () => {
     it('returns a random array of notes selected from the note template', () => {
       randomizeNoteSubGroups(dynamicNoteGroup).forEach((note) => {
         expect([NoteType.E, NoteType.S]).toContain(note.type);
+      });
+    });
+
+    it('also handles includePredicates', () => {
+      const dynamicNoteGroupWithPredicate: DynamicNoteGroup = {
+        ...dynamicNoteGroup,
+        includePredicate: (subGroupsSoFar) => {
+          return subGroupsSoFar.every((subGroup) => {
+            return subGroup.notes.every((note) => note.type === NoteType.S);
+          });
+        },
+      };
+
+      randomizeNoteSubGroups(dynamicNoteGroupWithPredicate).forEach((note) => {
+        expect(note.type).toEqual(NoteType.S);
       });
     });
   });

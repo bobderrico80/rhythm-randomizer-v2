@@ -19,6 +19,7 @@ import {
   generateNoteGroups,
   DynamicNoteGroup,
   GeneratedNoteGroup,
+  StaticNoteGroup,
 } from './note';
 import {
   getTimeSignature,
@@ -372,6 +373,23 @@ describe('The note module', () => {
           notes: duplicate(createNote(NoteType.E), 2),
           beam: true,
         });
+      });
+
+      it('handles dynamically beamed notes as expected', () => {
+        const testNoteGroup: StaticNoteGroup = {
+          categoryType: 'test' as NoteGroupCategoryType,
+          type: 'test' as NoteGroupType,
+          notes: duplicate(createNote(NoteType.E), 2),
+          description: 'test',
+          duration: 1,
+          icon: '',
+          defaultSelectionValue: false,
+          index: 0,
+          sortOrder: 0,
+          timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+          beam: (notes) => notes.every((note) => note.type === NoteType.E),
+        };
+        expect(generateNoteGroup(testNoteGroup).beam).toEqual(true);
       });
 
       it('handles tuplet note groups as expected', () => {
