@@ -10,10 +10,8 @@ import {
   getNoteGroup,
   getNoteGroupTypeSelectionMap,
   isValidNoteGroupForTimeSignature,
-  NoteGroupType,
   NoteGroupTypeSelectionMap,
   Pitch,
-  resetNoteGroupTypeSelectionMap,
 } from './note';
 import { getRandomMeasures } from './random';
 import { ScoreData } from './score';
