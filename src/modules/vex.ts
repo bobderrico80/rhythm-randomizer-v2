@@ -87,7 +87,17 @@ const createNotes = (
     });
 
     if (noteGroup.beam) {
-      toRender.beams.push(new VF.Beam(staveNotes, false));
+      let staveNotesToBeam = staveNotes;
+
+      if (typeof noteGroup.beam === 'string') {
+        const [start, end] = noteGroup.beam.split('-');
+        staveNotesToBeam = staveNotesToBeam.slice(
+          parseInt(start),
+          parseInt(end) + 1
+        );
+      }
+
+      toRender.beams.push(new VF.Beam(staveNotesToBeam, false));
     }
 
     if (noteGroup.tuplet) {

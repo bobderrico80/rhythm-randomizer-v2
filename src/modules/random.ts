@@ -25,7 +25,8 @@ export interface Randomizable {
 
 export const getRandomItems = <T extends Randomizable>(
   possibleItems: T[],
-  targetDuration: number
+  targetDuration: number,
+  includePredicate?: (itemsSoFar: T[]) => boolean
 ): T[] => {
   const uniqueDurations = [
     ...new Set(possibleItems.map((item) => item.duration)),
@@ -45,15 +46,29 @@ export const getRandomItems = <T extends Randomizable>(
     const randomIndex = Math.floor(Math.random() * possibleItems.length);
     const nextPossibleItem = possibleItems[randomIndex];
 
-    if (nextPossibleItem.duration + totalDuration > targetDuration) {
-      // Detect infinite loops, incase it becomes impossible to reach the target with the possible
-      // items
-      if (loopCount > MAX_LOOP_COUNT) {
-        logger.warn('Infinite loop detected!');
-        throw new Error();
-      }
+    // Detect infinite loops, incase it becomes impossible to reach the target with the possible
+    // items
+    if (loopCount > MAX_LOOP_COUNT) {
+      logger.warn('Infinite loop detected!');
+      throw new Error();
+    }
 
+    if (nextPossibleItem.duration + totalDuration > targetDuration) {
       loopCount++;
+      continue;
+    }
+
+    if (
+      includePredicate &&
+      !includePredicate([...randomItems, nextPossibleItem])
+    ) {
+      loopCount++;
+      if (loopCount === 999) {
+        logger.warn('Infinite loop caused by include predicate', [
+          ...randomItems,
+          nextPossibleItem,
+        ]);
+      }
       continue;
     }
 
@@ -182,12 +197,14 @@ export const randomizeNoteSubGroups = (
     // In test mode, just use the first subgroup
     randomizedSubGroups = getRandomItems(
       [dynamicNoteGroup.noteTemplate[0]],
-      dynamicNoteGroup.subGroupTargetDuration
+      dynamicNoteGroup.subGroupTargetDuration,
+      dynamicNoteGroup.includePredicate
     );
   } else {
     randomizedSubGroups = getRandomItems(
       dynamicNoteGroup.noteTemplate,
-      dynamicNoteGroup.subGroupTargetDuration
+      dynamicNoteGroup.subGroupTargetDuration,
+      dynamicNoteGroup.includePredicate
     );
   }
 
