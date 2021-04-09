@@ -85,5 +85,6 @@ const SPREADSHEET_RANGE = 'translations!A:C';
     logger.info('Translations fetched!');
   } catch (error) {
     logger.error('Error fetching translations!', error);
+    process.exit(1);
   }
 })();
