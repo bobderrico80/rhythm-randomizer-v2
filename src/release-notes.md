@@ -1,3 +1,11 @@
+## What's New in Version 2.7.0?
+
+Complex compound meter options!
+
+After much delay, part 2 of compound meter has arrived! Included with the compound meter note selections is a new category called 'Compound Complex Combinations.' These note selections behave a little bit differently than other note selections in that selecting one will cause a number of different patterns to potentially generate in the rhythm. These special kind of selections are denoted with an ellipsis (`...`) in the icon. The icons represent the types of rhythms patterns one can expect to see when using this selection.
+
+Care was taken to ensure that complex patterns do not also duplicate other note selections. For example, selecting the 8th note/rest combination will not cause a simple three-8th-note pattern to generate, as this is already covered by a separate note group. To use these note selections effectively, it is best to layer several on top of each other (or if you want a real challenge, select only the 8th note/rest and 16th note/rest one!).
+
 ## What's New in Version 2.6.0?
 
 German language support!
