@@ -15,6 +15,8 @@
     "@types/react-dom": "^16.9.8",
     "@types/vexflow": "^3.0.0",
     "classnames": "^2.2.6",
+    "dotenv": "^8.2.0",
+    "googleapis": "^71.0.0",
     "i18next": "^20.1.0",
     "i18next-browser-languagedetector": "^6.1.0",
     "i18next-http-backend": "^1.2.1",
@@ -36,7 +38,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "fetch-translations": "node fetch-translations.js"
   },
   "eslintConfig": {
     "extends": "react-app",
