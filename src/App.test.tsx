@@ -5,7 +5,8 @@ import App from './App';
 import * as random from './modules/random';
 import * as vex from './modules/vex';
 import * as events from './modules/events';
-import { getGeneratedNoteGroups, NoteGroupType } from './modules/note';
+import { getGeneratedNoteGroups } from './modules/note';
+import { NoteGroupType } from './modules/note-definition';
 import { getTimeSignature, TimeSignatureType } from './modules/time-signature';
 import { scoreDimensionConfig } from './components/Score';
 

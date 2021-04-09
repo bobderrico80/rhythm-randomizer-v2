@@ -4,11 +4,13 @@ import './App.scss';
 import {
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
+} from './modules/note';
+import {
   NoteGroupTypeSelectionMap,
   Octave,
   Pitch,
   PitchClass,
-} from './modules/note';
+} from './modules/note-definition';
 import Score from './components/Score';
 import { getRandomMeasures } from './modules/random';
 import {

@@ -1,5 +1,5 @@
 import Vex from 'vexflow';
-import { GeneratedNoteGroup } from './note';
+import { GeneratedNoteGroup } from './note-definition';
 import { TimeSignature } from './time-signature';
 import {
   getScoreDimensions,

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { buildBemClassName } from '../modules/util';
 import Select from './Select';
 import './PitchControl.scss';
-import { PitchClass, Octave } from '../modules/note';
+import { PitchClass, Octave } from '../modules/note-definition';
 import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
 import { useTranslation } from 'react-i18next';

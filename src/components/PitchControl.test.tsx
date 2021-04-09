@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import PitchControl from './PitchControl';
 import { Action, ActionType, State } from '../modules/reducer';
 import { AppContext, DEFAULT_SCORE_SETTINGS } from '../App';
-import { Octave, PitchClass } from '../modules/note';
+import { Octave, PitchClass } from '../modules/note-definition';
 
 describe('The <PitchControl /> component', () => {
   let state: State;

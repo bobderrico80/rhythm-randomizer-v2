@@ -1,6 +1,6 @@
 import Vex from 'vexflow';
 import { Measure, System } from './vex';
-import { Note, NoteType, GeneratedNoteGroup } from './note';
+import { Note, NoteType, GeneratedNoteGroup } from './note-definition';
 import { TimeSignature } from './time-signature';
 
 export interface ScoreDimensions {

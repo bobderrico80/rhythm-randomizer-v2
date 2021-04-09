@@ -7,12 +7,14 @@ import {
 import {
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
+  resetNoteGroupTypeSelectionMap,
+} from './note';
+import {
   NoteGroupType,
   NoteGroupTypeSelectionMap,
-  resetNoteGroupTypeSelectionMap,
   Octave,
   PitchClass,
-} from './note';
+} from './note-definition';
 import {
   decodeScoreSettingsShareString,
   encodeScoreSettingsShareString,

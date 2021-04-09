@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import classnames from 'classnames';
 import { buildBemClassName } from '../modules/util';
 import {
-  CategorizedNoteGroup,
   categorizeNoteGroups,
   getNoteGroups,
   isValidNoteGroupForTimeSignature,
 } from '../modules/note';
+import { CategorizedNoteGroup } from '../modules/note-definition';
 import NoteCheckboxGroup from './NoteCheckboxGroup';
 import { AppContext } from '../App';
 

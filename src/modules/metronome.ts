@@ -1,4 +1,4 @@
-import { Octave, Pitch, PitchClass, PlaybackPattern } from './note';
+import { Octave, Pitch, PitchClass, PlaybackPattern } from './note-definition';
 import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { duplicate, findItemOfType, TypedItem } from './util';
 

@@ -56,13 +56,15 @@ import {
   getNoteGroup,
   getNoteGroupTypeSelectionMap,
   isValidNoteGroupForTimeSignature,
+  resetNoteGroupTypeSelectionMap,
+} from './note';
+import {
   noteGroups,
   NoteGroupTypeSelectionMap,
   Octave,
   Pitch,
   PitchClass,
-  resetNoteGroupTypeSelectionMap,
-} from './note';
+} from './note-definition';
 import { TimeSignature, timeSignatures } from './time-signature';
 
 const SHARE_DECODE_ERROR_MESSAGE = 'Cannot decode share string';
