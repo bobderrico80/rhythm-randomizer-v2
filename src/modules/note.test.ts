@@ -2,24 +2,16 @@ import {
   getNoteGroup,
   getNoteGroups,
   getTotalDuration,
-  NoteGroupType,
-  NoteType,
-  NoteGroupCategoryType,
   resetNoteGroupTypeSelectionMap,
   getNoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
-  NoteGroupTypeSelectionMap,
   setNoteGroupTypeSelections,
   getPlaybackPatternsForNoteGroup,
   isValidNoteGroupForTimeSignature,
   getGeneratedNoteGroups,
   getGeneratedNoteGroup,
   generateNoteGroup,
-  createNote,
   generateNoteGroups,
-  DynamicNoteGroup,
-  GeneratedNoteGroup,
-  StaticNoteGroup,
 } from './note';
 import {
   getTimeSignature,
@@ -27,6 +19,16 @@ import {
   TimeSignatureComplexity,
   TimeSignatureType,
 } from './time-signature';
+import {
+  NoteGroupTypeSelectionMap,
+  NoteGroupType,
+  NoteType,
+  NoteGroupCategoryType,
+  createNote,
+  DynamicNoteGroup,
+  GeneratedNoteGroup,
+  StaticNoteGroup,
+} from './note-definition';
 import { duplicate } from './util';
 
 describe('The note module', () => {

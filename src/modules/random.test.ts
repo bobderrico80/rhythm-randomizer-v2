@@ -5,16 +5,18 @@ import {
   randomizeNoteSubGroups,
 } from './random';
 import {
-  NoteGroupType,
   getTotalDuration,
   getNoteGroupTypeSelectionMap,
   resetNoteGroupTypeSelectionMap,
+} from './note';
+import {
+  NoteGroupType,
   NoteGroupTypeSelectionMap,
   createNote,
   DynamicNoteGroup,
   NoteGroupCategoryType,
   NoteType,
-} from './note';
+} from './note-definition';
 import { InvalidNoteSelectionError } from './error';
 import { Measure } from './vex';
 import {

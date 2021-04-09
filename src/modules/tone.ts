@@ -1,11 +1,7 @@
 import * as Tone from 'tone';
 import { getMetronomePlaybackPatterns, MetronomeSettings } from './metronome';
-import {
-  getTotalDuration,
-  getPlaybackPatternsForNoteGroup,
-  PlaybackPattern,
-  Pitch,
-} from './note';
+import { getTotalDuration, getPlaybackPatternsForNoteGroup } from './note';
+import { PlaybackPattern, Pitch } from './note-definition';
 import { TimeSignature } from './time-signature';
 import { Measure } from './vex';
 

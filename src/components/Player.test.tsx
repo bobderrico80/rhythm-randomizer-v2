@@ -6,7 +6,7 @@ import { PlaybackState } from '../modules/tone';
 import * as tone from '../modules/tone';
 import { Action, State } from '../modules/reducer';
 import { AppContext, DEFAULT_SCORE_SETTINGS } from '../App';
-import { Octave, PitchClass } from '../modules/note';
+import { Octave, PitchClass } from '../modules/note-definition';
 import { getTimeSignature, TimeSignatureType } from '../modules/time-signature';
 
 jest.mock('../modules/tone');

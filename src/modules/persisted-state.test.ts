@@ -6,13 +6,15 @@ import {
 import { MetronomeSettings } from './metronome';
 import {
   getNoteGroupTypeSelectionMap,
+  setNoteGroupTypeSelections,
+} from './note';
+import {
   NoteGroupType,
   NoteGroupTypeSelectionMap,
-  setNoteGroupTypeSelections,
   Octave,
   Pitch,
   PitchClass,
-} from './note';
+} from './note-definition';
 import {
   getPersistedAppState,
   persistAppState,

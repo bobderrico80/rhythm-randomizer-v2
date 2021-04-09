@@ -11,12 +11,8 @@ import {
   ScoreDimensionConfig,
 } from './score';
 import { Measure, System } from './vex';
-import {
-  Note,
-  NoteGroupType,
-  getGeneratedNoteGroup,
-  getGeneratedNoteGroups,
-} from './note';
+import { getGeneratedNoteGroup, getGeneratedNoteGroups } from './note';
+import { Note, NoteGroupType } from './note-definition';
 import {
   getTimeSignature,
   TimeSignatureType,

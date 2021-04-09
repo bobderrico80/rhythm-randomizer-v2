@@ -6,7 +6,7 @@ import {
   NoteGroupTypeSelectionMap,
   NoteGroupType,
   NoteGroupCategory,
-} from '../modules/note';
+} from '../modules/note-definition';
 import './NoteCheckboxGroup.scss';
 import IconButton from './IconButton';
 import selectAllIcon from '../svg/select-all.svg';

@@ -1,14 +1,16 @@
 import {
-  NoteGroup,
   getNoteGroups,
-  NoteGroupTypeSelectionMap,
   getSelectedNoteGroupTypes,
   generateNoteGroup,
   generateNoteGroups,
+} from './note';
+import {
+  NoteGroup,
+  NoteGroupTypeSelectionMap,
   NoteSubGroup,
   DynamicNoteGroup,
   Note,
-} from './note';
+} from './note-definition';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
 import { TimeSignature } from './time-signature';

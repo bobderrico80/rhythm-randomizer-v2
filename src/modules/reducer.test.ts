@@ -1,10 +1,7 @@
 import { DEFAULT_PITCH, DEFAULT_SCORE_SETTINGS } from '../App';
 import { MultiSelectStatusType } from '../components/NoteCheckboxGroup';
-import {
-  getNoteGroupCategory,
-  NoteGroupCategoryType,
-  NoteGroupType,
-} from './note';
+import { getNoteGroupCategory } from './note';
+import { NoteGroupCategoryType, NoteGroupType } from './note-definition';
 import { Action, ActionType, reducer, State } from './reducer';
 
 describe('The reducer module', () => {

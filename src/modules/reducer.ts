@@ -1,6 +1,7 @@
 import { ScoreSettings } from '../App';
 import { MultiSelectStatusType } from '../components/NoteCheckboxGroup';
-import { NoteGroupType, NoteGroupCategory, getNoteGroup } from './note';
+import { NoteGroupType, NoteGroupCategory } from './note-definition';
+import { getNoteGroup } from './note';
 
 export type State = {
   scoreSettings: ScoreSettings;

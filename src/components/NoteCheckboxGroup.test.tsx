@@ -8,10 +8,12 @@ import {
   getNoteGroupCategory,
   getNoteGroups,
   getNoteGroupTypeSelectionMap,
-  NoteGroupCategoryType,
-  NoteGroupType,
   resetNoteGroupTypeSelectionMap,
 } from '../modules/note';
+import {
+  NoteGroupCategoryType,
+  NoteGroupType,
+} from '../modules/note-definition';
 
 describe('The <NoteCheckboxGroup /> component', () => {
   let state: State;

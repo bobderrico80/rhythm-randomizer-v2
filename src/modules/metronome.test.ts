@@ -1,5 +1,5 @@
 import { ClickType, getClick, getMetronomePlaybackPatterns } from './metronome';
-import { PlaybackPattern } from './note';
+import { PlaybackPattern } from './note-definition';
 import { getTimeSignature, TimeSignatureType } from './time-signature';
 
 const expectPlaybackPatternToEqualClick = (
