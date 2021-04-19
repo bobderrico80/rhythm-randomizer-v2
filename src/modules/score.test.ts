@@ -61,6 +61,8 @@ const setupMeasureConfiguration = (config: SetupMeasureConfig = {}) => {
 };
 
 describe('The score module', () => {
+  const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
   let dimensions: ScoreDimensions;
 
   describe('getScoreDimensions() function', () => {
@@ -236,7 +238,7 @@ describe('The score module', () => {
     describe('with non-dotted notes with standard behavior', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getGeneratedNoteGroup(NoteGroupType.Q).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.Q, timeSignature).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -277,7 +279,7 @@ describe('The score module', () => {
     describe('with dotted notes', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getGeneratedNoteGroup(NoteGroupType.HD).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.HD, timeSignature).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -294,7 +296,7 @@ describe('The score module', () => {
     describe('with whole rests in a non-first measure', () => {
       beforeEach(() => {
         inFirstMeasure = false;
-        note = getGeneratedNoteGroup(NoteGroupType.WR).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.WR, timeSignature).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -311,7 +313,7 @@ describe('The score module', () => {
     describe('with whole rests in the first measure', () => {
       beforeEach(() => {
         inFirstMeasure = true;
-        note = getGeneratedNoteGroup(NoteGroupType.WR).notes[0];
+        note = getGeneratedNoteGroup(NoteGroupType.WR, timeSignature).notes[0];
         noteConfiguration = getNoteConfiguration(
           note,
           measureWidth,
@@ -479,10 +481,26 @@ describe('The score module', () => {
       beforeEach(() => {
         system = {
           measures: [
-            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
-            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.WR)] },
-            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
-            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.WR)] },
+            {
+              noteGroups: [
+                getGeneratedNoteGroup(NoteGroupType.W, timeSignature),
+              ],
+            },
+            {
+              noteGroups: [
+                getGeneratedNoteGroup(NoteGroupType.WR, timeSignature),
+              ],
+            },
+            {
+              noteGroups: [
+                getGeneratedNoteGroup(NoteGroupType.W, timeSignature),
+              ],
+            },
+            {
+              noteGroups: [
+                getGeneratedNoteGroup(NoteGroupType.WR, timeSignature),
+              ],
+            },
           ],
         };
         measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
@@ -503,15 +521,21 @@ describe('The score module', () => {
       beforeEach(() => {
         system = {
           measures: [
-            { noteGroups: [getGeneratedNoteGroup(NoteGroupType.W)] },
+            {
+              noteGroups: [
+                getGeneratedNoteGroup(NoteGroupType.W, timeSignature),
+              ],
+            },
             {
               noteGroups: getGeneratedNoteGroups(
+                timeSignature,
                 NoteGroupType.H,
                 NoteGroupType.H
               ),
             },
             {
               noteGroups: getGeneratedNoteGroups(
+                timeSignature,
                 NoteGroupType.Q,
                 NoteGroupType.Q,
                 NoteGroupType.Q,
@@ -520,6 +544,7 @@ describe('The score module', () => {
             },
             {
               noteGroups: getGeneratedNoteGroups(
+                timeSignature,
                 NoteGroupType.EE,
                 NoteGroupType.EE,
                 NoteGroupType.EE,

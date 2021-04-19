@@ -1,4 +1,5 @@
 import {
+  getDuration,
   getRandomItems,
   getRandomMeasures,
   Randomizable,
@@ -61,7 +62,7 @@ describe('The random module', () => {
 
     it('contains items that add up to the target duration', () => {
       const randomItems = getRandomItems(items, 4);
-      expect(randomItems.reduce((t, i) => t + i.duration, 0)).toEqual(4);
+      expect(randomItems.reduce((t, i) => t + getDuration(i, 4), 0)).toEqual(4);
     });
 
     it('only includes item combinations that meet the include predicate, if provided', () => {
@@ -231,6 +232,21 @@ describe('The random module', () => {
       randomizeNoteSubGroups(dynamicNoteGroupWithPredicate).forEach((note) => {
         expect(note.type).toEqual(NoteType.S);
       });
+    });
+  });
+
+  describe('getDuration() function', () => {
+    it('returns the expected duration for an item with a static duration', () => {
+      expect(getDuration({ duration: 4 }, 4)).toEqual(4);
+    });
+
+    it('returns the expected duration for an item with a dynamic duration', () => {
+      expect(
+        getDuration(
+          { duration: (targetDuration: number) => targetDuration / 2 },
+          4
+        )
+      ).toEqual(2);
     });
   });
 });

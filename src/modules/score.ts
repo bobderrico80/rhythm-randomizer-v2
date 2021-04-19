@@ -153,8 +153,10 @@ export const getNoteConfiguration = (
     addDot: note.dotted ? true : false,
   };
 
-  // Center the whole rest
+  // Center the whole rest and remove the dot, even if it has one (as in compound time signatures)
   if (note.type === NoteType.W && note.rest) {
+    noteConfiguration.addDot = false;
+
     let offsetPercent = scoreDimensionConfig.wholeRestCenteringOffset;
 
     if (inFirstMeasure) {
