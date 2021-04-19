@@ -14,7 +14,7 @@ import {
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
 import { TimeSignature } from './time-signature';
-import { sortBy } from 'lodash';
+import { isFunction, sortBy } from 'lodash';
 import { duplicate } from './util';
 
 const logger = console;
@@ -22,8 +22,17 @@ const logger = console;
 const MAX_LOOP_COUNT = 1000;
 
 export interface Randomizable {
-  duration: number;
+  duration: number | ((targetDuration: number) => number);
 }
+
+export const getDuration = <T extends Randomizable>(
+  item: T,
+  targetDuration: number
+) => {
+  return isFunction(item.duration)
+    ? item.duration(targetDuration)
+    : item.duration;
+};
 
 export const getRandomItems = <T extends Randomizable>(
   possibleItems: T[],
@@ -55,7 +64,10 @@ export const getRandomItems = <T extends Randomizable>(
       throw new Error();
     }
 
-    if (nextPossibleItem.duration + totalDuration > targetDuration) {
+    if (
+      getDuration(nextPossibleItem, targetDuration) + totalDuration >
+      targetDuration
+    ) {
       loopCount++;
       continue;
     }
@@ -76,7 +88,7 @@ export const getRandomItems = <T extends Randomizable>(
 
     randomItems.push(nextPossibleItem);
     totalDuration = randomItems.reduce(
-      (total, item) => total + item.duration,
+      (total, item) => total + getDuration(item, targetDuration),
       0
     );
 
@@ -121,7 +133,7 @@ const getRandomMeasure = (
   }
 
   let randomMeasure: Measure = {
-    noteGroups: generateNoteGroups(randomNoteGroups),
+    noteGroups: generateNoteGroups(randomNoteGroups, timeSignature),
   };
 
   return randomMeasure;
@@ -171,9 +183,15 @@ export const getTestRandomMeasures = (
       selectedNoteGroups[
         (index + testRandomMeasureIndex) % selectedNoteGroups.length
       ];
-    const timesToDuplicate = timeSignature.beatsPerMeasure / noteGroup.duration;
+    const timesToDuplicate =
+      timeSignature.beatsPerMeasure /
+      getDuration(noteGroup, timeSignature.beatsPerMeasure);
 
-    const generatedNoteGroup = generateNoteGroup(noteGroup, true);
+    const generatedNoteGroup = generateNoteGroup(
+      noteGroup,
+      timeSignature,
+      true
+    );
 
     if (!Number.isInteger(timesToDuplicate)) {
       throw new InvalidNoteSelectionError();

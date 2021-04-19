@@ -11,7 +11,7 @@ import {
   GeneratedNoteGroup,
   PlaybackPattern,
 } from './note-definition';
-import { randomizeNoteSubGroups } from './random';
+import { getDuration, randomizeNoteSubGroups } from './random';
 import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { findItemOfType, categorizeItems } from './util';
 
@@ -87,6 +87,7 @@ export const getNoteGroups = (...types: NoteGroupType[]): NoteGroup[] => {
 
 export const generateNoteGroup = (
   noteGroup: NoteGroup,
+  timeSignature: TimeSignature,
   testMode: boolean = false
 ): GeneratedNoteGroup => {
   let generatedNoteGroup: GeneratedNoteGroup;
@@ -94,7 +95,7 @@ export const generateNoteGroup = (
   if (noteGroup.notes) {
     generatedNoteGroup = {
       type: noteGroup.type,
-      duration: noteGroup.duration,
+      duration: getDuration(noteGroup, timeSignature.beatsPerMeasure),
       notes: noteGroup.notes,
     };
   } else {
@@ -102,7 +103,7 @@ export const generateNoteGroup = (
 
     generatedNoteGroup = {
       type: noteGroup.type,
-      duration: noteGroup.duration,
+      duration: getDuration(noteGroup, timeSignature.beatsPerMeasure),
       notes: randomizedNotes,
     };
   }
@@ -124,22 +125,29 @@ export const generateNoteGroup = (
 
 export const generateNoteGroups = (
   noteGroups: NoteGroup[],
+  timeSignature: TimeSignature,
   testMode: boolean = false
 ): GeneratedNoteGroup[] => {
-  return noteGroups.map((noteGroup) => generateNoteGroup(noteGroup, testMode));
+  return noteGroups.map((noteGroup) =>
+    generateNoteGroup(noteGroup, timeSignature, testMode)
+  );
 };
 
 export const getGeneratedNoteGroup = (
-  type: NoteGroupType
+  type: NoteGroupType,
+  timeSignature: TimeSignature
 ): GeneratedNoteGroup => {
   const noteGroup = getNoteGroup(type);
-  return generateNoteGroup(noteGroup);
+  return generateNoteGroup(noteGroup, timeSignature);
 };
 
 export const getGeneratedNoteGroups = (
+  timeSignature: TimeSignature,
   ...types: NoteGroupType[]
 ): GeneratedNoteGroup[] => {
-  return types.map((noteGroupType) => getGeneratedNoteGroup(noteGroupType));
+  return types.map((noteGroupType) =>
+    getGeneratedNoteGroup(noteGroupType, timeSignature)
+  );
 };
 
 export const getTotalDuration = (noteGroups: GeneratedNoteGroup[]): number => {
@@ -152,8 +160,10 @@ export const isValidNoteGroupForTimeSignature = (
   noteGroup: NoteGroup,
   timeSignature: TimeSignature
 ): boolean => {
+  const duration = getDuration(noteGroup, timeSignature.beatsPerMeasure);
+
   return (
-    noteGroup.duration <= timeSignature.beatsPerMeasure &&
+    duration <= timeSignature.beatsPerMeasure &&
     noteGroup.timeSignatureComplexity === timeSignature.complexity
   );
 };
