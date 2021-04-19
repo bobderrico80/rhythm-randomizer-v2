@@ -185,14 +185,22 @@ describe('The <App /> component', () => {
 
     describe('rhythm generation behavior', () => {
       it('renders the expected score with default note selections, time signature, and measure count', () => {
+        const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
         expect(createScoreSpy).toHaveBeenCalledWith(
           expect.any(HTMLElement),
           {
-            timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+            timeSignature,
             measures: [
-              { noteGroups: getGeneratedNoteGroups(NoteGroupType.W) },
               {
                 noteGroups: getGeneratedNoteGroups(
+                  timeSignature,
+                  NoteGroupType.W
+                ),
+              },
+              {
+                noteGroups: getGeneratedNoteGroups(
+                  timeSignature,
                   NoteGroupType.H,
                   NoteGroupType.H
                 ),
@@ -217,19 +225,25 @@ describe('The <App /> component', () => {
         it('renders a new score with the same note selections, time signature, and measure count settings', async () => {
           expect(createScoreSpy).toHaveBeenCalledTimes(2);
           await waitFor(() => {
+            const timeSignature = getTimeSignature(
+              TimeSignatureType.SIMPLE_4_4
+            );
+
             expect(createScoreSpy).toHaveBeenLastCalledWith(
               expect.any(HTMLElement),
               {
-                timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+                timeSignature,
                 measures: [
                   {
                     noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
                       NoteGroupType.H,
                       NoteGroupType.H
                     ),
                   },
                   {
                     noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
@@ -258,19 +272,25 @@ describe('The <App /> component', () => {
         it('renders a new score with the same note selections, time signature, and measure count settings', async () => {
           expect(createScoreSpy).toHaveBeenCalledTimes(2);
           await waitFor(() => {
+            const timeSignature = getTimeSignature(
+              TimeSignatureType.SIMPLE_4_4
+            );
+
             expect(createScoreSpy).toHaveBeenLastCalledWith(
               expect.any(HTMLElement),
               {
-                timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+                timeSignature,
                 measures: [
                   {
                     noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
                       NoteGroupType.H,
                       NoteGroupType.H
                     ),
                   },
                   {
                     noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
                       NoteGroupType.Q,
@@ -304,16 +324,26 @@ describe('The <App /> component', () => {
         it('renders a new score with the new note selections', async () => {
           expect(createScoreSpy).toHaveBeenCalledTimes(1);
           await waitFor(() => {
+            const timeSignature = getTimeSignature(
+              TimeSignatureType.SIMPLE_3_4
+            );
+
             expect(createScoreSpy).toHaveBeenLastCalledWith(
               expect.any(HTMLElement),
               {
-                timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
+                timeSignature,
                 measures: [
                   {
-                    noteGroups: getGeneratedNoteGroups(NoteGroupType.HD),
+                    noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
+                      NoteGroupType.HD
+                    ),
                   },
                   {
-                    noteGroups: getGeneratedNoteGroups(NoteGroupType.HD),
+                    noteGroups: getGeneratedNoteGroups(
+                      timeSignature,
+                      NoteGroupType.HD
+                    ),
                   },
                 ],
               },

@@ -12,11 +12,19 @@ describe('The <Score /> component', () => {
   let scoreClickHandler: jest.Mock;
   let createScoreSpy: jest.SpyInstance;
 
+  const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
   const scoreData = {
     measures: [
-      { noteGroups: getGeneratedNoteGroups(NoteGroupType.H, NoteGroupType.H) },
+      {
+        noteGroups: getGeneratedNoteGroups(
+          timeSignature,
+          NoteGroupType.H,
+          NoteGroupType.H
+        ),
+      },
     ],
-    timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+    timeSignature,
   };
 
   beforeEach(() => {

@@ -61,7 +61,6 @@ describe('The note module', () => {
             { type: NoteType.W, rest: true, dotted: false, widthUnit: 13 },
           ],
           description: 'aWholeRest',
-          duration: 4,
         },
       ]);
     });
@@ -71,7 +70,11 @@ describe('The note module', () => {
     it('returns the total duration of the provided note groups', () => {
       expect(
         getTotalDuration(
-          getGeneratedNoteGroups(NoteGroupType.W, NoteGroupType.H)
+          getGeneratedNoteGroups(
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+            NoteGroupType.W,
+            NoteGroupType.H
+          )
         )
       ).toEqual(6);
     });
@@ -190,11 +193,13 @@ describe('The note module', () => {
   });
 
   describe('getPlaybackPatternsForNoteGroup() function', () => {
+    const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
     it('handles single-note note groups', () => {
       expect(
         getPlaybackPatternsForNoteGroup(
-          getGeneratedNoteGroup(NoteGroupType.W),
-          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          getGeneratedNoteGroup(NoteGroupType.W, timeSignature),
+          timeSignature
         )
       ).toEqual([
         {
@@ -207,8 +212,8 @@ describe('The note module', () => {
     it('handles multi note note-groups', () => {
       expect(
         getPlaybackPatternsForNoteGroup(
-          getGeneratedNoteGroup(NoteGroupType.EE),
-          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          getGeneratedNoteGroup(NoteGroupType.EE, timeSignature),
+          timeSignature
         )
       ).toEqual([
         {
@@ -225,8 +230,8 @@ describe('The note module', () => {
     it('handles rests', () => {
       expect(
         getPlaybackPatternsForNoteGroup(
-          getGeneratedNoteGroup(NoteGroupType.WR),
-          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          getGeneratedNoteGroup(NoteGroupType.WR, timeSignature),
+          timeSignature
         )
       ).toEqual([
         {
@@ -239,8 +244,8 @@ describe('The note module', () => {
     it('handles dotted notes', () => {
       expect(
         getPlaybackPatternsForNoteGroup(
-          getGeneratedNoteGroup(NoteGroupType.HD),
-          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          getGeneratedNoteGroup(NoteGroupType.HD, timeSignature),
+          timeSignature
         )
       ).toEqual([
         {
@@ -253,8 +258,8 @@ describe('The note module', () => {
     it('handles tuplets', () => {
       expect(
         getPlaybackPatternsForNoteGroup(
-          getGeneratedNoteGroup(NoteGroupType.TEEE),
-          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          getGeneratedNoteGroup(NoteGroupType.TEEE, timeSignature),
+          timeSignature
         )
       ).toEqual([
         {
@@ -273,11 +278,12 @@ describe('The note module', () => {
     });
 
     describe('with a compound meter time signature', () => {
+      const timeSignature = getTimeSignature(TimeSignatureType.COMPOUND_6_8);
       it('converts non-tupleted notes into tupleted notes', () => {
         expect(
           getPlaybackPatternsForNoteGroup(
-            getGeneratedNoteGroup(NoteGroupType.CEEE),
-            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+            getGeneratedNoteGroup(NoteGroupType.CEEE, timeSignature),
+            timeSignature
           )
         ).toEqual([
           {
@@ -298,8 +304,8 @@ describe('The note module', () => {
       it('converts tupleted notes into non-tupleted notes', () => {
         expect(
           getPlaybackPatternsForNoteGroup(
-            getGeneratedNoteGroup(NoteGroupType.CTEE),
-            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+            getGeneratedNoteGroup(NoteGroupType.CTEE, timeSignature),
+            timeSignature
           )
         ).toEqual([
           {
@@ -316,8 +322,8 @@ describe('The note module', () => {
       it('removes the dot from dotted notes', () => {
         expect(
           getPlaybackPatternsForNoteGroup(
-            getGeneratedNoteGroup(NoteGroupType.CHD),
-            getTimeSignature(TimeSignatureType.COMPOUND_6_8)
+            getGeneratedNoteGroup(NoteGroupType.CHD, timeSignature),
+            timeSignature
           )
         ).toEqual([
           {
@@ -359,9 +365,13 @@ describe('The note module', () => {
   });
 
   describe('generateNoteGroup() function', () => {
+    const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
     describe('with static note groups', () => {
       it('maps the required properties as expected', () => {
-        expect(generateNoteGroup(getNoteGroup(NoteGroupType.Q))).toEqual({
+        expect(
+          generateNoteGroup(getNoteGroup(NoteGroupType.Q), timeSignature)
+        ).toEqual({
           type: NoteGroupType.Q,
           duration: 1,
           notes: [createNote(NoteType.Q)],
@@ -369,7 +379,9 @@ describe('The note module', () => {
       });
 
       it('handles beamed note groups as expected', () => {
-        expect(generateNoteGroup(getNoteGroup(NoteGroupType.EE))).toEqual({
+        expect(
+          generateNoteGroup(getNoteGroup(NoteGroupType.EE), timeSignature)
+        ).toEqual({
           type: NoteGroupType.EE,
           duration: 1,
           notes: duplicate(createNote(NoteType.E), 2),
@@ -391,11 +403,15 @@ describe('The note module', () => {
           timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
           beam: (notes) => notes.every((note) => note.type === NoteType.E),
         };
-        expect(generateNoteGroup(testNoteGroup).beam).toEqual(true);
+        expect(generateNoteGroup(testNoteGroup, timeSignature).beam).toEqual(
+          true
+        );
       });
 
       it('handles tuplet note groups as expected', () => {
-        expect(generateNoteGroup(getNoteGroup(NoteGroupType.TQQQ))).toEqual({
+        expect(
+          generateNoteGroup(getNoteGroup(NoteGroupType.TQQQ), timeSignature)
+        ).toEqual({
           type: NoteGroupType.TQQQ,
           duration: 2,
           notes: duplicate(createNote(NoteType.Q), 3),
@@ -405,6 +421,8 @@ describe('The note module', () => {
     });
 
     describe('with dynamic note groups', () => {
+      const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
       const dynamicNoteGroup: DynamicNoteGroup = {
         type: 'test' as NoteGroupType,
         categoryType: 'test' as NoteGroupCategoryType,
@@ -425,7 +443,7 @@ describe('The note module', () => {
       let generatedNoteGroup: GeneratedNoteGroup;
 
       beforeEach(() => {
-        generatedNoteGroup = generateNoteGroup(dynamicNoteGroup);
+        generatedNoteGroup = generateNoteGroup(dynamicNoteGroup, timeSignature);
       });
 
       it('contains notes that are found in the note template', () => {
@@ -437,9 +455,14 @@ describe('The note module', () => {
   });
 
   describe('generateNoteGroups() function', () => {
+    const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
     it('maps the required properties as expected', () => {
       expect(
-        generateNoteGroups(getNoteGroups(NoteGroupType.Q, NoteGroupType.TEEE))
+        generateNoteGroups(
+          getNoteGroups(NoteGroupType.Q, NoteGroupType.TEEE),
+          timeSignature
+        )
       ).toEqual([
         {
           type: NoteGroupType.Q,
@@ -458,9 +481,13 @@ describe('The note module', () => {
   });
 
   describe('getGeneratedNoteGroup() function', () => {
+    const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
     describe('with static note groups', () => {
       it('gets the expected generated note group from the note group type', () => {
-        expect(getGeneratedNoteGroup(NoteGroupType.TEEE)).toEqual({
+        expect(
+          getGeneratedNoteGroup(NoteGroupType.TEEE, timeSignature)
+        ).toEqual({
           type: NoteGroupType.TEEE,
           duration: 1,
           notes: duplicate(createNote(NoteType.E), 3),
@@ -472,10 +499,16 @@ describe('The note module', () => {
   });
 
   describe('getGeneratedNoteGroups() function', () => {
+    const timeSignature = getTimeSignature(TimeSignatureType.SIMPLE_4_4);
+
     describe('with static note groups', () => {
       it('gets the expected generated note groups from the note group types', () => {
         expect(
-          getGeneratedNoteGroups(NoteGroupType.Q, NoteGroupType.TEEE)
+          getGeneratedNoteGroups(
+            timeSignature,
+            NoteGroupType.Q,
+            NoteGroupType.TEEE
+          )
         ).toEqual([
           {
             type: NoteGroupType.Q,
