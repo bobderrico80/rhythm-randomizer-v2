@@ -151,7 +151,20 @@ const scheduleMeasures = (
           ),
           elapsedTime
         );
-        elapsedTime += Tone.Time(playbackPattern.toneDuration).toSeconds();
+
+        let timeToAdd = Tone.Time(playbackPattern.toneDuration).toSeconds();
+
+        if (playbackPattern.toneDuration === '1n') {
+          timeToAdd = Tone.Time('4n').toSeconds() * 4;
+        }
+
+        console.log(
+          'toneDuration',
+          playbackPattern.toneDuration,
+          'timeToAdd',
+          timeToAdd
+        );
+        elapsedTime += timeToAdd;
         playbackPatternIndex += 1;
       });
     });

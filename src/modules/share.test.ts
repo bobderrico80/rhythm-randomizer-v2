@@ -464,10 +464,6 @@ describe('The share module', () => {
           shareString: '0a200',
         },
         {
-          description: 'where the time signature is not a valid selection',
-          shareString: '04900',
-        },
-        {
           description:
             'where the time signature cannot be parsed as a decimal number',
           shareString: '04a00',
@@ -517,10 +513,6 @@ describe('The share module', () => {
           description:
             'where the measure count cannot be parsed as a decimal string',
           shareString: '1a21203300',
-        },
-        {
-          description: 'where the time signature is not a valid selection',
-          shareString: '1491203300',
         },
         {
           description:
@@ -602,10 +594,6 @@ describe('The share module', () => {
           description:
             'where the measure count cannot be parsed as a decimal string',
           shareString: '2a2120331200',
-        },
-        {
-          description: 'where the time signature is not a valid selection',
-          shareString: '249120331200',
         },
         {
           description:
