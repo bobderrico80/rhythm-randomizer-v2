@@ -20,6 +20,7 @@ export enum TimeSignatureType {
   SIMPLE_2_4 = '2/4',
   SIMPLE_3_4 = '3/4',
   SIMPLE_4_4 = '4/4',
+  SIMPLE_COMMON = 'C',
   COMPOUND_6_8 = '6/8',
   COMPOUND_9_8 = '9/8',
   COMPOUND_12_8 = '12/8',
@@ -80,7 +81,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 2,
     description: '68TimeSignature',
     icon: require('../svg/time-signatures/ts-6-8.svg').default,
-    sortOrder: 3,
+    sortOrder: 4,
     index: 3,
   },
   {
@@ -90,7 +91,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 3,
     description: '98TimeSignature',
     icon: require('../svg/time-signatures/ts-9-8.svg').default,
-    sortOrder: 4,
+    sortOrder: 5,
     index: 4,
   },
   {
@@ -100,8 +101,18 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 4,
     description: '128TimeSignature',
     icon: require('../svg/time-signatures/ts-12-8.svg').default,
-    sortOrder: 5,
+    sortOrder: 6,
     index: 5,
+  },
+  {
+    type: TimeSignatureType.SIMPLE_COMMON,
+    complexity: TimeSignatureComplexity.SIMPLE,
+    categoryType: TimeSignatureCategoryType.SIMPLE,
+    beatsPerMeasure: 4,
+    description: 'commonTimeSignature',
+    icon: require('../svg/time-signatures/ts-common.svg').default,
+    sortOrder: 3,
+    index: 6,
   },
 ];
 
