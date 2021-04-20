@@ -31,6 +31,10 @@
   &__title {
     margin: 0;
     padding-right: 2rem;
+
+    @media screen and (min-width: $condensed-header-min) and (max-width: $condensed-header-max) {
+      font-size: 1rem;
+    }
   }
 
   &--right {

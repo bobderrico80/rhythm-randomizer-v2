@@ -11,6 +11,12 @@
   &__list-item {
     margin-right: 1rem;
   }
+
+  &__item-link {
+    @media screen and (min-width: $condensed-header-min) and (max-width: $condensed-header-max) {
+      font-size: 0.875rem;
+    }
+  }
 }
 
 .c-rr-header--mobile {
