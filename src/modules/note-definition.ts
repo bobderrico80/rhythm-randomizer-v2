@@ -46,6 +46,7 @@ export enum NoteGroupType {
 
   // Dotted note combinations (D = dotted)
   HD = 'hd',
+  WD = 'wd',
   QDE = 'qde',
   EQD = 'eqd',
   EDS = 'eds',
@@ -586,6 +587,18 @@ export const noteGroups: NoteGroup[] = [
   // Dotted note combinations
   {
     categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
+    type: NoteGroupType.WD,
+    notes: [c(NoteType.W, false, true)],
+    description: 'aDottedWholeNote',
+    duration: 6,
+    icon: require('../svg/notes/wd.svg').default,
+    defaultSelectionValue: false,
+    index: 41,
+    sortOrder: 23,
+    timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
+  },
+  {
+    categoryType: NoteGroupCategoryType.DOTTED_NOTE_COMBINATIONS,
     type: NoteGroupType.HD,
     notes: [c(NoteType.H, false, true)],
     description: 'aDottedHalfNote',
@@ -593,7 +606,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/hd.svg').default,
     defaultSelectionValue: false,
     index: 13,
-    sortOrder: 23,
+    sortOrder: 24,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -605,7 +618,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/qde.svg').default,
     defaultSelectionValue: false,
     index: 14,
-    sortOrder: 24,
+    sortOrder: 25,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -617,7 +630,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqd.svg').default,
     defaultSelectionValue: false,
     index: 15,
-    sortOrder: 25,
+    sortOrder: 26,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -630,7 +643,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eds.svg').default,
     defaultSelectionValue: false,
     index: 16,
-    sortOrder: 26,
+    sortOrder: 27,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -643,7 +656,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/sed.svg').default,
     defaultSelectionValue: false,
     index: 17,
-    sortOrder: 27,
+    sortOrder: 28,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
@@ -657,7 +670,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eer.svg').default,
     defaultSelectionValue: false,
     index: 18,
-    sortOrder: 28,
+    sortOrder: 29,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -669,7 +682,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/ere.svg').default,
     defaultSelectionValue: false,
     index: 19,
-    sortOrder: 29,
+    sortOrder: 30,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -682,7 +695,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/sser.svg').default,
     defaultSelectionValue: false,
     index: 20,
-    sortOrder: 30,
+    sortOrder: 31,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -695,7 +708,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/erss.svg').default,
     defaultSelectionValue: false,
     index: 21,
-    sortOrder: 31,
+    sortOrder: 32,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
 
@@ -709,7 +722,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqe.svg').default,
     defaultSelectionValue: false,
     index: 22,
-    sortOrder: 32,
+    sortOrder: 33,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -721,7 +734,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqqe.svg').default,
     defaultSelectionValue: false,
     index: 23,
-    sortOrder: 33,
+    sortOrder: 34,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -739,7 +752,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/eqqqe.svg').default,
     defaultSelectionValue: false,
     index: 24,
-    sortOrder: 34,
+    sortOrder: 35,
     timeSignatureComplexity: TimeSignatureComplexity.SIMPLE,
   },
   {
@@ -779,7 +792,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxqqreer.svg').default,
     defaultSelectionValue: false,
     index: 35,
-    sortOrder: 35,
+    sortOrder: 36,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
   },
   {
@@ -818,7 +831,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxeer.svg').default,
     defaultSelectionValue: false,
     index: 36,
-    sortOrder: 36,
+    sortOrder: 37,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
     beam: (notes) => {
       // Don't apply beam if first and third notes are rests
@@ -862,7 +875,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxess.svg').default,
     defaultSelectionValue: false,
     index: 37,
-    sortOrder: 37,
+    sortOrder: 38,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
     beam: true,
   },
@@ -892,7 +905,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxqqrss.svg').default,
     defaultSelectionValue: false,
     index: 38,
-    sortOrder: 38,
+    sortOrder: 39,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
     beam: (notes) => {
       if (notes[0].type === NoteType.Q) {
@@ -951,7 +964,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxeerss.svg').default,
     defaultSelectionValue: false,
     index: 39,
-    sortOrder: 39,
+    sortOrder: 40,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
     beam: (notes) => {
       const notesLength = notes.length;
@@ -1001,7 +1014,7 @@ export const noteGroups: NoteGroup[] = [
     icon: require('../svg/notes/cxeerssr.svg').default,
     defaultSelectionValue: false,
     index: 40,
-    sortOrder: 40,
+    sortOrder: 41,
     timeSignatureComplexity: TimeSignatureComplexity.COMPOUND,
     beam: true,
   },
