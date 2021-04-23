@@ -503,7 +503,11 @@ describe('The score module', () => {
             },
           ],
         };
-        measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
+        measureWidths = calculateMeasureWidths(
+          system,
+          scoreDimensionConfig,
+          timeSignature
+        );
       });
 
       it('includes measure widths that are all equal (to the default measure width)', () => {
@@ -553,7 +557,11 @@ describe('The score module', () => {
             },
           ],
         };
-        measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
+        measureWidths = calculateMeasureWidths(
+          system,
+          scoreDimensionConfig,
+          timeSignature
+        );
       });
 
       it('includes measure widths that are proportional to the distribution of width units', () => {

@@ -186,7 +186,7 @@ export interface Pitch {
 
 export type NoteGroupTypeSelectionMap = Map<NoteGroupType, Boolean>;
 
-const noteWidthUnitMap = {
+export const noteWidthUnitMap = {
   [NoteType.W]: 13,
   [NoteType.H]: 8,
   [NoteType.Q]: 5,

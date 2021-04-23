@@ -1,7 +1,12 @@
 import Vex from 'vexflow';
 import { Measure, System } from './vex';
-import { Note, NoteType, GeneratedNoteGroup } from './note-definition';
-import { TimeSignature } from './time-signature';
+import {
+  Note,
+  NoteType,
+  GeneratedNoteGroup,
+  noteWidthUnitMap,
+} from './note-definition';
+import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 
 export interface ScoreDimensions {
   width: number;
@@ -225,24 +230,62 @@ export const getMeasureConfiguration = (
   return measureConfiguration;
 };
 
-const getNoteGroupWidthUnits = (noteGroup: GeneratedNoteGroup): number => {
-  return noteGroup.notes.reduce((sum, noteGroup) => {
-    return (sum += noteGroup.widthUnit);
+const getWholeNoteWidthUnitForTimeSignature = (
+  timeSignature: TimeSignature
+) => {
+  let widthUnit = noteWidthUnitMap[NoteType.W];
+
+  switch (timeSignature.beatsPerMeasure) {
+    case 3:
+      widthUnit = noteWidthUnitMap[NoteType.H] * 1.5;
+      break;
+    case 2:
+      widthUnit = noteWidthUnitMap[NoteType.H];
+      break;
+    case 1:
+      widthUnit = noteWidthUnitMap[NoteType.Q];
+  }
+
+  if (timeSignature.complexity === TimeSignatureComplexity.COMPOUND) {
+    widthUnit = widthUnit * (3 / 2);
+  }
+
+  return widthUnit;
+};
+
+const getNoteGroupWidthUnits = (
+  noteGroup: GeneratedNoteGroup,
+  timeSignature: TimeSignature
+): number => {
+  return noteGroup.notes.reduce((sum, note) => {
+    let nextWidthUnit = note.widthUnit;
+
+    // Adjust spacing for the fact that a whole rest will always be equal to the duration of
+    // the time signature
+    if (note.rest && note.type === NoteType.W) {
+      nextWidthUnit = getWholeNoteWidthUnitForTimeSignature(timeSignature);
+    }
+
+    return (sum += nextWidthUnit);
   }, 0);
 };
 
-const getMeasureWidthUnits = (measure: Measure): number => {
+const getMeasureWidthUnits = (
+  measure: Measure,
+  timeSignature: TimeSignature
+): number => {
   return measure.noteGroups.reduce((sum, noteGroup) => {
-    return (sum += getNoteGroupWidthUnits(noteGroup));
+    return (sum += getNoteGroupWidthUnits(noteGroup, timeSignature));
   }, 0);
 };
 
 export const calculateMeasureWidths = (
   system: System,
-  scoreDimensionConfig: ScoreDimensionConfig
+  scoreDimensionConfig: ScoreDimensionConfig,
+  timeSignature: TimeSignature
 ) => {
   const measureWidthUnits = system.measures.map((measure) => {
-    return getMeasureWidthUnits(measure);
+    return getMeasureWidthUnits(measure, timeSignature);
   });
 
   const totalWidthUnits = measureWidthUnits.reduce(
