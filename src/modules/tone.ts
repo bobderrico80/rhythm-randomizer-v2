@@ -110,6 +110,11 @@ const triggerNote = (
         timeToAdd = Tone.Time('4n').toSeconds() * 4;
       }
 
+      // Handle dotted whole notes similarly
+      if (playbackPattern.toneDuration === '1n.') {
+        timeToAdd = Tone.Time('4n').toSeconds() * 6;
+      }
+
       synth.triggerAttackRelease(
         getPitchString(pitch),
         timeToAdd * NOTE_SPACING,
@@ -167,6 +172,11 @@ const scheduleMeasures = (
         // measure, so no need to apply this behavior if the note is a rest
         if (playbackPattern.toneDuration === '1n' && !playbackPattern.rest) {
           timeToAdd = Tone.Time('4n').toSeconds() * 4;
+        }
+
+        // Handle dotted whole notes similarly
+        if (playbackPattern.toneDuration === '1n.') {
+          timeToAdd = Tone.Time('4n').toSeconds() * 6;
         }
 
         elapsedTime += timeToAdd;
