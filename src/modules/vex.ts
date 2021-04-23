@@ -172,7 +172,11 @@ const createSystem = (
   scoreDimensionConfig: ScoreDimensionConfig
 ): void => {
   const isFinalSystem = systemIndex === totalSystems - 1;
-  const measureWidths = calculateMeasureWidths(system, scoreDimensionConfig);
+  const measureWidths = calculateMeasureWidths(
+    system,
+    scoreDimensionConfig,
+    timeSignature
+  );
 
   system.measures.forEach((measure, measureIndex) => {
     createMeasure(
@@ -219,7 +223,21 @@ export const createScore = (
 
   toRender.staveNotes.forEach((notes, stave) => {
     stave.setContext(context).draw();
-    VF.Formatter.FormatAndDraw(context, stave, notes);
+
+    // Manually doing what Formatter.FormatAndDraw() did before for more control over how the notes
+    // are spaced.
+    // See https://github.com/0xfe/vexflow/blob/1458abaf2206343a786ecfaebeea680565607f67/src/formatter.js#L200
+    const voice = new VF.Voice(VF.TIME4_4)
+      .setMode(VF.Voice.Mode.SOFT)
+      .addTickables(notes);
+
+    // `10` seems to prevent large duration notes from taking up too much of the measure, squishing
+    // smaller beamed durations
+    new VF.Formatter({ softmaxFactor: 10 })
+      .joinVoices([voice])
+      .formatToStave([voice], stave);
+
+    voice.setStave(stave).draw(context, stave);
   });
 
   toRender.beams.forEach((beam) => {

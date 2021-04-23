@@ -102,9 +102,17 @@ const triggerNote = (
   return (time: number) => {
     onNoteTrigger(index);
     if (!playbackPattern.rest) {
+      let timeToAdd = Tone.Time(playbackPattern.toneDuration).toSeconds();
+
+      // Tone.js treats `1n` (the whole note) as a whole measure, regardless of time signature.
+      // Convert it to be strictly 4 beats
+      if (playbackPattern.toneDuration === '1n') {
+        timeToAdd = Tone.Time('4n').toSeconds() * 4;
+      }
+
       synth.triggerAttackRelease(
         getPitchString(pitch),
-        Tone.Time(playbackPattern.toneDuration).valueOf() * NOTE_SPACING,
+        timeToAdd * NOTE_SPACING,
         time
       );
     }
@@ -154,16 +162,13 @@ const scheduleMeasures = (
 
         let timeToAdd = Tone.Time(playbackPattern.toneDuration).toSeconds();
 
-        if (playbackPattern.toneDuration === '1n') {
+        // Tone.js treats `1n` (the whole note) as a whole measure, regardless of time signature.
+        // Convert it add strictly 4 beats of time. However, whole rests should take up the whole
+        // measure, so no need to apply this behavior if the note is a rest
+        if (playbackPattern.toneDuration === '1n' && !playbackPattern.rest) {
           timeToAdd = Tone.Time('4n').toSeconds() * 4;
         }
 
-        console.log(
-          'toneDuration',
-          playbackPattern.toneDuration,
-          'timeToAdd',
-          timeToAdd
-        );
         elapsedTime += timeToAdd;
         playbackPatternIndex += 1;
       });
