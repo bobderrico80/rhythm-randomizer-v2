@@ -15,8 +15,6 @@ import { getDuration, randomizeNoteSubGroups } from './random';
 import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { findItemOfType, categorizeItems } from './util';
 
-// TODO: include predicates... find a better place for these?
-
 export const categorizeNoteGroups = (
   noteGroups: NoteGroup[]
 ): CategorizedNoteGroup[] => {
