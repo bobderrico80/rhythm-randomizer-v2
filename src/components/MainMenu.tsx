@@ -62,6 +62,14 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
                 rel="noopener noreferrer"
               >
                 {t('connectOnFacebook')}
+              </a>{' '}
+              | {t('viewCodeOn')}{' '}
+              <a
+                href="https://github.com/bobderrico80/rhythm-randomizer-v2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('gitHub')}
               </a>
             </p>
             <LanguageSwitcher supportedLanguageCodes={['en', 'de']} />
