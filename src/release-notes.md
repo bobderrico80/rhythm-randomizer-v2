@@ -1,3 +1,25 @@
+## What's New in Version 2.8.0?
+
+In addition to some small security updates, this update brings improvements to note space rendering, more intelligent handling of whole rests, and a handful of additional simple meter time signatures!
+
+### New Simple Meter Time Signatures
+
+Three new simple meter time signatures have been introduced in this version: 5/4, 6/4, and 7/4 time, allowing generated rhythms with 5, 6, and 7 beats per measure respectively. A new Common Time (C) time signature is also available. This behaves the same as the 4/4 time signature.
+
+### Improved Whole Rest Handling
+
+The behavior of the whole rest has changed a bit in this new version. The whole rest will now be an available note selection for all time signatures. The whole rest will also always fill an entire measure, meaning its duration is dependent on the time signature. For example, in 4/4 time, the whole rest is 4 beats long, but in 7/4 time, it is 7 beats long.
+
+### Improved Note Spacing
+
+The note formatting settings have been tweaked a bit so that longer notes don't receive quite as much space in comparison to shorter notes. This will avoid some of the crowding that occurred with beamed notes in measures that also had half notes or larger in them.
+
+### New Issues and Milestones Section on GitHub
+
+The Rhythm Randomizer is an open-source project, meaning it's code is available publicly on [GitHub](https://github.com/bobderrico80/rhythm-randomizer-v2). GitHub also offers tools for tracking current and upcoming work. Moving forward, all planned upcoming work and features will be documented as GitHub Issues and organized into GitHub Milestones. This will provide an easy way to see upcoming features to be added to The Rhythm Randomizer. If you have a GitHub account, you can even create issues to report bugs or suggest features. And since The Rhythm Randomizer is open-source, if you are tech savvy and know how to write code in React and Typescript, you could even get involved with adding features or fixing bugs on your own!
+
+To see a list of upcoming versions of The Rhythm Randomizer, and the features to be included in each version, see the Github [Milestones](https://github.com/bobderrico80/rhythm-randomizer-v2/milestones) page.
+
 ## What's New in Version 2.7.0?
 
 Complex compound meter options!
