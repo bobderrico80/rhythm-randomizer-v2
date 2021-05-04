@@ -4,7 +4,7 @@
  * Version 0:
  * 0 - Version
  * 2 - Measure Count (decimal, 1, 2, 4 or 8)
- * 2 - Time signature index (decimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
+ * 2 - Time signature index (hexadecimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
  * 00 - Selected note index (hexadecimal, 00 = whole note, 01 = half note, etc.)
  * ...
  *
@@ -14,7 +14,7 @@
  * Version 1:
  * 1 - Version
  * 2 - Measure Count (decimal, 1, 2, 4, or 8)
- * 2 - Time signature index (decimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
+ * 2 - Time signature index (hexadecimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
  * 080 - Tempo in BPM (decimal, 40-300)
  * 8 - Pitch class index (hexadecimal, 0 - A, 1 - Bb, 2 - B, ... B - Ab)
  * 3 - Octave index (decimal, 0-7)
@@ -27,7 +27,7 @@
  * Version 2:
  * 2 - Version
  * 2 - Measure Count (decimal, 1, 2, 4, or 8)
- * 2 - Time signature index (decimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
+ * 2 - Time signature index (hexadecimal, 0 = 2/4, 1 = 3/4, 2 = 4/4)
  * 080 - Tempo in BPM (decimal, 40-300)
  * 8 - Pitch class index (hexadecimal, 0 - A, 1 - Bb, 2 - B, ... B - Ab)
  * 3 - Octave index (decimal, 0-7)
@@ -108,7 +108,7 @@ const encodeMeasureCountAndTimeSignature = (
   measureCount: number,
   timeSignature: TimeSignature
 ): string => {
-  return `${measureCount}${timeSignature.index}`;
+  return `${measureCount}${timeSignature.index.toString(16)}`;
 };
 
 const encodeNoteGroupTypeSelectionMap = (
@@ -252,7 +252,7 @@ const decodeMeasureCount = (shareString: string): number => {
 };
 
 const decodeTimeSignature = (shareString: string): TimeSignature => {
-  const timeSignatureIndex = parseDecString(shareString.charAt(2));
+  const timeSignatureIndex = parseHexString(shareString.charAt(2));
   const timeSignature = timeSignatures.find(
     (ts) => ts.index === timeSignatureIndex
   );
