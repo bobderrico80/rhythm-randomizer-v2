@@ -277,6 +277,20 @@ describe('The note module', () => {
       ]);
     });
 
+    describe('with a alla breve time signature', () => {
+      it('shifts the duration of the tone to the next shortest tone duration', () => {
+        const timeSignature = getTimeSignature(
+          TimeSignatureType.ALLA_BREVE_2_2
+        );
+        expect(
+          getPlaybackPatternsForNoteGroup(
+            getGeneratedNoteGroup(NoteGroupType.Q, timeSignature),
+            timeSignature
+          )
+        ).toEqual([{ rest: false, toneDuration: '8n' }]);
+      });
+    });
+
     describe('with a compound meter time signature', () => {
       const timeSignature = getTimeSignature(TimeSignatureType.COMPOUND_6_8);
       it('converts non-tupleted notes into tupleted notes', () => {
@@ -341,6 +355,15 @@ describe('The note module', () => {
         isValidNoteGroupForTimeSignature(
           getNoteGroup(NoteGroupType.W),
           getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        )
+      ).toEqual(true);
+    });
+
+    it('returns true if the note group duration is simple and the time signature is alla breve', () => {
+      expect(
+        isValidNoteGroupForTimeSignature(
+          getNoteGroup(NoteGroupType.W),
+          getTimeSignature(TimeSignatureType.ALLA_BREVE_2_2)
         )
       ).toEqual(true);
     });

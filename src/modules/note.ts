@@ -160,9 +160,20 @@ export const isValidNoteGroupForTimeSignature = (
 ): boolean => {
   const duration = getDuration(noteGroup, timeSignature.beatsPerMeasure);
 
+  let timeSignatureComplexityMatches;
+
+  if (
+    timeSignature.complexity === TimeSignatureComplexity.SIMPLE ||
+    timeSignature.complexity === TimeSignatureComplexity.ALLA_BREVE
+  ) {
+    timeSignatureComplexityMatches =
+      noteGroup.timeSignatureComplexity === TimeSignatureComplexity.SIMPLE;
+  } else {
+    timeSignatureComplexityMatches =
+      noteGroup.timeSignatureComplexity === timeSignature.complexity;
+  }
   return (
-    duration <= timeSignature.beatsPerMeasure &&
-    noteGroup.timeSignatureComplexity === timeSignature.complexity
+    duration <= timeSignature.beatsPerMeasure && timeSignatureComplexityMatches
   );
 };
 
@@ -214,6 +225,7 @@ export const getPlaybackPatternsForNoteGroup = (
 
     switch (timeSignature.complexity) {
       case TimeSignatureComplexity.SIMPLE:
+      case TimeSignatureComplexity.ALLA_BREVE:
         if (note.dotted && noteGroup.tuplet) {
           unit = 'n';
           dotIndicator = '';
@@ -245,7 +257,13 @@ export const getPlaybackPatternsForNoteGroup = (
         break;
     }
 
-    const toneDuration = `${note.playbackUnit}${unit}${dotIndicator}`;
+    let resolvedPlaybackUnit = note.playbackUnit;
+
+    if (timeSignature.complexity === TimeSignatureComplexity.ALLA_BREVE) {
+      resolvedPlaybackUnit = (parseInt(note.playbackUnit) * 2).toString();
+    }
+
+    const toneDuration = `${resolvedPlaybackUnit}${unit}${dotIndicator}`;
 
     return {
       toneDuration,
