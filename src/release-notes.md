@@ -1,3 +1,11 @@
+## What's New in Version 2.9.0?
+
+This update brings a new category of time signatures: _alla breve_ (or cut-time) time signatures! Included with the new time signatures are 2/2, 3/2, 4/2, and cut-time (which functions the same as 2/2).
+
+These time signatures will use the same selection of notes as the simple meter time signatures, but each note will play back with half the usual duration, so that the half note will get one beat. This will apply to the playback and standalone metronome as well. As with other time signatures, these will be shareable through the share links.
+
+In addition to some minor security updates, the note playback duration spacing was also tweaked a bit so that more rapid notes playing in succession do not run together as much as they did before.
+
 ## What's New in Version 2.8.0?
 
 In addition to some small security updates, this update brings improvements to note space rendering, more intelligent handling of whole rests, and a handful of additional simple meter time signatures!
