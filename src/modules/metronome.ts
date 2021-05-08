@@ -98,7 +98,12 @@ export const getMetronomePlaybackPatterns = (
     );
   }
 
-  for (let i = 1; i < timeSignature.beatsPerMeasure; i++) {
+  let resolvedBeatsPerMeasure = timeSignature.beatsPerMeasure;
+  if (timeSignature.complexity === TimeSignatureComplexity.ALLA_BREVE) {
+    resolvedBeatsPerMeasure = timeSignature.beatsPerMeasure / 2;
+  }
+
+  for (let i = 1; i < resolvedBeatsPerMeasure; i++) {
     playbackPatterns.push(clickToPlaybackPattern(mainClick, toneDuration));
 
     if (metronomeSettings.subdivisionClick) {
