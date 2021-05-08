@@ -285,4 +285,25 @@ describe('The <TempoControl /> component', () => {
       expect(screen.getByAltText('dottedQuarterNote')).toBeInTheDocument();
     });
   });
+
+  describe('with alla breve time signatures', () => {
+    beforeEach(() => {
+      state = {
+        scoreSettings: {
+          ...DEFAULT_SCORE_SETTINGS,
+          timeSignature: getTimeSignature(TimeSignatureType.ALLA_BREVE_2_2),
+        },
+      };
+
+      render(
+        <AppContext.Provider value={{ state, dispatch }}>
+          <TempoControl />
+        </AppContext.Provider>
+      );
+    });
+
+    it('renders an MM marking icon for compound meters', () => {
+      expect(screen.getByAltText('halfNote')).toBeInTheDocument();
+    });
+  });
 });

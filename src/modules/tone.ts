@@ -2,7 +2,7 @@ import * as Tone from 'tone';
 import { getMetronomePlaybackPatterns, MetronomeSettings } from './metronome';
 import { getTotalDuration, getPlaybackPatternsForNoteGroup } from './note';
 import { PlaybackPattern, Pitch } from './note-definition';
-import { TimeSignature } from './time-signature';
+import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { Measure } from './vex';
 
 export enum PlaybackState {
@@ -10,6 +10,15 @@ export enum PlaybackState {
   STOPPED,
 }
 export type NoteTriggerHandler = (index: number | null) => void;
+
+const toneDurationFactorNoteSpacingMap: { [toneDuration: string]: number } = {
+  '1': 0.9,
+  '2': 0.875,
+  '4': 0.75,
+  '8': 0.67,
+  '16': 0.5,
+  '32': 0.1,
+};
 
 const NOTE_SPACING = 0.75; // %
 const HEADING_TIME = 0.1; // seconds
@@ -63,9 +72,15 @@ export const startPlayback = (
     );
 
     if (metronomeSettings.countOffMeasures) {
-      elapsedTime += Tone.Time(
+      let countOffTime = Tone.Time(
         `${metronomeSettings.countOffMeasures}m`
       ).toSeconds();
+
+      if (timeSignature.complexity === TimeSignatureComplexity.ALLA_BREVE) {
+        countOffTime = countOffTime / 2;
+      }
+
+      elapsedTime += countOffTime;
     }
   }
 
@@ -115,9 +130,16 @@ const triggerNote = (
         timeToAdd = Tone.Time('4n').toSeconds() * 6;
       }
 
+      const toneDurationFactor = playbackPattern.toneDuration.replace(
+        /\D/g,
+        ''
+      );
+
+      const noteSpacing = toneDurationFactorNoteSpacingMap[toneDurationFactor];
+
       synth.triggerAttackRelease(
         getPitchString(pitch),
-        timeToAdd * NOTE_SPACING,
+        timeToAdd * noteSpacing,
         time
       );
     }

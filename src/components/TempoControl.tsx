@@ -11,6 +11,7 @@ import './TempoControl.scss';
 import Icon from './Icon';
 import quarterNote from '../svg/notes/q.svg';
 import dottedQuarterNote from '../svg/notes/cqd.svg';
+import halfNote from '../svg/notes/h.svg';
 import { TimeSignatureComplexity } from '../modules/time-signature';
 import { AppContext } from '../App';
 import { createDispatchUpdateScoreSettings } from '../modules/reducer';
@@ -39,9 +40,18 @@ const TempoControl = () => {
   const [, setHolding] = useState(false);
 
   const displayedTempoRef = useRef<string | null>(null);
-  const isCompoundMeter =
-    timeSignature.complexity === TimeSignatureComplexity.COMPOUND;
-  const mmMarkingSvg = isCompoundMeter ? dottedQuarterNote : quarterNote;
+
+  const mmMarkingSvg = {
+    [TimeSignatureComplexity.SIMPLE]: quarterNote,
+    [TimeSignatureComplexity.COMPOUND]: dottedQuarterNote,
+    [TimeSignatureComplexity.ALLA_BREVE]: halfNote,
+  }[timeSignature.complexity];
+
+  const mmMarkingText = {
+    [TimeSignatureComplexity.SIMPLE]: 'quarterNote',
+    [TimeSignatureComplexity.COMPOUND]: 'dottedQuarterNote',
+    [TimeSignatureComplexity.ALLA_BREVE]: 'halfNote',
+  }[timeSignature.complexity];
 
   useEffect(() => {
     setDisplayedTempo(tempo.toString());
@@ -179,7 +189,7 @@ const TempoControl = () => {
         <div className={buildClassName('mm-marking')()}>
           <Icon
             svg={mmMarkingSvg}
-            alt={t(isCompoundMeter ? 'dottedQuarterNote' : 'quarterNote')}
+            alt={t(mmMarkingText)}
             className={buildClassName('mm-marking-icon')()}
           />{' '}
           {t('equals')}{' '}

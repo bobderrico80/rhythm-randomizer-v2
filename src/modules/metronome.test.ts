@@ -127,6 +127,115 @@ describe('The metronome module', () => {
         });
       });
 
+      describe('with alla breve meters', () => {
+        describe('with startOfMeasure click on', () => {
+          beforeEach(() => {
+            playbackPatterns = getMetronomePlaybackPatterns(
+              getTimeSignature(TimeSignatureType.ALLA_BREVE_2_2),
+              {
+                active: true,
+                startOfMeasureClick: true,
+                subdivisionClick: true,
+                countOffMeasures: 0,
+              }
+            );
+          });
+
+          it('contains a playback pattern for each beat and subdivision', () => {
+            expect(playbackPatterns.length).toEqual(4);
+          });
+
+          it('contains playback patterns equal to alla breve quarter notes (i.e. 8th notes)', () => {
+            expect(
+              playbackPatterns.every(
+                (playbackPattern) => playbackPattern.toneDuration === '8n'
+              )
+            );
+          });
+
+          it('contains a measure click as the first playback pattern', () => {
+            expectPlaybackPatternToEqualClick(
+              playbackPatterns[0],
+              ClickType.MEASURE
+            );
+          });
+
+          it('contains the main playback pattern for the remaining downbeat clicks', () => {
+            playbackPatterns.forEach((playbackPattern, index) => {
+              // even numbers greater than one for remaining downbeats
+              if (index > 1 && index % 2 === 0) {
+                expectPlaybackPatternToEqualClick(
+                  playbackPattern,
+                  ClickType.MAIN
+                );
+              }
+            });
+          });
+
+          it('contains the subdivision playback pattern for all upbeat clicks', () => {
+            playbackPatterns.forEach((playbackPattern, index) => {
+              // odd numbers for upbeats
+              if (index % 2 !== 0) {
+                expectPlaybackPatternToEqualClick(
+                  playbackPattern,
+                  ClickType.SUBDIVISION
+                );
+              }
+            });
+          });
+        });
+
+        describe('with startOfMeasure click off', () => {
+          beforeEach(() => {
+            playbackPatterns = getMetronomePlaybackPatterns(
+              getTimeSignature(TimeSignatureType.ALLA_BREVE_2_2),
+              {
+                active: true,
+                startOfMeasureClick: false,
+                subdivisionClick: true,
+                countOffMeasures: 0,
+              }
+            );
+          });
+
+          it('contains a playback patter for each beat and subdivision', () => {
+            expect(playbackPatterns.length).toEqual(4);
+          });
+
+          it('contains playback patterns equal to alla breve quarter notes (i.e. 8th notes)', () => {
+            expect(
+              playbackPatterns.every(
+                (playbackPattern) => playbackPattern.toneDuration === '8n'
+              )
+            );
+          });
+
+          it('contains the main playback pattern for the remaining downbeat clicks', () => {
+            playbackPatterns.forEach((playbackPattern, index) => {
+              // even numbers greater than one for remaining downbeats
+              if (index > 1 && index % 2 === 0) {
+                expectPlaybackPatternToEqualClick(
+                  playbackPattern,
+                  ClickType.MAIN
+                );
+              }
+            });
+          });
+
+          it('contains the subdivision playback pattern for all upbeat clicks', () => {
+            playbackPatterns.forEach((playbackPattern, index) => {
+              // odd numbers for upbeats
+              if (index % 2 !== 0) {
+                expectPlaybackPatternToEqualClick(
+                  playbackPattern,
+                  ClickType.SUBDIVISION
+                );
+              }
+            });
+          });
+        });
+      });
+
       describe('with compound meters', () => {
         describe('with startOfMeasure click on', () => {
           beforeEach(() => {
