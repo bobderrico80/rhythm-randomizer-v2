@@ -2,7 +2,7 @@ import * as Tone from 'tone';
 import { getMetronomePlaybackPatterns, MetronomeSettings } from './metronome';
 import { getTotalDuration, getPlaybackPatternsForNoteGroup } from './note';
 import { PlaybackPattern, Pitch } from './note-definition';
-import { TimeSignature } from './time-signature';
+import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { Measure } from './vex';
 
 export enum PlaybackState {
@@ -63,9 +63,15 @@ export const startPlayback = (
     );
 
     if (metronomeSettings.countOffMeasures) {
-      elapsedTime += Tone.Time(
+      let countOffTime = Tone.Time(
         `${metronomeSettings.countOffMeasures}m`
       ).toSeconds();
+
+      if (timeSignature.complexity === TimeSignatureComplexity.ALLA_BREVE) {
+        countOffTime = countOffTime / 2;
+      }
+
+      elapsedTime += countOffTime;
     }
   }
 

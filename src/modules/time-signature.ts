@@ -9,11 +9,13 @@ import {
 export enum TimeSignatureCategoryType {
   SIMPLE = 'simpleMeter',
   COMPOUND = 'compoundMeter',
+  ALLA_BREVE = 'allaBreveMeter',
 }
 
 export enum TimeSignatureComplexity {
   SIMPLE,
   COMPOUND,
+  ALLA_BREVE,
 }
 
 export enum TimeSignatureType {
@@ -27,6 +29,10 @@ export enum TimeSignatureType {
   COMPOUND_6_8 = '6/8',
   COMPOUND_9_8 = '9/8',
   COMPOUND_12_8 = '12/8',
+  ALLA_BREVE_2_2 = '2/2',
+  ALLA_BREVE_3_2 = '3/2',
+  ALLA_BREVE_4_2 = '4/2',
+  ALLA_BREVE_CUT = 'C|',
 }
 
 export interface TimeSignatureCategory
@@ -84,7 +90,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 2,
     description: '68TimeSignature',
     icon: require('../svg/time-signatures/ts-6-8.svg').default,
-    sortOrder: 7,
+    sortOrder: 11,
     index: 3,
   },
   {
@@ -94,7 +100,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 3,
     description: '98TimeSignature',
     icon: require('../svg/time-signatures/ts-9-8.svg').default,
-    sortOrder: 8,
+    sortOrder: 12,
     index: 4,
   },
   {
@@ -104,7 +110,7 @@ export const timeSignatures: TimeSignature[] = [
     beatsPerMeasure: 4,
     description: '128TimeSignature',
     icon: require('../svg/time-signatures/ts-12-8.svg').default,
-    sortOrder: 9,
+    sortOrder: 13,
     index: 5,
   },
   {
@@ -147,6 +153,46 @@ export const timeSignatures: TimeSignature[] = [
     sortOrder: 6,
     index: 9,
   },
+  {
+    type: TimeSignatureType.ALLA_BREVE_2_2,
+    complexity: TimeSignatureComplexity.ALLA_BREVE,
+    categoryType: TimeSignatureCategoryType.ALLA_BREVE,
+    beatsPerMeasure: 4,
+    description: '22TimeSignature',
+    icon: require('../svg/time-signatures/ts-2-2.svg').default,
+    sortOrder: 7,
+    index: 10,
+  },
+  {
+    type: TimeSignatureType.ALLA_BREVE_3_2,
+    complexity: TimeSignatureComplexity.ALLA_BREVE,
+    categoryType: TimeSignatureCategoryType.ALLA_BREVE,
+    beatsPerMeasure: 6,
+    description: '32TimeSignature',
+    icon: require('../svg/time-signatures/ts-3-2.svg').default,
+    sortOrder: 8,
+    index: 11,
+  },
+  {
+    type: TimeSignatureType.ALLA_BREVE_4_2,
+    complexity: TimeSignatureComplexity.ALLA_BREVE,
+    categoryType: TimeSignatureCategoryType.ALLA_BREVE,
+    beatsPerMeasure: 8,
+    description: '42TimeSignature',
+    icon: require('../svg/time-signatures/ts-4-2.svg').default,
+    sortOrder: 9,
+    index: 12,
+  },
+  {
+    type: TimeSignatureType.ALLA_BREVE_CUT,
+    complexity: TimeSignatureComplexity.ALLA_BREVE,
+    categoryType: TimeSignatureCategoryType.ALLA_BREVE,
+    beatsPerMeasure: 4,
+    description: 'cutTimeSignature',
+    icon: require('../svg/time-signatures/ts-cut.svg').default,
+    sortOrder: 10,
+    index: 13,
+  },
 ];
 
 export const timeSignatureCategories: TimeSignatureCategory[] = [
@@ -155,8 +201,12 @@ export const timeSignatureCategories: TimeSignatureCategory[] = [
     sortOrder: 0,
   },
   {
-    type: TimeSignatureCategoryType.COMPOUND,
+    type: TimeSignatureCategoryType.ALLA_BREVE,
     sortOrder: 1,
+  },
+  {
+    type: TimeSignatureCategoryType.COMPOUND,
+    sortOrder: 2,
   },
 ];
 

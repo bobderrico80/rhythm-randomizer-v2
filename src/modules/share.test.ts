@@ -465,8 +465,8 @@ describe('The share module', () => {
         },
         {
           description:
-            'where the time signature cannot be parsed as a decimal number',
-          shareString: '04a00',
+            'where the time signature cannot be parsed as a hexadecimal number',
+          shareString: '04g00',
         },
         {
           description:
@@ -517,7 +517,7 @@ describe('The share module', () => {
         {
           description:
             'where the time signature cannot be parsed as a decimal number',
-          shareString: '14a1203300',
+          shareString: '14g1203300',
         },
         {
           description:
@@ -598,7 +598,7 @@ describe('The share module', () => {
         {
           description:
             'where the time signature cannot be parsed as a decimal number',
-          shareString: '24a120331200',
+          shareString: '24g120331200',
         },
         {
           description:
