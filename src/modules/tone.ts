@@ -11,6 +11,15 @@ export enum PlaybackState {
 }
 export type NoteTriggerHandler = (index: number | null) => void;
 
+const toneDurationFactorNoteSpacingMap: { [toneDuration: string]: number } = {
+  '1': 0.9,
+  '2': 0.875,
+  '4': 0.75,
+  '8': 0.67,
+  '16': 0.5,
+  '32': 0.1,
+};
+
 const NOTE_SPACING = 0.75; // %
 const HEADING_TIME = 0.1; // seconds
 const TRAILING_TIME = 1; // seconds
@@ -121,9 +130,16 @@ const triggerNote = (
         timeToAdd = Tone.Time('4n').toSeconds() * 6;
       }
 
+      const toneDurationFactor = playbackPattern.toneDuration.replace(
+        /\D/g,
+        ''
+      );
+
+      const noteSpacing = toneDurationFactorNoteSpacingMap[toneDurationFactor];
+
       synth.triggerAttackRelease(
         getPitchString(pitch),
-        timeToAdd * NOTE_SPACING,
+        timeToAdd * noteSpacing,
         time
       );
     }
