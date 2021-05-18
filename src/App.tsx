@@ -68,7 +68,7 @@ export interface AppProps {
   testMode?: boolean;
 }
 
-const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._2;
+const CURRENT_SHARE_STRING_VERSION = ShareStringEncodingVersion._3;
 
 export const MEASURE_COUNT_OPTIONS: MeasureCount[] = [1, 2, 4, 8];
 
