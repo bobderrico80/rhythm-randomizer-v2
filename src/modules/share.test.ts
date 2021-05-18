@@ -270,10 +270,107 @@ describe('The share module', () => {
 
         shareString = encodeScoreSettingsShareString(
           scoreSettings,
-          ShareStringEncodingVersion._1
+          ShareStringEncodingVersion._2
         );
 
-        expect(shareString.substring(8)).toEqual('01');
+        expect(shareString.substring(10)).toEqual('01');
+      });
+    });
+
+    describe('with a version 3 share string', () => {
+      let noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap;
+      let scoreSettings: ScoreSettings;
+      let shareString: string;
+
+      beforeEach(() => {
+        noteGroupTypeSelectionMap = getNoteGroupTypeSelectionMap().set(
+          NoteGroupType.TEEE,
+          true
+        );
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_4_4),
+          noteGroupTypeSelectionMap,
+          tempo: 80,
+          pitch: { pitchClass: PitchClass.Bb, octave: Octave._4 },
+          metronomeSettings: {
+            countOffMeasures: 2,
+            active: true,
+            startOfMeasureClick: false,
+            subdivisionClick: true,
+          },
+        };
+
+        shareString = encodeScoreSettingsShareString(
+          scoreSettings,
+          ShareStringEncodingVersion._3
+        );
+      });
+
+      it('returns the expected full share string', () => {
+        expect(shareString).toEqual('3402080142500010203040506070c');
+      });
+
+      it('contains the current version `3` as the first character', () => {
+        expect(shareString.charAt(0)).toEqual('3');
+      });
+
+      it('contains the measure count at the second character', () => {
+        expect(shareString.charAt(1)).toEqual('4');
+      });
+
+      it('contains the time signature index at the 3rd and 4th characters', () => {
+        expect(shareString.substr(2, 2)).toEqual('02');
+      });
+
+      it('contains the tempo in BPM in the 5th, 6th, and 7th characters', () => {
+        expect(shareString.substr(4, 3)).toEqual('080');
+      });
+
+      it('contains the pitch class index at the 8th character', () => {
+        expect(shareString.charAt(7)).toEqual('1');
+      });
+
+      it('contains the pitch octave index at the 9th character', () => {
+        expect(shareString.charAt(8)).toEqual('4');
+      });
+
+      it('contains the metronome count-off value at the 10th character', () => {
+        expect(shareString.charAt(9)).toEqual('2');
+      });
+
+      it('contains hexadecimal value, representing the boolean metronome settings (active, start of measure click, subdivision click) at the 11th character', () => {
+        expect(shareString.charAt(10)).toEqual('5');
+      });
+
+      it('contains a 8-bit hex code of the index of each selected note group in the note group type selection map for the remaining characters', () => {
+        expect(shareString.substring(11)).toEqual('00010203040506070c');
+      });
+
+      it('does not include selected invalid note groups for the current time signature', () => {
+        noteGroupTypeSelectionMap = resetNoteGroupTypeSelectionMap(
+          getNoteGroupTypeSelectionMap()
+        )
+          .set(NoteGroupType.W, true)
+          .set(NoteGroupType.H, true)
+          .set(NoteGroupType.CHD, true);
+
+        scoreSettings = {
+          measureCount: 4,
+          timeSignature: getTimeSignature(TimeSignatureType.SIMPLE_3_4),
+          noteGroupTypeSelectionMap,
+          tempo: DEFAULT_TEMPO,
+          pitch: DEFAULT_PITCH,
+          metronomeSettings: DEFAULT_METRONOME_SETTINGS,
+        };
+
+        shareString = encodeScoreSettingsShareString(
+          scoreSettings,
+          ShareStringEncodingVersion._3
+        );
+
+        expect(shareString.substring(11)).toEqual('01');
       });
     });
   });
@@ -444,6 +541,75 @@ describe('The share module', () => {
       });
     });
 
+    describe('with a valid version 3 share string', () => {
+      let scoreSettings: ScoreSettings;
+
+      beforeEach(() => {
+        scoreSettings = decodeScoreSettingsShareString(
+          '3402120331300010203040506070c'
+        );
+      });
+
+      it('parses the correct measure count', () => {
+        expect(scoreSettings.measureCount).toEqual(4);
+      });
+
+      it('parses the correct time signature type', () => {
+        expect(scoreSettings.timeSignature).toEqual(
+          getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+        );
+      });
+
+      it('parses the correct selected note groups', () => {
+        expect(
+          getSelectedNoteGroupTypes(
+            scoreSettings.noteGroupTypeSelectionMap,
+            getTimeSignature(TimeSignatureType.SIMPLE_4_4)
+          )
+        ).toEqual([
+          NoteGroupType.EE,
+          NoteGroupType.SSSS,
+          NoteGroupType.QR,
+          NoteGroupType.H,
+          NoteGroupType.HR,
+          NoteGroupType.Q,
+          NoteGroupType.TEEE,
+          NoteGroupType.W,
+          NoteGroupType.WR,
+        ]);
+      });
+
+      it('parses the correct tempo', () => {
+        expect(scoreSettings.tempo).toEqual(120);
+      });
+
+      it('parses the correct pitch class', () => {
+        expect(scoreSettings.pitch.pitchClass).toEqual(PitchClass.C);
+      });
+
+      it('parses the correct octave', () => {
+        expect(scoreSettings.pitch.octave).toEqual(Octave._3);
+      });
+
+      it('parses the correct metronome count-off settings', () => {
+        expect(scoreSettings.metronomeSettings.countOffMeasures).toEqual(1);
+      });
+
+      it('parses the correct metronome subdivision click setting', () => {
+        expect(scoreSettings.metronomeSettings.subdivisionClick).toEqual(false);
+      });
+
+      it('parses the correct metronome start of measure click setting', () => {
+        expect(scoreSettings.metronomeSettings.startOfMeasureClick).toEqual(
+          true
+        );
+      });
+
+      it('parses the correct metronome active setting', () => {
+        expect(scoreSettings.metronomeSettings.active).toEqual(true);
+      });
+    });
+
     describe('with invalid version 0 share strings', () => {
       const testCases = [
         {
@@ -452,7 +618,7 @@ describe('The share module', () => {
         },
         {
           description: 'where the share string is not a valid version',
-          shareString: '34200',
+          shareString: '94200',
         },
         {
           description: 'where the measure count value is not a valid selection',
@@ -503,7 +669,7 @@ describe('The share module', () => {
         },
         {
           description: 'where the share string is not a valid version',
-          shareString: '3421203300',
+          shareString: '9421203300',
         },
         {
           description: 'where the measure count value is not a valid selection',
@@ -516,7 +682,7 @@ describe('The share module', () => {
         },
         {
           description:
-            'where the time signature cannot be parsed as a decimal number',
+            'where the time signature cannot be parsed as a hexadecimal number',
           shareString: '14g1203300',
         },
         {
@@ -584,7 +750,7 @@ describe('The share module', () => {
         },
         {
           description: 'where the share string is not a valid version',
-          shareString: '342120331200',
+          shareString: '942120331200',
         },
         {
           description: 'where the measure count value is not a valid selection',
@@ -597,7 +763,7 @@ describe('The share module', () => {
         },
         {
           description:
-            'where the time signature cannot be parsed as a decimal number',
+            'where the time signature cannot be parsed as a hexadecimal number',
           shareString: '24g120331200',
         },
         {
@@ -658,6 +824,102 @@ describe('The share module', () => {
           description:
             'where the metronome boolean settings setting cannot be parsed as a hexadecimal number',
           shareString: '242120331z00',
+        },
+      ];
+
+      testCases.forEach(({ description, shareString }) => {
+        describe(description, () => {
+          it('throws the expected error', () => {
+            expect(() => {
+              decodeScoreSettingsShareString(shareString);
+            }).toThrowError(new Error('Cannot decode share string'));
+          });
+        });
+      });
+    });
+
+    describe('with invalid version 3 share strings', () => {
+      const testCases = [
+        {
+          description: 'where the share string is too short',
+          shareString: '340212033',
+        },
+        {
+          description: 'where the share string is not a valid version',
+          shareString: '9402120331200',
+        },
+        {
+          description: 'where the measure count value is not a valid selection',
+          shareString: '3302120331200',
+        },
+        {
+          description:
+            'where the measure count cannot be parsed as a decimal string',
+          shareString: '3a02120331200',
+        },
+        {
+          description:
+            'where the time signature cannot be parsed as a two-digit hexadecimal number',
+          shareString: '34gg120331200',
+        },
+        {
+          description:
+            'where there is an odd number of note group index characters',
+          shareString: '34021203312000',
+        },
+        {
+          description:
+            'where a note group index cannot be parsed as a hexadecimal number',
+          shareString: '3402120331200zz',
+        },
+        {
+          description: 'where a note group index is not a valid selection',
+          shareString: '3402120331200ff',
+        },
+        {
+          description: 'where the tempo cannot be parsed as a decimal number',
+          shareString: '340212a331200',
+        },
+        {
+          description: 'where the tempo is lower than the expected range',
+          shareString: '3402039331200',
+        },
+        {
+          description: 'where the tempo is higher than the expected range',
+          shareString: '3402301331200',
+        },
+        {
+          description:
+            'where the pitch class index cannot be parsed as a hexadecimal number',
+          shareString: '3402120z31200',
+        },
+        {
+          description: 'where the pitch class is not a valid selection',
+          shareString: '3402120c31200',
+        },
+        {
+          description:
+            'where the pitch octave index cannot be parsed as a decimal number',
+          shareString: '34021203a1200',
+        },
+        {
+          description: 'where the pitch octave is not a valid selection',
+          shareString: '3402120381200',
+        },
+        {
+          description:
+            'where the metronome count-off setting cannot be parsed as a hexadecimal number',
+          shareString: '340212033z200',
+        },
+        {
+          description:
+            'where the metronome count-off setting is not a valid selection',
+          shareString: '3402120333200',
+        },
+        {
+          description:
+            'where the metronome boolean settings setting cannot be parsed as a hexadecimal number',
+          shareString: '3402120331z00',
         },
       ];
 

@@ -36,7 +36,23 @@
  * 00 - Selected note index (hexadecimal, 00 = whole note, 01 = half note, etc.)
  *
  * Example:
- * 1421201413000102 - 4 measures of 4/4 time with whole notes, half notes, and quarter notes, played
+ * 2421201413000102 - 4 measures of 4/4 time with whole notes, half notes, and quarter notes, played
+ * back at 120 BPM on the pitch Bb3, with the metronome active, with a 1 measure count-off, measure
+ * click on, and subdivision click off
+ *
+ * Version 2:
+ * 3 - Version
+ * 2 - Measure Count (decimal, 1, 2, 4, or 8)
+ * 02 - Time signature index (hexadecimal, 00 = 2/4, 01 = 3/4, 02 = 4/4)
+ * 080 - Tempo in BPM (decimal, 40-300)
+ * 8 - Pitch class index (hexadecimal, 0 - A, 1 - Bb, 2 - B, ... B - Ab)
+ * 3 - Octave index (decimal, 0-7)
+ * 1 - Metronome count-off, future use (hexadecimal, 2 LSB to represent 0, 1 or 2 measure count-off)
+ * 2 - Metronome settings, future use (hexadecimal, 4 bits: future, subdivision, measure, active)
+ * 00 - Selected note index (hexadecimal, 00 = whole note, 01 = half note, etc.)
+ *
+ * Example:
+ * 34021201413000102 - 4 measures of 4/4 time with whole notes, half notes, and quarter notes, played
  * back at 120 BPM on the pitch Bb3, with the metronome active, with a 1 measure count-off, measure
  * click on, and subdivision click off
  *
@@ -74,6 +90,7 @@ export enum ShareStringEncodingVersion {
   _0 = '0',
   _1 = '1',
   _2 = '2',
+  _3 = '3',
 }
 
 const pitchClassIndexMap: { [key: string]: number } = {
@@ -106,9 +123,16 @@ const parseHexString = parseNumberString(16);
 
 const encodeMeasureCountAndTimeSignature = (
   measureCount: number,
-  timeSignature: TimeSignature
+  timeSignature: TimeSignature,
+  eightBitFormat = false
 ): string => {
-  return `${measureCount}${timeSignature.index.toString(16)}`;
+  let timeSignatureEncoded = timeSignature.index.toString(16);
+
+  if (eightBitFormat) {
+    timeSignatureEncoded = timeSignatureEncoded.padStart(2, '0');
+  }
+
+  return `${measureCount}${timeSignatureEncoded}`;
 };
 
 const encodeNoteGroupTypeSelectionMap = (
@@ -227,6 +251,49 @@ const encodeVersion2ShareString = (scoreSettings: ScoreSettings): string => {
   return shareString;
 };
 
+const encodeVersion3ShareString = (scoreSettings: ScoreSettings): string => {
+  // First character - current version
+  let shareString = ShareStringEncodingVersion._3.toString();
+
+  // Second character - count of measures (1, 2, 4, 8)
+  // Third and 4th characters - time signature index (ex. 4/4 = 02)
+  shareString += encodeMeasureCountAndTimeSignature(
+    scoreSettings.measureCount,
+    scoreSettings.timeSignature,
+    true
+  );
+
+  // 5th-7th characters - tempo in BPM
+  shareString += scoreSettings.tempo.toString().padStart(3, '0');
+
+  // 8th character - pitch class index (hex)
+  shareString += pitchClassIndexMap[scoreSettings.pitch.pitchClass].toString(
+    16
+  );
+
+  // 9th character - pitch octave index (dec)
+  shareString += scoreSettings.pitch.octave.toString();
+
+  // 10th character - metronome count-off value (hex)
+  shareString += scoreSettings.metronomeSettings.countOffMeasures.toString(16);
+
+  // 11th character - metronome boolean settings (hex)
+  shareString += parseInt(
+    0 +
+      (+scoreSettings.metronomeSettings.subdivisionClick).toString() +
+      (+scoreSettings.metronomeSettings.startOfMeasureClick).toString() +
+      (+scoreSettings.metronomeSettings.active).toString(),
+    2
+  ).toString(16);
+
+  // Remaining characters, encoded note group type selections
+  shareString += encodeNoteGroupTypeSelectionMap(
+    scoreSettings.noteGroupTypeSelectionMap,
+    scoreSettings.timeSignature
+  );
+
+  return shareString;
+};
 export const encodeScoreSettingsShareString = (
   scoreSettings: ScoreSettings,
   version: ShareStringEncodingVersion
@@ -238,6 +305,8 @@ export const encodeScoreSettingsShareString = (
       return encodeVersion1ShareString(scoreSettings);
     case ShareStringEncodingVersion._2:
       return encodeVersion2ShareString(scoreSettings);
+    case ShareStringEncodingVersion._3:
+      return encodeVersion3ShareString(scoreSettings);
   }
 };
 
@@ -251,8 +320,13 @@ const decodeMeasureCount = (shareString: string): number => {
   return measureCount;
 };
 
-const decodeTimeSignature = (shareString: string): TimeSignature => {
-  const timeSignatureIndex = parseHexString(shareString.charAt(2));
+const decodeTimeSignature = (
+  shareString: string,
+  timeSignatureCharacters = 1
+): TimeSignature => {
+  const timeSignatureIndex = parseHexString(
+    shareString.substr(2, timeSignatureCharacters)
+  );
   const timeSignature = timeSignatures.find(
     (ts) => ts.index === timeSignatureIndex
   );
@@ -304,8 +378,8 @@ const decodeNoteGroupTypeSelectionMap = (selectedNoteGroupIndices: string) => {
   return noteGroupTypeSelectionMap;
 };
 
-const decodeTempo = (shareString: string): number => {
-  const tempo = parseDecString(shareString.substr(3, 3));
+const decodeTempo = (shareString: string, startingCharacter = 3): number => {
+  const tempo = parseDecString(shareString.substr(startingCharacter, 3));
 
   // Check if tempo is in expected range
   if (tempo < MIN_TEMPO || tempo > MAX_TEMPO) {
@@ -315,8 +389,8 @@ const decodeTempo = (shareString: string): number => {
   return tempo;
 };
 
-const decodePitch = (shareString: string): Pitch => {
-  const pitchClassIndex = parseHexString(shareString.charAt(6));
+const decodePitch = (shareString: string, startingCharacter = 6): Pitch => {
+  const pitchClassIndex = parseHexString(shareString.charAt(startingCharacter));
 
   const foundPitchClassIndexMapEntry = Object.entries(pitchClassIndexMap).find(
     ([, index]) => {
@@ -331,7 +405,7 @@ const decodePitch = (shareString: string): Pitch => {
   const pitchClass = foundPitchClassIndexMapEntry[0] as PitchClass;
 
   // Extract octave (8th character)
-  const octaveIndex = parseDecString(shareString.charAt(7));
+  const octaveIndex = parseDecString(shareString.charAt(startingCharacter + 1));
 
   if (octaveIndex > MAX_OCTAVE_INDEX) {
     throw new Error(SHARE_DECODE_ERROR_MESSAGE);
@@ -342,8 +416,13 @@ const decodePitch = (shareString: string): Pitch => {
   return { pitchClass, octave };
 };
 
-const decodeMetronomeSettings = (shareString: string): MetronomeSettings => {
-  const countOffMeasures = parseHexString(shareString.charAt(8));
+const decodeMetronomeSettings = (
+  shareString: string,
+  startingCharacter = 8
+): MetronomeSettings => {
+  const countOffMeasures = parseHexString(
+    shareString.charAt(startingCharacter)
+  );
 
   // Count of measures cannot be more than 2
   if (countOffMeasures > 2) {
@@ -352,7 +431,7 @@ const decodeMetronomeSettings = (shareString: string): MetronomeSettings => {
 
   // Extract 4 boolean values form the hexadecimal value at character 8
   const [_, subdivisionClick, startOfMeasureClick, active] = parseHexString(
-    shareString.charAt(9)
+    shareString.charAt(startingCharacter + 1)
   )
     .toString(2)
     .padStart(4, '0')
@@ -471,6 +550,44 @@ const decodeVersion2ShareString = (shareString: string): ScoreSettings => {
   };
 };
 
+const decodeVersion3ShareString = (shareString: string): ScoreSettings => {
+  // Minimum valid string must contain a version, measure count, time signature, tempo, pitch class,
+  // octave, 2 hex digits for metronome settings, and one note group
+  // (1 + 1 + 2 + 3 + 1 + 1 + 2 + 2 = 13)
+  if (shareString.length < 13) {
+    throw new Error(SHARE_DECODE_ERROR_MESSAGE);
+  }
+
+  // Extract the measure count (2nd character)
+  const measureCount = decodeMeasureCount(shareString) as MeasureCount;
+
+  // Extract time signature index and look up time signature (3rd and 4th character)
+  const timeSignature = decodeTimeSignature(shareString, 2);
+
+  // Extract tempo (5th-7th characters)
+  const tempo = decodeTempo(shareString, 4);
+
+  // Extract pitch class and octave (8th and 9th characters)
+  const pitch = decodePitch(shareString, 7);
+
+  // Extract metronome count off value and settings (10th and 11th characters)
+  const metronomeSettings = decodeMetronomeSettings(shareString, 9);
+
+  // Extract selected note groups (remaining characters)
+  const selectedNoteGroupIndices = shareString.substr(11);
+  const noteGroupTypeSelectionMap = decodeNoteGroupTypeSelectionMap(
+    selectedNoteGroupIndices
+  );
+
+  return {
+    measureCount,
+    timeSignature,
+    noteGroupTypeSelectionMap,
+    tempo,
+    pitch,
+    metronomeSettings,
+  };
+};
 export const decodeScoreSettingsShareString = (
   shareString: string
 ): ScoreSettings => {
@@ -482,6 +599,8 @@ export const decodeScoreSettingsShareString = (
       return decodeVersion1ShareString(shareString);
     case '2':
       return decodeVersion2ShareString(shareString);
+    case '3':
+      return decodeVersion3ShareString(shareString);
     default:
       throw new Error(SHARE_DECODE_ERROR_MESSAGE);
   }
