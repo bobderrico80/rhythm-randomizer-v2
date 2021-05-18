@@ -230,7 +230,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '58TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-5-8.svg').default,
     sortOrder: 14,
     index: 14,
     total8thNotesPerMeasure: 5,
@@ -245,7 +245,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '78TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-7-8.svg').default,
     sortOrder: 15,
     index: 15,
     total8thNotesPerMeasure: 7,
@@ -261,7 +261,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '238TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-2-3-8.svg').default,
     sortOrder: 16,
     index: 16,
     total8thNotesPerMeasure: 5,
@@ -276,7 +276,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '328TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-3-2-8.svg').default,
     sortOrder: 16,
     index: 16,
     total8thNotesPerMeasure: 5,
@@ -291,7 +291,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '2238TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-2-2-3-8.svg').default,
     sortOrder: 17,
     index: 17,
     total8thNotesPerMeasure: 7,
@@ -307,7 +307,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '2328TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-2-3-2-8.svg').default,
     sortOrder: 18,
     index: 18,
     total8thNotesPerMeasure: 7,
@@ -323,7 +323,7 @@ export const timeSignatures: TimeSignature[] = [
     complexity: TimeSignatureComplexity.ASYMMETRICAL,
     categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
     description: '3228TimeSignature',
-    icon: '', // TODO: icon
+    icon: require('../svg/time-signatures/ts-3-2-2-8.svg').default,
     sortOrder: 19,
     index: 19,
     total8thNotesPerMeasure: 7,
