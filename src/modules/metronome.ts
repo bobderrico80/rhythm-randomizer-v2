@@ -67,6 +67,11 @@ export const getMetronomePlaybackPatterns = (
   timeSignature: TimeSignature,
   metronomeSettings: MetronomeSettings
 ): PlaybackPattern[] => {
+  // TODO: Handle asymmetrical meters
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return [];
+  }
+
   const mainClick = getClick(ClickType.MAIN);
   const measureClick = metronomeSettings.startOfMeasureClick
     ? getClick(ClickType.MEASURE)

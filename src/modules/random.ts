@@ -13,7 +13,7 @@ import {
 } from './note-definition';
 import { Measure } from './vex';
 import { InvalidNoteSelectionError } from './error';
-import { TimeSignature } from './time-signature';
+import { TimeSignature, TimeSignatureComplexity } from './time-signature';
 import { isFunction, sortBy } from 'lodash';
 import { duplicate } from './util';
 
@@ -111,6 +111,11 @@ const getRandomMeasure = (
   noteGroupTypeSelectionMap: NoteGroupTypeSelectionMap,
   timeSignature: TimeSignature
 ): Measure => {
+  // TODO: Handle asymmetrical meter
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return { noteGroups: [] };
+  }
+
   const selectedNoteGroupTypes = getSelectedNoteGroupTypes(
     noteGroupTypeSelectionMap,
     timeSignature
@@ -169,6 +174,11 @@ export const getTestRandomMeasures = (
   timeSignature: TimeSignature,
   measureCount: number
 ): Measure[] => {
+  // TODO: Handle asymmetrical meter
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return [];
+  }
+
   const selectedNoteGroups = sortBy(
     getNoteGroups(
       ...getSelectedNoteGroupTypes(noteGroupTypeSelectionMap, timeSignature)

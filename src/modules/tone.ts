@@ -54,6 +54,11 @@ export const startPlayback = (
   onNoteTrigger: NoteTriggerHandler,
   onMetronomeClickTrigger: NoteTriggerHandler
 ) => {
+  // TODO: Handle asymmetrical meter
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return;
+  }
+
   Tone.start();
   Transport.cancel();
 

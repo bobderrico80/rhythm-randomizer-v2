@@ -45,12 +45,14 @@ const TempoControl = () => {
     [TimeSignatureComplexity.SIMPLE]: quarterNote,
     [TimeSignatureComplexity.COMPOUND]: dottedQuarterNote,
     [TimeSignatureComplexity.ALLA_BREVE]: halfNote,
+    [TimeSignatureComplexity.ASYMMETRICAL]: quarterNote,
   }[timeSignature.complexity];
 
   const mmMarkingText = {
     [TimeSignatureComplexity.SIMPLE]: 'quarterNote',
     [TimeSignatureComplexity.COMPOUND]: 'dottedQuarterNote',
     [TimeSignatureComplexity.ALLA_BREVE]: 'halfNote',
+    [TimeSignatureComplexity.ASYMMETRICAL]: 'quarterNote',
   }[timeSignature.complexity];
 
   useEffect(() => {

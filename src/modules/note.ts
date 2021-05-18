@@ -88,6 +88,15 @@ export const generateNoteGroup = (
   timeSignature: TimeSignature,
   testMode: boolean = false
 ): GeneratedNoteGroup => {
+  // TODO: Handle Asymmetrical meters
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return {
+      duration: 1,
+      notes: [],
+      type: NoteGroupType.H,
+    };
+  }
+
   let generatedNoteGroup: GeneratedNoteGroup;
 
   if (noteGroup.notes) {
@@ -158,6 +167,11 @@ export const isValidNoteGroupForTimeSignature = (
   noteGroup: NoteGroup,
   timeSignature: TimeSignature
 ): boolean => {
+  // TODO: Handle Asymmetrical meters
+  if (timeSignature.complexity === TimeSignatureComplexity.ASYMMETRICAL) {
+    return false;
+  }
+
   const duration = getDuration(noteGroup, timeSignature.beatsPerMeasure);
 
   let timeSignatureComplexityMatches;

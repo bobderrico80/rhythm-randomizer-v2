@@ -10,12 +10,14 @@ export enum TimeSignatureCategoryType {
   SIMPLE = 'simpleMeter',
   COMPOUND = 'compoundMeter',
   ALLA_BREVE = 'allaBreveMeter',
+  ASYMMETRICAL = 'asymmetricalMeter',
 }
 
 export enum TimeSignatureComplexity {
   SIMPLE,
   COMPOUND,
   ALLA_BREVE,
+  ASYMMETRICAL,
 }
 
 export enum TimeSignatureType {
@@ -33,6 +35,14 @@ export enum TimeSignatureType {
   ALLA_BREVE_3_2 = '3/2',
   ALLA_BREVE_4_2 = '4/2',
   ALLA_BREVE_CUT = 'C|',
+  ASYMMETRICAL_5_8 = '5/8',
+  ASYMMETRICAL_7_8 = '7/8',
+  // TODO: Figure out how we do these in Vexflow
+  ASYMMETRICAL_2_3_8 = '2+3/8',
+  ASYMMETRICAL_3_2_8 = '3+2/8',
+  ASYMMETRICAL_2_2_3_8 = '2+2+3/8',
+  ASYMMETRICAL_2_3_2_8 = '2+3+2/8',
+  ASYMMETRICAL_3_2_2_8 = '3+2+2/8',
 }
 
 export interface TimeSignatureCategory
@@ -41,16 +51,36 @@ export interface TimeSignatureCategory
 export interface CategorizedTimeSignature
   extends CategorizedItem<TimeSignatureCategory, TimeSignature> {}
 
-export interface TimeSignature
+interface BaseTimeSignature
   extends CategorizableTypedItem<TimeSignatureType, TimeSignatureCategoryType> {
-  type: TimeSignatureType;
-  complexity: TimeSignatureComplexity;
-  categoryType: TimeSignatureCategoryType;
-  beatsPerMeasure: number;
   description: string;
   icon: string;
   index: number;
 }
+
+interface MeterConfiguration {
+  complexity:
+    | TimeSignatureComplexity.SIMPLE
+    | TimeSignatureComplexity.COMPOUND
+    | TimeSignatureComplexity.ALLA_BREVE;
+  beatsPerMeasure: number;
+}
+
+export interface StaticTimeSignature
+  extends BaseTimeSignature,
+    MeterConfiguration {
+  randomizable?: never;
+  meterConfigurations?: never;
+}
+
+export interface DynamicTimeSignature extends BaseTimeSignature {
+  meterConfigurations: MeterConfiguration[];
+  complexity: TimeSignatureComplexity.ASYMMETRICAL;
+  randomizable: boolean;
+  beatsPerMeasure?: never;
+}
+
+export type TimeSignature = StaticTimeSignature | DynamicTimeSignature;
 
 export const timeSignatures: TimeSignature[] = [
   {
