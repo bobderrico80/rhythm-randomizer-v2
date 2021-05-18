@@ -28,11 +28,11 @@ describe('The <TimeSignatureSelection /> component', () => {
   });
 
   it('renders a fieldset for each category of time signatures', () => {
-    expect(screen.getAllByRole('group')).toHaveLength(3);
+    expect(screen.getAllByRole('group')).toHaveLength(4);
   });
 
   it('renders a radio button for each time signature', () => {
-    expect(screen.getAllByRole('radio')).toHaveLength(14);
+    expect(screen.getAllByRole('radio')).toHaveLength(21);
   });
 
   it('renders selected the radio button for the time signature stored in the state', () => {

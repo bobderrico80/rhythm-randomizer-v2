@@ -66,21 +66,23 @@ interface MeterConfiguration {
   beatsPerMeasure: number;
 }
 
-export interface StaticTimeSignature
+export interface SymmetricTimeSignature
   extends BaseTimeSignature,
     MeterConfiguration {
   randomizable?: never;
   meterConfigurations?: never;
+  total8thNotesPerMeasure?: never;
 }
 
-export interface DynamicTimeSignature extends BaseTimeSignature {
+export interface AsymmetricTimeSignature extends BaseTimeSignature {
   meterConfigurations: MeterConfiguration[];
   complexity: TimeSignatureComplexity.ASYMMETRICAL;
   randomizable: boolean;
   beatsPerMeasure?: never;
+  total8thNotesPerMeasure: number;
 }
 
-export type TimeSignature = StaticTimeSignature | DynamicTimeSignature;
+export type TimeSignature = SymmetricTimeSignature | AsymmetricTimeSignature;
 
 export const timeSignatures: TimeSignature[] = [
   {
@@ -223,6 +225,115 @@ export const timeSignatures: TimeSignature[] = [
     sortOrder: 10,
     index: 13,
   },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_5_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '58TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 14,
+    index: 14,
+    total8thNotesPerMeasure: 5,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+    ],
+    randomizable: true,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_7_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '78TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 15,
+    index: 15,
+    total8thNotesPerMeasure: 7,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 2, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+    ],
+    randomizable: true,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_2_3_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '238TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 16,
+    index: 16,
+    total8thNotesPerMeasure: 5,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+    ],
+    randomizable: false,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_3_2_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '328TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 16,
+    index: 16,
+    total8thNotesPerMeasure: 5,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+    ],
+    randomizable: false,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_2_2_3_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '2238TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 17,
+    index: 17,
+    total8thNotesPerMeasure: 7,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+    ],
+    randomizable: false,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_2_3_2_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '2328TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 18,
+    index: 18,
+    total8thNotesPerMeasure: 7,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+    ],
+    randomizable: false,
+  },
+  {
+    type: TimeSignatureType.ASYMMETRICAL_3_2_2_8,
+    complexity: TimeSignatureComplexity.ASYMMETRICAL,
+    categoryType: TimeSignatureCategoryType.ASYMMETRICAL,
+    description: '3228TimeSignature',
+    icon: '', // TODO: icon
+    sortOrder: 19,
+    index: 19,
+    total8thNotesPerMeasure: 7,
+    meterConfigurations: [
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.COMPOUND },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+      { beatsPerMeasure: 1, complexity: TimeSignatureComplexity.SIMPLE },
+    ],
+    randomizable: false,
+  },
 ];
 
 export const timeSignatureCategories: TimeSignatureCategory[] = [
@@ -237,6 +348,10 @@ export const timeSignatureCategories: TimeSignatureCategory[] = [
   {
     type: TimeSignatureCategoryType.COMPOUND,
     sortOrder: 2,
+  },
+  {
+    type: TimeSignatureCategoryType.ASYMMETRICAL,
+    sortOrder: 3,
   },
 ];
 
