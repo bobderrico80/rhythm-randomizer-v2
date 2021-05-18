@@ -152,7 +152,7 @@ describe('The <App /> component', () => {
 
           it('copies the Share Settings Link to the clipboard', () => {
             expect(mockCopy).toBeCalledWith(
-              'http://localhost?s=22208084020001020304050607'
+              'http://localhost?s=320208084020001020304050607'
             );
           });
 
@@ -160,7 +160,7 @@ describe('The <App /> component', () => {
             expect(mockSendEvent).toHaveBeenCalledWith(
               events.EventCategory.SHARE_LINK,
               events.EventAction.COPIED,
-              '22208084020001020304050607'
+              '320208084020001020304050607'
             );
           });
         });
