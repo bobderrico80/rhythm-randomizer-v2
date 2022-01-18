@@ -73,16 +73,6 @@ const MainMenu = ({ mainMenuOpen, onMainMenuCloseClick }: MainMenuProps) => {
               </a>
             </p>
             <LanguageSwitcher supportedLanguageCodes={['en', 'de']} />
-            <p>
-              {t('preferOldVersion')}{' '}
-              <a
-                href="http://v1.rhythmrandomizer.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                http://v1.rhythmrandomizer.com
-              </a>
-            </p>
           </footer>
         </section>
       </section>
