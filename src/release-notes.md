@@ -1,3 +1,9 @@
+## What's New in Version 2.10.0?
+
+Version 1 is officially being retired, so the link is no longer in the footer, and trying to access version 1 will just redirect here. This update also includes some under-the-hood prep work for future features.
+
+It has been a while since the last substantial update. Life got very busy, and I unfortunately have not found much time to work on The Rhythm Randomizer. Rest assured, I do have updates planned, and hope to resume development again soon!
+
 ## What's New in Version 2.9.0?
 
 This update brings a new category of time signatures: _alla breve_ (or cut-time) time signatures! Included with the new time signatures are 2/2, 3/2, 4/2, and cut-time (which functions the same as 2/2).
